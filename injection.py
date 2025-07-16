@@ -1,3 +1,5 @@
+import astropy.units as u
+import astropy.units.physical as pu
 from .particles import particles
 from .transport import transport
 from .accelerator import accelerator
@@ -182,3 +184,21 @@ def compute_pflux_continuous_point(N_0, Ep, d, a, dens, chi=0.05,
 
     # Return
     return pflux.to(u.GeV**-1 *u.cm**-3)
+
+@u.quantity_input(e=pu.energy)
+def compute_fgal(e) -> u.GeV**-1 * u.cm**-3:
+    """
+    Return spectral particle density of galactic CRs as measured by [3].
+    """
+    R = e2R(e)
+
+    term = 1 + (R/(336*u.GV))**5.542
+    phi = 0.4544 * (R/(45*u.GV))**-2.849 * term**0.024 * u.Unit("m-2 sr-1 s-1 GV-1")
+
+    n = fourpi*u.sr / c.c * phi
+
+    # rigidity -> energy (for a proton here)
+    n = n / c.e.si
+
+    # Return
+    return n

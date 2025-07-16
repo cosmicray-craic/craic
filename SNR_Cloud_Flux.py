@@ -1,11 +1,11 @@
 import numpy as np
 import astropy.units as u
-from .particles import particles
-from .transport import transport
-from .accelerator import accelerator
-from .flux import flux
+from particles import particles
+from transport import transport
+from accelerator import accelerator
+from flux import flux
 from craic import injection
-from .stellarcluster import compute_fgal
+from injection import compute_fgal
 #
 
 
