@@ -5,7 +5,7 @@ from transport import transport
 from accelerator import accelerator
 from flux import flux
 from craic import injection
-from injection import compute_fgal
+from injection import compute_fgal, compute_fgal_dampe
 #
 
 
@@ -185,15 +185,25 @@ def SNR_Cloud_Flux(nh2, dist, age, chi=0.05,
     ########################################################################
 
     # Include flux from galactic CR sea if requested
-    fgal = compute_fgal(Eps)
+    fgal_AMSO2 = compute_fgal(Eps)
+    fgal_DAMPE = compute_fgal_dampe(Eps)
+    
+    if F_gal is not False:
+        if F_gal == "AMS-O2":
+            gal_ratio = np.nanmean(pflux_tmp/fgal_AMSO2)
+            if gal_ratio < 1.:
+                print("Mean ratio pflux / fgal:",gal_ratio)
+            pflux_tmp += fgal_AMSO2
+            #pflux_tmp = 1000*fgal_AMSO2 #testing for reviewer
+        elif F_gal == "DAMPE":
+            gal_ratio = np.nanmean(pflux_tmp/fgal_DAMPE)
+            if gal_ratio < 1.:
+                print("Mean ratio pflux / fgal:",gal_ratio)
+            pflux_tmp += fgal_DAMPE
+            #pflux_tmp = 1000*fgal_DAMPE #testing for reviewer
+        else:
+            print('Choose a model from "AMS-O2" and "DAMPE".')
 
-    if F_gal:
-        gal_ratio = np.nanmean(pflux_tmp/fgal)
-        if gal_ratio < 1.:
-            print("Mean ratio pflux / fgal:",gal_ratio)
-        pflux_tmp += fgal
-        #pflux_tmp = 1000*fgal #testing for reviewer
-        
     # Compute total proton flux interacting with the cloud (cell-based)
     pflux = fl.cloud_cell_flux(radius_MC, cloud_depth, pflux_tmp)
     

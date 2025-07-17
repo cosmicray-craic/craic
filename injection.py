@@ -1,8 +1,13 @@
 import astropy.units as u
 import astropy.units.physical as pu
-from .particles import particles
-from .transport import transport
-from .accelerator import accelerator
+import numpy as np
+import astropy.constants as c
+from scipy.interpolate import interp1d
+import pandas as pd
+
+from particles import particles
+from transport import transport
+from accelerator import accelerator
 part = particles()
 tran = transport()
 acel = accelerator()
@@ -185,20 +190,88 @@ def compute_pflux_continuous_point(N_0, Ep, d, a, dens, chi=0.05,
     # Return
     return pflux.to(u.GeV**-1 *u.cm**-3)
 
+# Define functions for Galactic CRs
+
 @u.quantity_input(e=pu.energy)
-def compute_fgal(e) -> u.GeV**-1 * u.cm**-3:
+def e2R(e, Z=1) -> u.GV:
     """
-    Return spectral particle density of galactic CRs as measured by [3].
+    Compute proton rigidity.
+
+    Parameters
+    ==========
+    e : `astropy.Quantity`
+        Particle energy. (~ GeV)
+    Z : `float`
+        Charge number, 1 for a proton.
+
+    Returns
+    =======
+    R : `astropy.Quantity`
+        Particle rigidity. (GV)
     """
-    R = e2R(e)
+    R = e / (Z * c.e.si)
+    return R
+
+@u.quantity_input(E=pu.energy)
+def compute_fgal(E) -> u.GeV**(-1) * u.cm**(-3):
+    """
+    Return spectral particle density of galactic CRs as measured by
+    AMS Collab. (2015), PRL 114 171103,
+    https://journals.aps.org/prl/pdf/10.1103/PhysRevLett.114.171103.
+    """
+    R = e2R(E)
 
     term = 1 + (R/(336*u.GV))**5.542
     phi = 0.4544 * (R/(45*u.GV))**-2.849 * term**0.024 * u.Unit("m-2 sr-1 s-1 GV-1")
 
-    n = fourpi*u.sr / c.c * phi
+    n = 4 * np.pi * u.sr / c.c * phi
 
     # rigidity -> energy (for a proton here)
     n = n / c.e.si
 
     # Return
+    return n
+
+def compute_fgal_dampe(E) -> u.GeV**(-1) * u.cm**(-3):
+    
+
+    """
+    Import cosmic ray flux data from DAMPE measurements:
+    DAMPE Collab (2019), SciAdv aax3793,
+    https://www.science.org/doi/10.1126/sciadv.aax3793, 
+    and return cosmic-ray density of galactic CRs.
+
+
+    
+    Parameters:
+    -----------
+    E : array-like, optional
+        Energy values of Galactic cosmic rays (GeV).
+
+    
+    Returns:
+    --------
+    Cosmic ray density at specified energies (GeV^-1 cm^-3)
+    """
+    
+    # Load data from CSV file
+    df = pd.read_csv("./data/DAMPE_fgal.csv")
+    gal_cr_flux = df['F_flux'].values / (u.m**2 * u.sr * u.s * u.GeV)
+    energy = df['E_GeV'].values * u.GeV
+
+    # Convert galactic CR flux to energy density
+    gal_cr_density=(gal_cr_flux * 4 * np.pi * u.sr / c.c).to('GeV^-1*cm^-3')
+
+    # Take log of both x and y arrays for interpolation
+    log_energy = np.log10(energy.value)
+    log_density = np.log10(gal_cr_density.value)
+ 
+    # Create interpolation function in log space
+    interp_func_log = interp1d(log_energy, log_density, kind='linear', 
+                               bounds_error=False, fill_value='extrapolate')
+    
+    # Compute the CR density with the input energy array
+    density_interp = interp_func_log(np.log10(E.value))
+
+    n = (10**(density_interp))*u.Unit('GeV^-1*cm^-3')
     return n
