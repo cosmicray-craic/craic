@@ -1,10 +1,10 @@
 import numpy as np
 import astropy.units as u
-from particles import particles
-from transport import transport
-from accelerator import accelerator
-from flux import flux 
-import injection
+from .particles import particles
+from .transport import transport
+from .accelerator import accelerator
+from .flux import flux 
+from . import injection
 
 part = particles()
 tran = transport()
@@ -12,7 +12,7 @@ acce = accelerator()
 fl = flux()
 
 # Set up initial energy arrays
-N = 200 # Number of energy bins
+N = 200 
 Eg_lo = 10. *u.GeV
 Eg_hi = 3e3 *u.TeV # 1 PeV
 
@@ -44,7 +44,7 @@ def find_nearest(array, value):
     idx = (np.abs(array-value)).argmin()
     return idx
 
-class SNRCloudFlux:
+class SNR_Cloud_Flux:
     """
     Class to compute gamma-ray flux from a molecular cloud given the properties of a nearby SNR.
     
@@ -162,7 +162,7 @@ class SNRCloudFlux:
         # Compute time spent in cloud & cloud penetration depth
         cloudtime = timediff - ismtime
         cloudtime = cloudtime.clip(min=0)
-        cloud_depth = tran.R_diffusion(Eps, cloudtime, nh2, radius_MC, chi=self.chi, ism=0, sum=True)
+        cloud_depth = tran.R_diffusion(Eps, cloudtime, nh2, chi=self.chi, ism=0)
         
         return cloud_depth, dism, ismtime, Resc
     
@@ -248,7 +248,7 @@ class SNRCloudFlux:
         
         return pflux_tmp
     
-    @u.quantity_input(nh2=u.cm**-3, pflux=u.GeV**-1*u.cm**-3, pfluxlow_tmp=u.GeV**-1*u.cm**-3)
+    @u.quantity_input(nh2=u.cm**-3)
     def _compute_gamma_ray_flux(self, nh2, pflux, pfluxlow_tmp) -> 1 / (u.TeV*u.s*u.cm**2):
         """
         Compute gamma-ray flux from proton-proton interactions.
@@ -290,7 +290,7 @@ class SNRCloudFlux:
         
         return total_phig
     
-    @u.quantity_input(nh2=u.cm**-3, pflux=u.GeV**-1*u.cm**-3, pfluxlow_tmp=u.GeV**-1*u.cm**-3)
+    @u.quantity_input(nh2=u.cm**-3)
     def _compute_low_energy_gamma(self, phi, pfluxlow_tmp) -> 1 / (u.TeV*u.s*u.cm**2):
         """
         Compute 1 - 100 GeV part of the gamma-ray spectrum.
@@ -337,7 +337,7 @@ class SNRCloudFlux:
         
         return total_phig
     
-    @u.quantity_input(nh2=u.cm**-3, pflux=u.GeV**-1*u.cm**-3)
+    @u.quantity_input(nh2=u.cm**-3)
     def _compute_neutrino_flux(self, nh2, pflux):
         """
         Compute neutrino flux from proton-proton interactions.
@@ -431,10 +431,10 @@ class SNRCloudFlux:
         # Compute total proton flux interacting with the cloud (cell-based)
         radius_MC = np.sqrt(self.major_MC.value * self.minor_MC.value) * u.pc
         pflux = fl.cloud_cell_flux(radius_MC, cloud_depth, pflux_tmp) 
-        
+
         # To be sure, set NaN fluxes to zero
         pflux = np.nan_to_num(pflux, nan=0)
-
+        
         # Compute gamma-ray flux
         total_phig = self._compute_gamma_ray_flux(nh2, pflux, pfluxlow_tmp)
         

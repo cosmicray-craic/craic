@@ -5,9 +5,9 @@ import astropy.constants as c
 from scipy.interpolate import interp1d
 import pandas as pd
 
-from particles import particles
-from transport import transport
-from accelerator import accelerator
+from .particles import particles
+from .transport import transport
+from .accelerator import accelerator
 part = particles()
 tran = transport()
 acel = accelerator()
@@ -255,7 +255,7 @@ def compute_fgal_dampe(E) -> u.GeV**(-1) * u.cm**(-3):
     """
     
     # Load data from CSV file
-    df = pd.read_csv("./data/DAMPE_fgal.csv")
+    df = pd.read_csv("./craic/data/DAMPE_fgal.csv")
     gal_cr_flux = df['F_flux'].values / (u.m**2 * u.sr * u.s * u.GeV)
     energy = df['E_GeV'].values * u.GeV
 

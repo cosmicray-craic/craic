@@ -1,7 +1,7 @@
 import numpy as np
 import astropy.units as u
 import astropy.constants as c
-from particles import particles
+from .particles import particles
 
 class transport:
 
@@ -36,9 +36,7 @@ class transport:
     def R_diffusion(self, Ep, a, dens, chi=0.05, ism=0):  # input: seconds
 
 
-        R_dif = 2 * np.sqrt(self.Diffusion_Coefficient(Ep, dens, chi, ism) * a.to(u.s))  # no frac contribution
-
-
+        R_dif = 2 * np.sqrt(self.Diffusion_Coefficient(Ep, dens, chi=chi, ism=ism) * a.to(u.s))  # no frac contribution
         
         return R_dif  # cm
 
