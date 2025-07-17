@@ -1,7 +1,7 @@
 import numpy as np
 import astropy.units as u
 import astropy.constants as c
-from .particles import particles
+from particles import particles
 
 class transport:
 
