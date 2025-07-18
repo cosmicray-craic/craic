@@ -3,7 +3,8 @@ import astropy.units as u
 import astropy.constants as c
 
 class accelerator:
-
+    """Calculates the radius and age of supernova remnant 
+    in the Sedov stage."""
     Mej = (10.*u.Msun).to(u.gram)
     mp = c.m_p.to(u.gram)
     nh2ism = np.array([1.])*u.cm**(-3) # Density of Ambient Gas (cm^-3) ISM
@@ -16,7 +17,10 @@ class accelerator:
         # Sedov time is a fixed value (~1.6kyr), here in s
         self.t_sed = 0.495*(En/u.erg)**-0.5 * (self.Mej/u.gram)**(5/6)* ((self.mp/u.gram)*(self.nh2ism/(u.cm**(-3))))**(-1/3) *u.s
 
-    def escape_time(self, Ep, typeIIb=True):             # input: GeV
+    def escape_time(self, Ep, typeIIb=True) -> u.yr:  
+        """Calculates the time for particles with energy 
+        Ep to escape from the SNR."""
+
         # To find how long it takes for cosmic rays to escape
         t_sed = self.t_sed.to(u.yr)
 
@@ -30,19 +34,20 @@ class accelerator:
 
         return t_esc
 
-    def SNR_Radius(self, time):
+    @u.quantity_input(time=u.yr)
+    def SNR_Radius(self, time) -> u.pc:
         """
         Classical ST-stage solution for SNR radius as a function of its age.
 
         Parameters
         ----------
         time : `astropy.Quantity`
-            SNR age.
+            SNR age. (~ yr)
 
         Returns
         -------
         radius : `astropy.Quantity`
-            Radius of the SNR. (pc)
+            Radius of the SNR. (~ pc)
         """
 
         # (1) Truelove & McKee (1999):
@@ -66,8 +71,8 @@ class accelerator:
         # Return
         return radius.to(u.pc)
 
-
-    def SNR_age(self, size):
+    @u.quantity_input(size=u.pc)
+    def SNR_age(self, size) -> u.yr:
         """
         Estimate SNR age based on its radius.
 

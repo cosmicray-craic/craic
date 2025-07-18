@@ -52,9 +52,8 @@ class SNR_Cloud_Flux:
     from cosmic ray interactions in molecular clouds illuminated by nearby supernova remnants.
     """
     
-    def __init__(self, chi=0.05, distance_SNR=1000*u.pc, major_MC=10*u.pc, 
-                 minor_MC=10*u.pc, accel_type='Impulsive', snr_typeII=True, 
-                 F_gal=False, palpha=2.0, D_fast=True, flag_low=True):
+    def __init__(self, chi=0.05, distance_SNR=2000*u.pc, radius_MC=10*u.pc, accel_type='Impulsive', 
+                 snr_typeII=True, F_gal=False, palpha=2.0, D_fast=True, flag_low=True):
         """
         Initialize the SNR Cloud Flux Calculator by setting the properties of the SNR and the cloud.
         
@@ -66,10 +65,8 @@ class SNR_Cloud_Flux:
             (ism: 1, clouds: 0.05)
         distance_SNR : astropy.Quantity
             Distance from earth to the SNR. (~ pc)
-        major_MC : astropy.Quantity
-            Major axis of the MC. (~ pc)
-        minor_MC : astropy.Quantity
-            Minor axis of the MC. (~ pc)
+        radius_MC: astropy.Quantity
+            Radius of the molecular cloud (~ pc)
         accel_type : str
             Type of acceleration. Possible values are:
             ``Impulsive`` or ``Continuous``
@@ -88,8 +85,9 @@ class SNR_Cloud_Flux:
 
         self.chi = chi
         self.distance_SNR = distance_SNR
-        self.major_MC = major_MC
-        self.minor_MC = minor_MC
+        self.radius_MC = radius_MC
+        # self.E_min = E_min
+        # self.E_max = E_max
         self.accel_type = accel_type
         self.snr_typeII = snr_typeII
         self.F_gal = F_gal
@@ -144,10 +142,8 @@ class SNR_Cloud_Flux:
         distancediff = dist - Resc
         
         # Here, use two step approach with accelerator situated away from cloud
-        radius_MC = np.sqrt(self.major_MC.value * self.minor_MC.value) * u.pc
-        
         # First reach cloud
-        d2cloud = distancediff - radius_MC
+        d2cloud = distancediff - self.radius_MC
         # clip: if negative, cloud and SNR overlap.
         d2cloud = d2cloud.clip(min=0.)
         
@@ -167,7 +163,7 @@ class SNR_Cloud_Flux:
         return cloud_depth, dism, ismtime, Resc
     
     @u.quantity_input(nh2=u.cm**-3, dism=u.pc, time_diff=u.yr, ismtime=u.yr, Resc=u.pc)
-    def _compute_proton_flux(self, nh2, dism, time_diff, ismtime, Resc) -> tuple[u.GeV**-1 * u.cm**-3, u.GeV**-1 * u.cm**-3,]:
+    def _compute_proton_flux(self, nh2, dism, time_diff, ismtime, Resc) -> tuple[u.GeV**-1 * u.cm**-3, u.GeV**-1 * u.cm**-3]:
         """
         Compute energy distribution of protons at cloud entrance location.
         
@@ -429,8 +425,7 @@ class SNR_Cloud_Flux:
         pflux_tmp = self._add_galactic_flux(pflux_tmp)
         
         # Compute total proton flux interacting with the cloud (cell-based)
-        radius_MC = np.sqrt(self.major_MC.value * self.minor_MC.value) * u.pc
-        pflux = fl.cloud_cell_flux(radius_MC, cloud_depth, pflux_tmp) 
+        pflux = fl.cloud_cell_flux(self.radius_MC, cloud_depth, pflux_tmp) 
 
         # To be sure, set NaN fluxes to zero
         pflux = np.nan_to_num(pflux, nan=0)

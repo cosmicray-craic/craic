@@ -3,6 +3,8 @@ import astropy.units as u
 import astropy.constants as c
 
 class particles:
+    """Calculates the p-p cross-section, cooling time, 
+    and the normalisation for proton spectrum."""
 
     # from Kafexhiu eq 1
     Epth = 0.2797 * u.GeV # GeV
@@ -13,8 +15,8 @@ class particles:
         self.alpha = alpha
         self.Ebudget = Ebudget
 
-
-    def sig_ppEK(self, Ep):
+    @u.quantity_input(Ep=u.GeV)
+    def sig_ppEK(self, Ep) -> u.cm**2:
         """
         Compute the total inelastic cross section of p-p collisions as given by
         Kafexhiu et al. (2014) (eq. 1).
@@ -41,7 +43,8 @@ class particles:
 
         return sig_pp.to(u.cm**2)  # cm^2
 
-    def t_ppEK(self, dens, Ep):
+    @u.quantity_input(dens=u.cm**-3, Ep=u.GeV)
+    def t_ppEK(self, dens, Ep) -> u.s:
         """
         Compute the cooling time of protons.
 
@@ -60,7 +63,6 @@ class particles:
         t_ppEK = (dens * self.sig_ppEK(Ep)* self.cspeed * self.kappa) ** -1
 
         return t_ppEK
-
 
     def NormEbudget(self,Emin=10*u.GeV,Emax=3.*u.PeV):#1 PeV
         """

@@ -1,5 +1,4 @@
 import astropy.units as u
-import astropy.units.physical as pu
 import numpy as np
 import astropy.constants as c
 from scipy.interpolate import interp1d
@@ -12,8 +11,9 @@ part = particles()
 tran = transport()
 acel = accelerator()
 
+@u.quantity_input(R_esc=u.pc, N_0=u.GeV, Ep=u.GeV, d=u.pc, a=u.yr, dens=u.cm**-3)
 def compute_pflux_impulsive_extended(Resc,
-        N_0, Ep, d, a, dens, chi=0.05, ism=1, alpha=2.0):
+        N_0, Ep, d, a, dens, chi=0.05, ism=1, alpha=2.0) -> u.GeV**-1 * u.cm**-3:
     """
     Compute differential proton flux density for an impulsive injection from
     the surface of an extended source.
@@ -28,7 +28,7 @@ def compute_pflux_impulsive_extended(Resc,
     Returns
     -------
     pflux : `astropy.Quantity`
-        Differential flux density in ``GeV-1 cm-3``.
+        Differential flux density (~ GeV^-1 cm^-3).
     """
     import numpy as np
     import astropy.units as u
@@ -48,9 +48,9 @@ def compute_pflux_impulsive_extended(Resc,
     # Return
     return pflux.to(u.GeV**-1 *u.cm**-3)
 
-
+@u.quantity_input(N_0=u.GeV, Ep=u.GeV, d=u.pc, a=u.yr, dens=u.cm**-3)
 def compute_pflux_impulsive_point(N_0, Ep, d, a, dens, chi=0.05,
-        ism=1, alpha=2.0):
+        ism=1, alpha=2.0) -> u.GeV**-1 * u.cm**-3:
     """
     Compute differential proton flux density for an impulsive injection from
     a point source as given by Aharonian & Atoyan (1996) (eq. 3).
@@ -69,8 +69,8 @@ def compute_pflux_impulsive_point(N_0, Ep, d, a, dens, chi=0.05,
     a : `astropy.Quantity`
         Time since particle injection at source (can differ from its age). (~ yr)
     dens : `astropy.Quantity`
-        Density of traversed ambient matter. (~ cm-3)
-        (ism: 1 cm-3)
+        Density of traversed ambient matter. (~ cm^-3)
+        (ism: 1.0 cm^-3)
     chi : `float`
         Scalar suppression factor for diffusion coefficient, relating to
         the level of turbulence along the particles path.
@@ -97,9 +97,9 @@ def compute_pflux_impulsive_point(N_0, Ep, d, a, dens, chi=0.05,
     # Return
     return pflux.to(u.GeV**-1 *u.cm**-3)
 
-
+@u.quantity_input(Resc=u.pc, N_0=u.GeV, Ep=u.GeV, d=u.pc, a=u.yr, dens=u.cm**-3)
 def compute_pflux_continuous_extended(Resc,
-        N_0, Ep, d, a, dens, chi=0.05, ism=1, alpha=2.0):
+        N_0, Ep, d, a, dens, chi=0.05, ism=1, alpha=2.0) -> u.GeV**-1 * u.cm**-3:
     """
     Compute differential proton flux density for an continuous injection from
     the surface of an extended source.
@@ -135,9 +135,9 @@ def compute_pflux_continuous_extended(Resc,
     # Return
     return pflux
 
-
+@u.quantity_input(N_0=u.GeV, Ep=u.GeV, d=u.pc, a=u.yr, dens=u.cm**-3)
 def compute_pflux_continuous_point(N_0, Ep, d, a, dens, chi=0.05,
-        ism=1, alpha=2.0):
+        ism=1, alpha=2.0) -> u.GeV**-1 * u.cm**-3:
     """
     Compute differential proton flux density for a continuous injection from
     a point source as given by Aharonian & Atoyan (1996) (eq. 8).
@@ -168,7 +168,7 @@ def compute_pflux_continuous_point(N_0, Ep, d, a, dens, chi=0.05,
     Returns
     -------
     pflux : `astropy.Quantity`
-        Differential flux density in ``GeV-1 cm-3``.
+        Differential flux density (~ GeV^-1 cm^-3).
     """
     import numpy as np
     import astropy.units as u
@@ -192,7 +192,7 @@ def compute_pflux_continuous_point(N_0, Ep, d, a, dens, chi=0.05,
 
 # Define functions for Galactic CRs
 
-@u.quantity_input(e=pu.energy)
+@u.quantity_input(e=u.GeV)
 def e2R(e, Z=1) -> u.GV:
     """
     Compute proton rigidity.
@@ -212,7 +212,7 @@ def e2R(e, Z=1) -> u.GV:
     R = e / (Z * c.e.si)
     return R
 
-@u.quantity_input(E=pu.energy)
+@u.quantity_input(E=u.GeV)
 def compute_fgal(E) -> u.GeV**(-1) * u.cm**(-3):
     """
     Return spectral particle density of galactic CRs as measured by
@@ -232,26 +232,23 @@ def compute_fgal(E) -> u.GeV**(-1) * u.cm**(-3):
     # Return
     return n
 
+@u.quantity_input(E=u.GeV)
 def compute_fgal_dampe(E) -> u.GeV**(-1) * u.cm**(-3):
-    
-
     """
     Import cosmic ray flux data from DAMPE measurements:
     DAMPE Collab (2019), SciAdv aax3793,
     https://www.science.org/doi/10.1126/sciadv.aax3793, 
     and return cosmic-ray density of galactic CRs.
-
-
     
     Parameters:
     -----------
     E : array-like, optional
-        Energy values of Galactic cosmic rays (GeV).
+        Energy values of Galactic cosmic rays (~ GeV).
 
     
     Returns:
     --------
-    Cosmic ray density at specified energies (GeV^-1 cm^-3)
+    Cosmic ray density at specified energies (~ GeV^-1 cm^-3)
     """
     
     # Load data from CSV file

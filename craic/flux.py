@@ -4,7 +4,8 @@ from scipy.special import erfc
 from IPython import embed
 
 class flux:
-
+    """Return proton flux, gamma-ray and neutrino 
+    kernal function from the molecular cloud."""
     ncbins = 30
 
     # Neutrino Oscillation Probabilities over long distances
@@ -16,9 +17,7 @@ class flux:
     Pmutau = 0.381
     Ptautau = 0.43
     
-
-
-    # Input: cloud radius, depth, flux
+    @u.quantity_input(Rc=u.pc, Dc=u.pc)
     def cloud_cell_flux(self, Rc, Dc, flux):
         """
         Compute the total proton influx at the cloud.
@@ -94,7 +93,7 @@ class flux:
 
         return tot_ccf
 
-
+    @u.quantity_input(Eg=u.TeV, Ep=u.GeV)
     def compute_gamma_kernel(self, Eg, Ep):
         """
         Compute the gamma-ray kernel function according to Kelner et al. 2006:
@@ -160,6 +159,7 @@ class flux:
         # Return [((proton,)gamma)]
         return F_gamma
 
+    @u.quantity_input(En=u.TeV, Ep=u.GeV)
     def compute_neutrino_kernel(self, En, Ep):
         """
         Compute the neutrino kernel function according to Kelner et al. 2006:
