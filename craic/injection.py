@@ -272,3 +272,79 @@ def compute_fgal_dampe(E) -> u.GeV**(-1) * u.cm**(-3):
 
     n = (10**(density_interp))*u.Unit('GeV^-1*cm^-3')
     return n
+
+def compute_fgal_dampe(E, E_tran=6.3*u.TeV):
+    
+
+    """
+    Import cosmic ray flux data from CSV and return cosmic-ray density 
+    of galactic CRs as measured by DAMPE: 
+    DAMPE Collab (2019), SciAdv aax3793,
+    https://www.science.org/doi/10.1126/sciadv.aax3793.
+    
+    Parameters:
+    -----------
+    E : array-like
+        Energy values of Galactic cosmic rays (GeV).
+
+    E_tran: astropy.Quantity
+        Energy which the Smooth Broken Power-Law (SBPL) fits for low and high energies transitions. (TeV)
+
+    Returns:
+    --------
+    Cosmic ray density at specified energies (GeV^-1 cm^-3)
+    """
+    
+    def DAMPE_SBPL_low(E):
+        """Smooth Broken Power Law fit for 100 GeV - 6.3 TeV. 
+        
+        Parameter:
+        ----------
+        E: astropy.Quantity
+            Energy values of Galactic cosmic rays (energy)
+
+        Returns:
+        --------
+        Cosmic-ray density (GeV^-1 cm^-3)
+        """
+    
+        E_0 = 1 * u.TeV
+        E_b = 0.48*u.TeV
+        flux = 7.58e-5 * (E/E_0)**(-2.772) * (1 + (E/E_b)**5.0)**(0.173/5.0) / (u.m**2 * u.sr * u.s * u.GeV)
+        density = (flux *4*np.pi*u.sr/c.c).to('GeV^-1*cm^-3') 
+        return density
+
+    def DAMPE_SBPL_high(E):
+        """Smooth Broken Power Law fit for 1 TeV - 100 TeV. 
+        
+        Parameter:
+        ----------
+        E: astropy.Quantity
+            Energy values of Galactic cosmic rays (energy)
+        Returns:
+        --------
+        Cosmic-ray density (GeV^-1 cm^-3)
+        """
+
+        E_0 = 1.0 * u.TeV
+        E_b = 13.6*u.TeV
+        flux = 8.68e-5 * (E/E_0)**(-2.6) * (1 + (E/E_b)**5.0)**(-0.25/5.0) / (u.m**2 * u.sr * u.s * u.GeV)
+        density = (flux *4*np.pi*u.sr/c.c).to('GeV^-1*cm^-3')
+        return density
+    
+    
+    E = E.to('GeV') # Confirm units of E
+
+    result = np.zeros(E.shape) * (u.GeV**-1 * u.cm**-3)
+
+    # Low-energy SBPL fit (100 GeV - 6.3 TeV)
+    low_mask = E <= E_tran
+    if np.any(low_mask):
+        result[low_mask] = DAMPE_SBPL_low(E[low_mask])
+
+    #High-energy SBPL fit (1-100 TeV)
+    high_mask = E > E_tran
+    if np.any(high_mask):
+        result[high_mask] = DAMPE_SBPL_high(E[high_mask])
+
+    return result

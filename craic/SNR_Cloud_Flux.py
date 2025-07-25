@@ -62,7 +62,8 @@ class SNR_Cloud_Flux:
             Flag to include low energy correction
         """
         # Set up initial energy arrays
-        N = 200 
+        # N = 200 
+        N=200
         # Eg_lo = 10. *u.GeV
         # Eg_lo = 1. * u.GeV
         # Eg_hi = 3e3 *u.TeV # 1 PeV
