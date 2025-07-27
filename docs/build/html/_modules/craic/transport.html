@@ -1,0 +1,215 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>craic.transport &mdash; craic 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            craic
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../subpages/project.html">Project &amp; Contributors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../subpages/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../subpages/modules.html">Modules &amp; Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../subpages/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../subpages/versions.html">Versions</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">craic</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">craic.transport</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for craic.transport</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">astropy.constants</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">c</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.particles</span><span class="w"> </span><span class="kn">import</span> <span class="n">particles</span>
+
+<div class="viewcode-block" id="transport">
+<a class="viewcode-back" href="../../subpages/modules.html#craic.transport.transport">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">transport</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculates magnetic field strength, diffusion coefficient and diffusion radius</span>
+<span class="sd">    in the ISM and in a molecular cloud.&quot;&quot;&quot;</span>
+
+    <span class="n">chiism</span> <span class="o">=</span> <span class="mf">1.</span>
+    <span class="n">cr_delta</span> <span class="o">=</span> <span class="mf">0.5</span>
+    <span class="n">part</span> <span class="o">=</span> <span class="n">particles</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">D0</span><span class="o">=</span><span class="mi">3</span><span class="o">*</span><span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="mi">26</span><span class="p">)</span> <span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span><span class="n">u</span><span class="o">.</span><span class="n">s</span> <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">D_0</span> <span class="o">=</span> <span class="n">D0</span>
+        <span class="c1">#Galactic Diffusion Coefficient (cm^2 s^-1) at 1 GeV</span>
+        <span class="c1">#FAST = 3x10^27 SLOW = 3x10^26</span>
+
+    <span class="c1"># Magnetic Field Strength</span>
+<div class="viewcode-block" id="transport.B_mag">
+<a class="viewcode-back" href="../../subpages/modules.html#craic.transport.transport.B_mag">[docs]</a>
+    <span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">dens</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">B_mag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dens</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">uG</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the magnetic field strength of the cloud (:math:`\mathrm{\mu G}`)</span>
+<span class="sd">        based on `Crutcher et al. 2010, ApJ 725 466 </span>
+<span class="sd">        &lt;https://iopscience.iop.org/article/10.1088/0004-637X/725/1/466&gt;`_ (eq. 21).</span>
+
+<span class="sd">        Parameter</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dens: :class:`~astropy.units.Quantity`</span>
+<span class="sd">            Number density of the molecular cloud (:math:`\mathrm{cm}^{-3}`)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">dens</span> <span class="o">&gt;</span> <span class="mi">300</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">,</span>
+                        <span class="mi">10</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">uG</span> <span class="o">*</span> <span class="p">(</span><span class="n">dens</span><span class="o">/</span><span class="p">(</span><span class="mi">300</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">))</span><span class="o">**</span><span class="mf">0.65</span><span class="p">,</span>
+                        <span class="mi">10</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">uG</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">B</span>  <span class="c1"># micro G</span></div>
+
+
+<div class="viewcode-block" id="transport.Diffusion_Coefficient">
+<a class="viewcode-back" href="../../subpages/modules.html#craic.transport.transport.Diffusion_Coefficient">[docs]</a>
+    <span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">Ep</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="p">,</span> <span class="n">dens</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">Diffusion_Coefficient</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Ep</span><span class="p">,</span> <span class="n">dens</span><span class="p">,</span> <span class="n">chi</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">ism</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">:</span>  <span class="c1"># input: GeV</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the diffusion coefficient of the ISM or the cloud (:math:`\mathrm{cm}^{2} \mathrm{/s}`)</span>
+<span class="sd">        based on number density of the medium.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        Ep : :class:`~astropy.units.Quantity` or array-like</span>
+<span class="sd">            Energy of particles (GeV)</span>
+<span class="sd">        dens: :class:`~astropy.units.Quantity`</span>
+<span class="sd">            Number density (:math:`\mathrm{cm}^{-3}`)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># chi = 1, no suppression in the ISM = larger diffusion coefficient</span>
+        <span class="k">if</span> <span class="n">ism</span><span class="p">:</span>
+            <span class="n">d_coeff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chiism</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">D_0</span> <span class="o">*</span> <span class="p">((</span><span class="n">Ep</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="mf">3.</span> <span class="o">/</span> <span class="mf">3.</span><span class="p">))</span> <span class="o">**</span> <span class="mf">0.5</span>  <span class="c1"># make this 3 micro gaus</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">d_coeff</span> <span class="o">=</span> <span class="n">chi</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">D_0</span> <span class="o">*</span> <span class="p">(((</span><span class="n">Ep</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="p">)))</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">B_mag</span><span class="p">(</span><span class="n">dens</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">microgauss</span><span class="p">)))</span> <span class="o">**</span> <span class="mf">0.5</span>  <span class="c1"># cm^2s^-1</span>
+
+        <span class="k">return</span> <span class="n">d_coeff</span></div>
+
+
+<div class="viewcode-block" id="transport.R_diffusion">
+<a class="viewcode-back" href="../../subpages/modules.html#craic.transport.transport.R_diffusion">[docs]</a>
+    <span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">Ep</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">,</span> <span class="n">dens</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">R_diffusion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Ep</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">dens</span><span class="p">,</span> <span class="n">chi</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">ism</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">:</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns how far the accelerated particles can </span>
+<span class="sd">        propagate by diffusion in the ISM or in the molecular cloud (cm).</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        Ep : :class:`~astropy.units.Quantity`</span>
+<span class="sd">            Energy of particles (GeV)</span>
+<span class="sd">        a : :class:`~astropy.units.Quantity`</span>
+<span class="sd">            Time of particle propagation in the medium. (seconds)</span>
+<span class="sd">        dens: :class:`~astropy.units.Quantity`</span>
+<span class="sd">            Number density (:math:`\mathrm{cm}^{-3}`)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+
+        <span class="n">R_dif</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Diffusion_Coefficient</span><span class="p">(</span><span class="n">Ep</span><span class="p">,</span> <span class="n">dens</span><span class="p">,</span> <span class="n">chi</span><span class="o">=</span><span class="n">chi</span><span class="p">,</span> <span class="n">ism</span><span class="o">=</span><span class="n">ism</span><span class="p">)</span> <span class="o">*</span> <span class="n">a</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">))</span>  <span class="c1"># no frac contribution</span>
+        
+        <span class="k">return</span> <span class="n">R_dif</span>  </div>
+</div>
+
+
+    <span class="c1"># def t_diffusion(self, Rdiff, Ep, dens, chi=0.05, ism=0):</span>
+
+    <span class="c1">#     D = self.Diffusion_Coefficient(Ep, dens, chi, ism)</span>
+    <span class="c1">#     t_diff = Rdiff.to(u.cm)**2 / (4. * D)</span>
+
+    <span class="c1">#     return t_diff</span>
+
+    <span class="c1"># def vel_advection(self, rad):</span>
+
+    <span class="c1">#     Rts = 0.1*u.pc</span>
+    <span class="c1">#     Rc = 50.**0.5 * Rts</span>
+
+    <span class="c1">#     va = (c.c/3.)*((rad - Rts) / Rts)**-2.</span>
+
+    <span class="c1">#     mask = rad &gt; Rc</span>
+
+    <span class="c1">#     va[mask] = (c.c/3.)*((Rc - Rts) / Rts)**-2.</span>
+
+    <span class="c1">#     va[va &lt; 0.] = 0.</span>
+    <span class="c1">#     va[va &gt; (c.c/3.)] = c.c/3.</span>
+
+    <span class="c1">#     return va.to(u.m/u.s)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, CRAIC Contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

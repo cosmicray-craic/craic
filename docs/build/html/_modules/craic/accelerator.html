@@ -1,0 +1,219 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>craic.accelerator &mdash; craic 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            craic
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../subpages/project.html">Project &amp; Contributors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../subpages/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../subpages/modules.html">Modules &amp; Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../subpages/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../subpages/versions.html">Versions</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">craic</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">craic.accelerator</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for craic.accelerator</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">astropy.constants</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">c</span>
+
+<div class="viewcode-block" id="accelerator">
+<a class="viewcode-back" href="../../subpages/modules.html#craic.accelerator.accelerator">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">accelerator</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculates the radius and age of supernova remnant </span>
+<span class="sd">    in the Sedov-Taylor stage.&quot;&quot;&quot;</span>
+    <span class="n">Mej</span> <span class="o">=</span> <span class="p">(</span><span class="mf">10.</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">Msun</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">gram</span><span class="p">)</span>
+    <span class="n">mp</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">m_p</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">gram</span><span class="p">)</span>
+    <span class="n">nh2ism</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.</span><span class="p">])</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span> <span class="c1"># Density of Ambient Gas (cm^-3) ISM</span>
+    <span class="n">E51</span> <span class="o">=</span> <span class="mf">1.</span>  <span class="c1"># Ejected Energy (normalised to E^{51} ergs)</span>
+    <span class="n">brkind</span> <span class="o">=</span> <span class="mf">3.</span> <span class="c1">#pulsar braking index</span>
+    <span class="n">eta</span> <span class="o">=</span> <span class="mf">1.</span> <span class="c1">#efficiency of conversion of energy into particles</span>
+    <span class="n">kappa</span> <span class="o">=</span> <span class="mf">100.</span> <span class="c1">#c.m_p/c.m_e #pair production multiplicity </span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">En</span><span class="o">=</span><span class="mf">1e51</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">erg</span><span class="p">):</span>
+        <span class="c1"># Sedov time is a fixed value (~1.6kyr), here in s</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t_sed</span> <span class="o">=</span> <span class="mf">0.495</span><span class="o">*</span><span class="p">(</span><span class="n">En</span><span class="o">/</span><span class="n">u</span><span class="o">.</span><span class="n">erg</span><span class="p">)</span><span class="o">**-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Mej</span><span class="o">/</span><span class="n">u</span><span class="o">.</span><span class="n">gram</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mi">5</span><span class="o">/</span><span class="mi">6</span><span class="p">)</span><span class="o">*</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">mp</span><span class="o">/</span><span class="n">u</span><span class="o">.</span><span class="n">gram</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nh2ism</span><span class="o">/</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">))))</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span> <span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">s</span>
+
+<div class="viewcode-block" id="accelerator.escape_time">
+<a class="viewcode-back" href="../../subpages/modules.html#craic.accelerator.accelerator.escape_time">[docs]</a>
+    <span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">Ep</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">escape_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Ep</span><span class="p">,</span> <span class="n">typeIIb</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">yr</span><span class="p">:</span>  
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes the escape time of particles from the supernova remnant (yr).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        Ep : :class:`~astropy.units.Quantity`</span>
+<span class="sd">            Energy of particles (GeV)</span>
+<span class="sd">        typeIIb : bool</span>
+<span class="sd">            Type of supernova. Type Ia if False, type IIb if True.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># To find how long it takes for cosmic rays to escape</span>
+        <span class="n">t_sed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t_sed</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">yr</span><span class="p">)</span>
+
+        <span class="c1"># Hard-coded max momentum 1PeV, and shock index 2.5</span>
+        <span class="n">Pp</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">Ep</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="p">(</span><span class="mf">0.938</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="c1">#Ep is roughly equal Pp at these energies</span>
+
+        <span class="k">if</span> <span class="n">typeIIb</span><span class="p">:</span>
+            <span class="n">t_esc</span> <span class="o">=</span> <span class="n">t_sed</span><span class="o">*</span><span class="p">((</span><span class="n">Pp</span><span class="o">/</span><span class="p">(</span><span class="mf">1e6</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="p">))</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="mf">2.5</span><span class="p">))</span>   <span class="c1">#in yr type IIb core collapse (default)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">t_esc</span> <span class="o">=</span> <span class="p">[(</span><span class="mf">234.</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">yr</span><span class="p">)</span> <span class="o">*</span> <span class="p">((</span><span class="n">Pp</span><span class="o">/</span><span class="p">(</span><span class="mf">1e6</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="p">))</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="mf">2.5</span><span class="p">))]</span> <span class="c1">#type 1A in yr</span>
+
+        <span class="k">return</span> <span class="n">t_esc</span></div>
+
+
+<div class="viewcode-block" id="accelerator.SNR_Radius">
+<a class="viewcode-back" href="../../subpages/modules.html#craic.accelerator.accelerator.SNR_Radius">[docs]</a>
+    <span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">yr</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SNR_Radius</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">pc</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Classical Sedov-Taylor stage solution for SNR radius (pc) as a function of its age.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        time : :class:`~astropy.units.Quantity`</span>
+<span class="sd">            SNR age. (yr)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># (1) Truelove &amp; McKee (1999):</span>
+        <span class="c1"># mu_0 = 1.4 * c.m_p            # see text above eq. 4</span>
+        <span class="c1"># rho_0 = self.nh2ism * mu_0    # see text above eq. 4</span>
+
+        <span class="c1"># # eq. 52</span>
+        <span class="c1"># radius = (2.026 * (self.E51*1e51*u.erg) / rho_0)**0.2 * time**0.4</span>
+
+        <span class="c1"># (2) Reynolds (2008), which is based on (1):</span>
+        <span class="n">mu_1</span> <span class="o">=</span> <span class="mf">1.4</span> <span class="c1"># for neutral gas</span>
+        <span class="n">n</span>    <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nh2ism</span>
+
+        <span class="c1"># eq. 8 (exact factor found by comparing with Truelove)</span>
+        <span class="n">radius</span> <span class="o">=</span> <span class="mf">0.31456744</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">pc</span> \
+                    <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">E51</span><span class="o">**</span><span class="mf">0.2</span> \
+                    <span class="o">*</span> <span class="p">(</span><span class="n">n</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">nh2ism</span><span class="p">)</span><span class="o">**-</span><span class="mf">0.2</span> \
+                    <span class="o">*</span> <span class="p">(</span><span class="n">mu_1</span><span class="o">/</span><span class="mf">1.4</span><span class="p">)</span><span class="o">**-</span><span class="mf">0.2</span> \
+                    <span class="o">*</span> <span class="p">(</span><span class="n">time</span><span class="o">/</span><span class="n">u</span><span class="o">.</span><span class="n">yr</span><span class="p">)</span><span class="o">**</span><span class="mf">0.4</span>
+
+        <span class="c1"># Return</span>
+        <span class="k">return</span> <span class="n">radius</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">pc</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="accelerator.SNR_age">
+<a class="viewcode-back" href="../../subpages/modules.html#craic.accelerator.accelerator.SNR_age">[docs]</a>
+    <span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">pc</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SNR_age</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">yr</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Estimates SNR age in the Sedov-Taylor stage (yr) based on its radius.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        size : :class:`~astropy.units.Quantity`</span>
+<span class="sd">            SNR radius. (pc)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nh2ism</span>
+        <span class="n">mu_1</span> <span class="o">=</span> <span class="mf">1.4</span> <span class="c1"># for neutral gas</span>
+
+        <span class="c1"># Simply invert eq. used in method SNR_Radius()</span>
+        <span class="n">age</span> <span class="o">=</span> <span class="p">(</span><span class="n">size</span> <span class="o">/</span><span class="n">u</span><span class="o">.</span><span class="n">pc</span> \
+                <span class="o">/</span> <span class="mf">0.31456744</span> \
+                <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">E51</span><span class="o">**</span><span class="mf">0.2</span><span class="p">)</span> \
+                <span class="o">/</span> <span class="p">((</span><span class="n">n</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">nh2ism</span><span class="p">)</span><span class="o">**-</span><span class="mf">0.2</span><span class="p">)</span> \
+                <span class="o">/</span> <span class="p">(</span><span class="n">mu_1</span><span class="o">/</span><span class="mf">1.4</span><span class="p">)</span><span class="o">**-</span><span class="mf">0.2</span> \
+                <span class="p">)</span><span class="o">**</span><span class="mf">2.5</span> <span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">yr</span>
+
+        <span class="c1"># Return</span>
+        <span class="k">return</span> <span class="n">age</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">yr</span><span class="p">)</span></div>
+</div>
+
+
+    
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, CRAIC Contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -3,7 +3,7 @@ import astropy.units as u
 import astropy.constants as c
 
 class particles:
-    """Calculates the p-p cross-section, cooling time, 
+    """Calculates the p-p cross-section, proton cooling time, 
     and the normalisation for proton spectrum."""
 
     # from Kafexhiu eq 1
@@ -18,18 +18,14 @@ class particles:
     @u.quantity_input(Ep=u.GeV)
     def sig_ppEK(self, Ep) -> u.cm**2:
         """
-        Compute the total inelastic cross section of p-p collisions as given by
-        Kafexhiu et al. (2014) (eq. 1).
+        Computes the total inelastic cross section of p-p collisions (:math:`\mathrm{cm}^{2}`) as given by
+        `Kafexhiu et al. (2014), PhysRevD 90, 123014,  
+        <https://journals.aps.org/prd/abstract/10.1103/PhysRevD.90.123014>`_ (eq. 1).
 
         Parameters
         ----------
-        Ep : `astropy.Quantity`
-            Proton energy.
-
-        Returns
-        -------
-        sig_pp : `astropy.Quantity`
-            Inelastic cross section. (cm2)
+        Ep : :class:`~astropy.units.Quantity` 
+            Proton energy. (GeV)
         """
         frac = Ep / self.Epth
         log_frac = np.log(frac)
@@ -46,19 +42,14 @@ class particles:
     @u.quantity_input(dens=u.cm**-3, Ep=u.GeV)
     def t_ppEK(self, dens, Ep) -> u.s:
         """
-        Compute the cooling time of protons.
+        Computes the cooling time of protons (s).
 
         Parameters
         ----------
-        dens : `astropy.Quantity`
-            Matter density. (~ cm-3)
-        Ep : `astropy.Quantity`
-            Proton energy. (~ GeV)
-
-        Returns
-        -------
-        t_ppEK : `astropy.Quantity`
-            Cooling time. (s)
+        dens : :class:`~astropy.units.Quantity`
+            Number density. (:math:`\mathrm{cm}^{-3}`)
+        Ep : :class:`~astropy.units.Quantity`
+            Proton energy. (GeV)
         """
         t_ppEK = (dens * self.sig_ppEK(Ep)* self.cspeed * self.kappa) ** -1
 
@@ -66,20 +57,15 @@ class particles:
 
     def NormEbudget(self,Emin=10*u.GeV,Emax=3.*u.PeV):#1 PeV
         """
-        Compute the normalisation of the proton flux. Normalises the integral
+        Computes the normalisation of the proton flux. Normalises the integral
         of the energy flux to 1.
 
         Parameters
         ----------
-        Emin : `astropy.Quantity`
-            Minimum proton energy. (~ GeV)
-        Emax : `astropy.Quantity`
-            Maximum proton energy. (~ GeV)
-
-        Returns
-        -------
-        N0 : `astropy.Quantity`
-            Proton flux normalisation. (= GeV^(alpha-1))
+        Emin : :class:`~astropy.units.Quantity`
+            Minimum proton energy. (GeV)
+        Emax : :class:`~astropy.units.Quantity`
+            Maximum proton energy. (GeV)
         """
 
         if self.alpha == 2:
@@ -88,4 +74,4 @@ class particles:
             N0 = (self.Ebudget.to(u.GeV) * (2 - self.alpha) /
                   (Emax.to(u.GeV) ** (2 - self.alpha) - Emin.to(u.GeV) ** (2 - self.alpha)))
 
-        return N0.to(u.GeV**(self.alpha-1))
+        return N0.to(u.GeV**(self.alpha-1)) # (GeV^(alpha-1))

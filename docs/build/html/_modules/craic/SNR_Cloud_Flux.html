@@ -1,0 +1,600 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>craic.SNR_Cloud_Flux &mdash; craic 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            craic
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../subpages/project.html">Project &amp; Contributors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../subpages/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../subpages/modules.html">Modules &amp; Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../subpages/tutorial.html">Quickstart Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../subpages/versions.html">Versions</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">craic</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">craic.SNR_Cloud_Flux</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for craic.SNR_Cloud_Flux</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.particles</span><span class="w"> </span><span class="kn">import</span> <span class="n">particles</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.transport</span><span class="w"> </span><span class="kn">import</span> <span class="n">transport</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.accelerator</span><span class="w"> </span><span class="kn">import</span> <span class="n">accelerator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.flux</span><span class="w"> </span><span class="kn">import</span> <span class="n">flux</span> 
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">injection</span>
+
+<span class="n">part</span> <span class="o">=</span> <span class="n">particles</span><span class="p">()</span>
+<span class="n">tran</span> <span class="o">=</span> <span class="n">transport</span><span class="p">()</span>
+<span class="n">acce</span> <span class="o">=</span> <span class="n">accelerator</span><span class="p">()</span>
+<span class="n">fl</span> <span class="o">=</span> <span class="n">flux</span><span class="p">()</span>
+
+
+
+<span class="c1">#Define a convenient function</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_nearest</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">array</span><span class="o">-</span><span class="n">value</span><span class="p">))</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">idx</span>
+
+<div class="viewcode-block" id="SNR_Cloud_Flux">
+<a class="viewcode-back" href="../../subpages/modules.html#craic.SNR_Cloud_Flux.SNR_Cloud_Flux">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SNR_Cloud_Flux</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to compute gamma-ray flux from a molecular cloud given the properties of a nearby SNR.</span>
+<span class="sd">    </span>
+<span class="sd">    This class calculates gamma-ray and neutrino fluxes</span>
+<span class="sd">    from cosmic ray interactions in molecular clouds illuminated by nearby supernova remnants.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="SNR_Cloud_Flux.__init__">
+<a class="viewcode-back" href="../../subpages/modules.html#craic.SNR_Cloud_Flux.SNR_Cloud_Flux.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chi</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">distance_SNR</span><span class="o">=</span><span class="mi">2000</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">pc</span><span class="p">,</span> <span class="n">radius_MC</span><span class="o">=</span><span class="mi">10</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">pc</span><span class="p">,</span> <span class="n">Eg_lo</span><span class="o">=</span><span class="mf">1.0</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="p">,</span> <span class="n">Eg_hi</span><span class="o">=</span><span class="mf">3e3</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">TeV</span><span class="p">,</span> <span class="n">accel_type</span><span class="o">=</span><span class="s1">&#39;Impulsive&#39;</span><span class="p">,</span> 
+                 <span class="n">snr_typeII</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">F_gal</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">palpha</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">D_fast</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">flag_low</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the SNR Cloud Flux model by setting the properties of the SNR and the cloud.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        chi : float</span>
+<span class="sd">            Scalar suppression factor for diffusion coefficient in clouds, relating</span>
+<span class="sd">            to the level of turbulence along the particles path.</span>
+<span class="sd">            (ism: 1, clouds: 0.05)</span>
+<span class="sd">        distance_SNR : astropy.Quantity</span>
+<span class="sd">            Distance from earth to the SNR. (~ pc)</span>
+<span class="sd">        radius_MC: astropy.Quantity</span>
+<span class="sd">            Radius of the molecular cloud (~ pc)</span>
+<span class="sd">        Eg_lo: astropy.Quantity</span>
+<span class="sd">            Minimum energy of the produced gamma rays.</span>
+<span class="sd">        Eg_hi: astropy.Quantity</span>
+<span class="sd">            Maximum energy of the produced gamma rays.</span>
+<span class="sd">        accel_type : str</span>
+<span class="sd">            Type of acceleration. Possible values are:</span>
+<span class="sd">            ``Impulsive`` or ``Continuous``</span>
+<span class="sd">        snr_typeII : boolean</span>
+<span class="sd">            Flag to indicate the SNR scenario considered</span>
+<span class="sd">        F_gal : boolean or string</span>
+<span class="sd">            Flag to include the galactic CR flux contribution. Can switch between </span>
+<span class="sd">            two Galactic CR flux inputs &quot;AMS-O2&quot; and &quot;DAMPE&quot;.</span>
+<span class="sd">        palpha : float</span>
+<span class="sd">            Proton spectrum index</span>
+<span class="sd">        D_fast : boolean</span>
+<span class="sd">            Diffusion scenario (fast or slow normalisation)</span>
+<span class="sd">        flag_low : boolean</span>
+<span class="sd">            Flag to include low energy correction</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Set up initial energy arrays</span>
+        <span class="c1"># N = 200 </span>
+        <span class="n">N</span><span class="o">=</span><span class="mi">200</span>
+        <span class="c1"># Eg_lo = 10. *u.GeV</span>
+        <span class="c1"># Eg_lo = 1. * u.GeV</span>
+        <span class="c1"># Eg_hi = 3e3 *u.TeV # 1 PeV</span>
+
+        <span class="c1"># Set up gamma-ray evaluation energies</span>
+        <span class="n">Eg_edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="n">start</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">Eg_lo</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">TeV</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+                            <span class="n">stop</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">Eg_hi</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">TeV</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+                            <span class="n">num</span>   <span class="o">=</span> <span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">TeV</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Egs</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Eg_edges</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">Eg_edges</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="c1"># log bin centers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dEgs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">Eg_edges</span><span class="p">)</span>
+
+        <span class="c1"># Define proton energies</span>
+        <span class="c1"># Ep_edges = np.logspace(0, 6.48, 1001) *u.GeV #1 PeV</span>
+        <span class="n">Ep_edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">6.48</span><span class="p">,</span> <span class="mi">1001</span><span class="p">)</span> <span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">GeV</span> <span class="c1">#1 PeV</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Eps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Ep_edges</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">Ep_edges</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="c1"># log bin centers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dEps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">Ep_edges</span><span class="p">)</span>
+
+        <span class="c1">#Define low energy part of proton energies </span>
+        <span class="n">Epl_edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">3.24</span><span class="p">,</span> <span class="mi">1001</span><span class="p">)</span> <span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">GeV</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Epls</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Epl_edges</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">Epl_edges</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">dEpls</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">Epl_edges</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">m_pion</span> <span class="o">=</span> <span class="mf">135.</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">MeV</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">m_proton</span> <span class="o">=</span> <span class="mf">938.</span> <span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">MeV</span>
+        <span class="c1">#Emin for integration (Kelner eq 78)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Emin_g</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Egs</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">m_pion</span> <span class="o">**</span><span class="mf">2.</span> <span class="o">/</span> <span class="p">(</span><span class="mf">4.</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">Egs</span><span class="p">)</span> 
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">chi</span> <span class="o">=</span> <span class="n">chi</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">distance_SNR</span> <span class="o">=</span> <span class="n">distance_SNR</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">radius_MC</span> <span class="o">=</span> <span class="n">radius_MC</span>
+        <span class="c1"># self.E_min = E_min</span>
+        <span class="c1"># self.E_max = E_max</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">accel_type</span> <span class="o">=</span> <span class="n">accel_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">snr_typeII</span> <span class="o">=</span> <span class="n">snr_typeII</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">F_gal</span> <span class="o">=</span> <span class="n">F_gal</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">palpha</span> <span class="o">=</span> <span class="n">palpha</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">D_fast</span> <span class="o">=</span> <span class="n">D_fast</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flag_low</span> <span class="o">=</span> <span class="n">flag_low</span>
+
+        <span class="c1"># Set up initial parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_setup_parameters</span><span class="p">()</span></div>
+
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">_setup_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set up proton flux normalisation and diffusion coefficients.&quot;&quot;&quot;</span>
+        <span class="c1"># Suppress numpy warnings</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># Get proton flux normalisation, computed for total CR energy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">N0</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">NormEbudget</span><span class="p">()</span>
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">palpha</span> <span class="o">==</span> <span class="mf">2.0</span><span class="p">:</span>
+            <span class="n">part</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">palpha</span>
+            
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">D_fast</span><span class="p">:</span>
+            <span class="n">tran</span><span class="o">.</span><span class="n">D_0</span> <span class="o">=</span> <span class="mi">3</span><span class="o">*</span><span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span>
+    
+    <span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">nh2</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">,</span> <span class="n">dist</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">pc</span><span class="p">,</span> <span class="n">age</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">yr</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_travel_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nh2</span><span class="p">,</span> <span class="n">dist</span><span class="p">,</span> <span class="n">age</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">pc</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">yr</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">pc</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute proton travel parameters and cloud penetration depth.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        nh2 : astropy.Quantity</span>
+<span class="sd">            Matter density in the MC. (~ cm-3)</span>
+<span class="sd">        dist : astropy.Quantity</span>
+<span class="sd">            Distance from SNR center to MC center. (~ pc)</span>
+<span class="sd">        age : astropy.Quantity</span>
+<span class="sd">            SNR age. (~ yr)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            (cloud_depth, dism, ismtime, Resc)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Compute Escape time</span>
+        <span class="n">tesc</span> <span class="o">=</span> <span class="n">acce</span><span class="o">.</span><span class="n">escape_time</span><span class="p">(</span><span class="n">Ep</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Eps</span><span class="p">,</span> <span class="n">typeIIb</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">snr_typeII</span><span class="p">)</span>
+        
+        <span class="c1"># Compute size of SNR at escape time</span>
+        <span class="n">Resc</span> <span class="o">=</span> <span class="n">acce</span><span class="o">.</span><span class="n">SNR_Radius</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">tesc</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">pc</span><span class="p">)</span>
+        
+        <span class="n">timediff</span> <span class="o">=</span> <span class="n">age</span> <span class="o">-</span> <span class="n">tesc</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">yr</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timediff</span> <span class="o">=</span> <span class="n">timediff</span>
+        <span class="n">distancediff</span> <span class="o">=</span> <span class="n">dist</span> <span class="o">-</span> <span class="n">Resc</span>
+        
+        <span class="c1"># Here, use two step approach with accelerator situated away from cloud</span>
+        <span class="c1"># First reach cloud</span>
+        <span class="n">d2cloud</span> <span class="o">=</span> <span class="n">distancediff</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">radius_MC</span>
+        <span class="c1"># clip: if negative, cloud and SNR overlap.</span>
+        <span class="n">d2cloud</span> <span class="o">=</span> <span class="n">d2cloud</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mf">0.</span><span class="p">)</span>
+        
+        <span class="c1"># Compute travel time from Resc to cloud</span>
+        <span class="n">traveltime</span> <span class="o">=</span> <span class="n">d2cloud</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">tran</span><span class="o">.</span><span class="n">Diffusion_Coefficient</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Eps</span><span class="p">,</span> <span class="n">acce</span><span class="o">.</span><span class="n">nh2ism</span><span class="p">,</span> <span class="n">ism</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mf">4.</span>
+        
+        <span class="n">ismtime</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">timediff</span><span class="p">,</span> <span class="n">traveltime</span><span class="p">)</span>
+        <span class="n">ismtime</span> <span class="o">=</span> <span class="n">ismtime</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        
+        <span class="n">dism</span> <span class="o">=</span> <span class="n">d2cloud</span>  <span class="c1"># should be equivalent</span>
+        
+        <span class="c1"># Compute time spent in cloud &amp; cloud penetration depth</span>
+        <span class="n">cloudtime</span> <span class="o">=</span> <span class="n">timediff</span> <span class="o">-</span> <span class="n">ismtime</span>
+        <span class="n">cloudtime</span> <span class="o">=</span> <span class="n">cloudtime</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">cloud_depth</span> <span class="o">=</span> <span class="n">tran</span><span class="o">.</span><span class="n">R_diffusion</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Eps</span><span class="p">,</span> <span class="n">cloudtime</span><span class="p">,</span> <span class="n">nh2</span><span class="p">,</span> <span class="n">chi</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">chi</span><span class="p">,</span> <span class="n">ism</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">cloud_depth</span><span class="p">,</span> <span class="n">dism</span><span class="p">,</span> <span class="n">ismtime</span><span class="p">,</span> <span class="n">Resc</span>
+    
+    <span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">nh2</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">,</span> <span class="n">dism</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">pc</span><span class="p">,</span> <span class="n">time_diff</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">yr</span><span class="p">,</span> <span class="n">ismtime</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">yr</span><span class="p">,</span> <span class="n">Resc</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">pc</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_proton_flux</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nh2</span><span class="p">,</span> <span class="n">dism</span><span class="p">,</span> <span class="n">time_diff</span><span class="p">,</span> <span class="n">ismtime</span><span class="p">,</span> <span class="n">Resc</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="o">**-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="o">**-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute energy distribution of protons at cloud entrance location.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        nh2 : astropy.Quantity</span>
+<span class="sd">            Number density of molecular cloud (~ cm^-3)</span>
+<span class="sd">        dism : astropy.Quantity</span>
+<span class="sd">            Distance in ISM (~ pc)</span>
+<span class="sd">        timediff : astropy.Quantity</span>
+<span class="sd">            Time difference (~ yr)</span>
+<span class="sd">        ismtime : astropy.Quantity</span>
+<span class="sd">            Time in ISM (~ yr)</span>
+<span class="sd">        Resc : astropy.Quantity</span>
+<span class="sd">            Escape radius (~pc)</span>
+<span class="sd">            </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            (pflux_tmp, pfluxlow_tmp)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">accel_type</span> <span class="o">==</span> <span class="s1">&#39;Impulsive&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">dism</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
+                <span class="n">pflux_tmp</span> <span class="o">=</span> <span class="n">injection</span><span class="o">.</span><span class="n">compute_pflux_impulsive_extended</span><span class="p">(</span>
+                    <span class="n">Resc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">N0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Eps</span><span class="p">,</span> <span class="n">dism</span><span class="p">,</span> <span class="n">time_diff</span><span class="p">,</span> <span class="n">nh2</span><span class="p">,</span> <span class="n">chi</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">chi</span><span class="p">,</span> <span class="n">ism</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">part</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span>
+                <span class="n">pfluxlow_tmp</span> <span class="o">=</span> <span class="n">injection</span><span class="o">.</span><span class="n">compute_pflux_impulsive_extended</span><span class="p">(</span>
+                    <span class="n">Resc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">N0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Epls</span><span class="p">,</span> <span class="n">dism</span><span class="p">,</span> <span class="n">time_diff</span><span class="p">,</span> <span class="n">nh2</span><span class="p">,</span> <span class="n">chi</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">chi</span><span class="p">,</span> <span class="n">ism</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">part</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">pflux_tmp</span> <span class="o">=</span> <span class="n">injection</span><span class="o">.</span><span class="n">compute_pflux_impulsive_extended</span><span class="p">(</span>
+                    <span class="n">Resc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">N0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Eps</span><span class="p">,</span> <span class="n">dism</span><span class="p">,</span> <span class="n">time_diff</span><span class="p">,</span> <span class="n">acce</span><span class="o">.</span><span class="n">nh2ism</span><span class="p">,</span> <span class="n">chi</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">chi</span><span class="p">,</span> <span class="n">ism</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">part</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span>
+                <span class="n">pfluxlow_tmp</span> <span class="o">=</span> <span class="n">injection</span><span class="o">.</span><span class="n">compute_pflux_impulsive_extended</span><span class="p">(</span>
+                    <span class="n">Resc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">N0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Epls</span><span class="p">,</span> <span class="n">dism</span><span class="p">,</span> <span class="n">time_diff</span><span class="p">,</span> <span class="n">acce</span><span class="o">.</span><span class="n">nh2ism</span><span class="p">,</span> <span class="n">chi</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">chi</span><span class="p">,</span> <span class="n">ism</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">part</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span>
+        
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">accel_type</span> <span class="o">==</span> <span class="s1">&#39;Continuous&#39;</span><span class="p">:</span>
+            <span class="n">pflux_tmp</span> <span class="o">=</span> <span class="n">injection</span><span class="o">.</span><span class="n">compute_pflux_continuous_extended</span><span class="p">(</span>
+                <span class="n">Resc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">N0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Eps</span><span class="p">,</span> <span class="n">dism</span><span class="p">,</span> <span class="n">ismtime</span><span class="p">,</span> <span class="n">acce</span><span class="o">.</span><span class="n">nh2ism</span><span class="p">,</span> <span class="n">chi</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">chi</span><span class="p">,</span> <span class="n">ism</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">part</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span>
+            <span class="n">pfluxlow_tmp</span> <span class="o">=</span> <span class="n">injection</span><span class="o">.</span><span class="n">compute_pflux_continuous_extended</span><span class="p">(</span>
+                <span class="n">Resc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">N0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Epls</span><span class="p">,</span> <span class="n">dism</span><span class="p">,</span> <span class="n">ismtime</span><span class="p">,</span> <span class="n">acce</span><span class="o">.</span><span class="n">nh2ism</span><span class="p">,</span> <span class="n">chi</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">chi</span><span class="p">,</span> <span class="n">ism</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">part</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span>
+        
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Bad acceleration type: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">accel_type</span><span class="si">}</span><span class="s2">, choose between Impulsive or Continuous&quot;</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">pflux_tmp</span><span class="p">,</span> <span class="n">pfluxlow_tmp</span>
+    
+    <span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">pflux_tmp</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="o">**-</span><span class="mi">1</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_add_galactic_flux</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pflux_tmp</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="o">**-</span><span class="mi">1</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add galactic cosmic ray flux contribution if requested.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        pflux_tmp : array</span>
+<span class="sd">            Proton flux array</span>
+<span class="sd">            </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        array (GeV^-1 cm^-3)</span>
+<span class="sd">            Modified proton flux with galactic contribution</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">F_gal</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="n">fgal_AMSO2</span> <span class="o">=</span> <span class="n">injection</span><span class="o">.</span><span class="n">compute_fgal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Eps</span><span class="p">)</span>
+            <span class="n">fgal_DAMPE</span> <span class="o">=</span> <span class="n">injection</span><span class="o">.</span><span class="n">compute_fgal_dampe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Eps</span><span class="p">)</span>
+            
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">F_gal</span> <span class="o">==</span> <span class="s2">&quot;AMS-O2&quot;</span><span class="p">:</span>
+                <span class="n">gal_ratio</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">pflux_tmp</span> <span class="o">/</span> <span class="n">fgal_AMSO2</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">gal_ratio</span> <span class="o">&lt;</span> <span class="mf">1.</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Mean ratio pflux / fgal:&quot;</span><span class="p">,</span> <span class="n">gal_ratio</span><span class="p">)</span>
+                <span class="n">pflux_tmp</span> <span class="o">+=</span> <span class="n">fgal_AMSO2</span>
+            
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">F_gal</span> <span class="o">==</span> <span class="s2">&quot;DAMPE&quot;</span><span class="p">:</span>
+                <span class="n">gal_ratio</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">pflux_tmp</span> <span class="o">/</span> <span class="n">fgal_DAMPE</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">gal_ratio</span> <span class="o">&lt;</span> <span class="mf">1.</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Mean ratio pflux / fgal:&quot;</span><span class="p">,</span> <span class="n">gal_ratio</span><span class="p">)</span>
+                <span class="n">pflux_tmp</span> <span class="o">+=</span> <span class="n">fgal_DAMPE</span>
+            
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Choose a valid galactic flux model: &quot;AMS-O2&quot; or &quot;DAMPE&quot;&#39;</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">pflux_tmp</span>
+    
+    <span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">nh2</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_gamma_ray_flux</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nh2</span><span class="p">,</span> <span class="n">pflux</span><span class="p">,</span> <span class="n">pfluxlow_tmp</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">TeV</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute gamma-ray flux from proton-proton interactions.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        nh2 : astropy.Quantity</span>
+<span class="sd">            Matter density in the MC (~ cm^-3)</span>
+<span class="sd">        pflux : array</span>
+<span class="sd">            Proton flux array (~ GeV^-1 cm^-3)</span>
+<span class="sd">        pfluxlow_tmp : array</span>
+<span class="sd">            Low energy proton flux (~ GeV^-1 cm^-3)</span>
+<span class="sd">            </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        astropy.Quantity</span>
+<span class="sd">            Total gamma-ray flux (~ TeV^-1 cm^-2 s^-1)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Compute kernel function for gamma-ray flux</span>
+        <span class="n">F_gamma</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">compute_gamma_kernel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Egs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Eps</span><span class="p">)</span>
+        
+        <span class="c1"># Get cross section (cm2) for given proton energy</span>
+        <span class="n">sig</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">sig_ppEK</span><span class="p">(</span><span class="n">Ep</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Eps</span><span class="p">)</span>
+        
+        <span class="c1"># Compute gamma-ray flux</span>
+        <span class="n">intg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">sig</span><span class="p">[:,</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">pflux</span><span class="p">[:,</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">F_gamma</span><span class="p">)</span> \
+                      <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dEps</span><span class="p">[:,</span><span class="kc">None</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">Eps</span><span class="p">[:,</span><span class="kc">None</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        
+        <span class="n">phi</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">cspeed</span> <span class="o">*</span> <span class="n">nh2</span> <span class="o">*</span> <span class="n">intg</span> <span class="o">/</span> <span class="p">(</span><span class="mf">4.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance_SNR</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">phi</span> <span class="o">=</span> <span class="n">phi</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">TeV</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">))</span>
+        
+        <span class="n">total_phig</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Egs</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">TeV</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+        
+        <span class="c1"># Compute low energy part if requested</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">flag_low</span><span class="p">:</span>
+            <span class="n">total_phig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_low_energy_gamma</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="n">pfluxlow_tmp</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">total_phig</span> <span class="o">=</span> <span class="n">phi</span>
+        
+        <span class="k">return</span> <span class="n">total_phig</span>
+    
+    <span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">nh2</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_low_energy_gamma</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">pfluxlow_tmp</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">TeV</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute 1 - 100 GeV part of the gamma-ray spectrum.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        phi : array</span>
+<span class="sd">            High energy gamma-ray flux (~ GeV^-1 cm^-3)</span>
+<span class="sd">        pfluxlow_tmp : array</span>
+<span class="sd">            Low energy proton flux (~ GeV^-1 cm^-3)</span>
+<span class="sd">            </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        array</span>
+<span class="sd">            Total gamma-ray flux including low energy part (~ TeV^-1 cm^-2 s^-1)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">n_t</span> <span class="o">=</span> <span class="mf">1.</span>  <span class="c1"># Change to fix normalisation (1. as default)</span>
+        <span class="n">kappa</span> <span class="o">=</span> <span class="mf">1.</span>
+        <span class="n">K_pi</span> <span class="o">=</span> <span class="n">kappa</span> <span class="o">/</span> <span class="n">n_t</span>
+        <span class="n">E_pi</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Epls</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">m_proton</span><span class="p">)</span> <span class="o">*</span> <span class="n">K_pi</span>
+        <span class="n">dE_pi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dEpls</span>
+        
+        <span class="c1"># Compute q_pi</span>
+        <span class="n">q_pi</span> <span class="o">=</span> <span class="p">(</span><span class="n">n_t</span> <span class="o">/</span> <span class="n">K_pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">part</span><span class="o">.</span><span class="n">cspeed</span> <span class="o">*</span> <span class="n">part</span><span class="o">.</span><span class="n">sig_ppEK</span><span class="p">(</span><span class="n">Ep</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Epls</span><span class="p">)</span> <span class="o">*</span> <span class="n">pfluxlow_tmp</span>
+        
+        <span class="n">phig_low</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Egs</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">TeV</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+        
+        <span class="c1"># Integral eq 78 of Kelner from Emin for all Eg</span>
+        <span class="k">for</span> <span class="n">ig</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Egs</span><span class="p">)):</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">E_pi</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">Emin_g</span><span class="p">[</span><span class="n">ig</span><span class="p">]</span>
+            <span class="n">phi_low</span> <span class="o">=</span> <span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">q_pi</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">*</span> <span class="n">dE_pi</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">E_pi</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span><span class="o">**</span><span class="mf">2.</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">m_pion</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">phi_low</span> <span class="o">/=</span> <span class="p">(</span><span class="mf">4.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance_SNR</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">phig_low</span><span class="p">[</span><span class="n">ig</span><span class="p">]</span> <span class="o">=</span> <span class="n">phi_low</span>
+        
+        <span class="c1"># Establish normalisation factor</span>
+        <span class="n">idxn</span> <span class="o">=</span> <span class="n">find_nearest</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Egs</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>  <span class="c1"># at 200 GeV (smoother than 100 GeV)</span>
+        <span class="n">phig_norm</span> <span class="o">=</span> <span class="n">phi</span><span class="p">[</span><span class="n">idxn</span><span class="p">]</span> <span class="o">/</span> <span class="n">phig_low</span><span class="p">[</span><span class="n">idxn</span><span class="p">]</span>
+        
+        <span class="n">Emask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Egs</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">Egs</span><span class="p">[</span><span class="n">idxn</span><span class="p">]</span>
+        
+        <span class="n">total_phig</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Egs</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">TeV</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+        <span class="n">total_phig</span><span class="p">[</span><span class="o">~</span><span class="n">Emask</span><span class="p">]</span> <span class="o">=</span> <span class="n">phi</span><span class="p">[</span><span class="o">~</span><span class="n">Emask</span><span class="p">]</span>
+        <span class="n">total_phig</span><span class="p">[</span><span class="n">Emask</span><span class="p">]</span> <span class="o">=</span> <span class="n">phig_norm</span> <span class="o">*</span> <span class="n">phig_low</span><span class="p">[</span><span class="n">Emask</span><span class="p">]</span>
+        
+        <span class="k">return</span> <span class="n">total_phig</span>
+    
+    <span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">nh2</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_neutrino_flux</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nh2</span><span class="p">,</span> <span class="n">pflux</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute neutrino flux from proton-proton interactions.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        nh2 : astropy.Quantity</span>
+<span class="sd">            Matter density in the MC</span>
+<span class="sd">        pflux : array</span>
+<span class="sd">            Proton flux array</span>
+<span class="sd">            </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            [phi_nu, phi_nue_osc, phi_numu_osc, phi_nutau_osc] (~ TeV^-1 cm^-2 s^-1)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Compute neutrino kernel function and neutrino flux</span>
+        <span class="n">F_nu_1</span><span class="p">,</span> <span class="n">F_nu_2</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">compute_neutrino_kernel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Egs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Eps</span><span class="p">)</span>
+        
+        <span class="c1"># Get cross section</span>
+        <span class="n">sig</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">sig_ppEK</span><span class="p">(</span><span class="n">Ep</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Eps</span><span class="p">)</span>
+        
+        <span class="c1"># Total (for muon neutrinos, electron neutrinos are roughly F_nu_2 only)</span>
+        <span class="n">F_nu_mu</span> <span class="o">=</span> <span class="n">F_nu_1</span> <span class="o">+</span> <span class="n">F_nu_2</span>
+        
+        <span class="n">intn_mu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">((</span><span class="n">sig</span><span class="p">[:,</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">pflux</span><span class="p">[:,</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">F_nu_mu</span><span class="p">)</span> \
+                          <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dEps</span><span class="p">[:,</span><span class="kc">None</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">Eps</span><span class="p">[:,</span><span class="kc">None</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        
+        <span class="n">phi_numu</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">cspeed</span> <span class="o">*</span> <span class="n">nh2</span> <span class="o">*</span> <span class="n">intn_mu</span> <span class="o">/</span> <span class="p">(</span><span class="mf">4.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance_SNR</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">phi_numu</span> <span class="o">=</span> <span class="n">phi_numu</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">TeV</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">))</span>
+        
+        <span class="n">F_nue</span> <span class="o">=</span> <span class="n">F_nu_2</span>
+        <span class="n">intn_e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">((</span><span class="n">sig</span><span class="p">[:,</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">pflux</span><span class="p">[:,</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">F_nue</span><span class="p">)</span> \
+                          <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dEps</span><span class="p">[:,</span><span class="kc">None</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">Eps</span><span class="p">[:,</span><span class="kc">None</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        
+        <span class="n">phi_nue</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">cspeed</span> <span class="o">*</span> <span class="n">nh2</span> <span class="o">*</span> <span class="n">intn_e</span> <span class="o">/</span> <span class="p">(</span><span class="mf">4.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance_SNR</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">phi_nue</span> <span class="o">=</span> <span class="n">phi_nue</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">TeV</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">))</span>
+        
+        <span class="c1"># Total neutrino flux</span>
+        <span class="n">phi_nu</span> <span class="o">=</span> <span class="n">phi_numu</span> <span class="o">+</span> <span class="n">phi_nue</span>
+        
+        <span class="c1"># Single neutrino flavour flux with oscillation probabilities</span>
+        <span class="n">phi_nue_osc</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">Pee</span> <span class="o">*</span> <span class="n">phi_nue</span> <span class="o">+</span> <span class="n">fl</span><span class="o">.</span><span class="n">Pemu</span> <span class="o">*</span> <span class="n">phi_numu</span>
+        <span class="n">phi_numu_osc</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">Pemu</span> <span class="o">*</span> <span class="n">phi_nue</span> <span class="o">+</span> <span class="n">fl</span><span class="o">.</span><span class="n">Pmumu</span> <span class="o">*</span> <span class="n">phi_numu</span>
+        <span class="n">phi_nutau_osc</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">Petau</span> <span class="o">*</span> <span class="n">phi_nue</span> <span class="o">+</span> <span class="n">fl</span><span class="o">.</span><span class="n">Pmutau</span> <span class="o">*</span> <span class="n">phi_numu</span>
+        
+        <span class="k">return</span> <span class="n">phi_nu</span><span class="p">,</span> <span class="n">phi_nue_osc</span><span class="p">,</span> <span class="n">phi_numu_osc</span><span class="p">,</span> <span class="n">phi_nutau_osc</span>
+    
+<div class="viewcode-block" id="SNR_Cloud_Flux.compute_flux">
+<a class="viewcode-back" href="../../subpages/modules.html#craic.SNR_Cloud_Flux.SNR_Cloud_Flux.compute_flux">[docs]</a>
+    <span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">nh2</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">,</span> <span class="n">dist</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">pc</span><span class="p">,</span> <span class="n">age</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">yr</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_flux</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nh2</span><span class="p">,</span> <span class="n">dist</span><span class="p">,</span> <span class="n">age</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the gamma-ray and neutrino flux from a molecular cloud</span>
+<span class="sd">        irradiated by a nearby SNR.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        nh2 : astropy.Quantity</span>
+<span class="sd">            Matter density in the MC. (~ cm-3)</span>
+<span class="sd">        dist : astropy.Quantity</span>
+<span class="sd">            Distance from SNR center to MC center. (~ pc)</span>
+<span class="sd">        age : astropy.Quantity</span>
+<span class="sd">            SNR age. (~ yr)</span>
+<span class="sd">            </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            (Egs, total_phig, phi_nu, phi_nue_osc, phi_numu_osc, phi_nutau_osc)</span>
+<span class="sd">            </span>
+<span class="sd">            Egs : astropy.Quantity</span>
+<span class="sd">                Gamma-ray (or neutrino, i.e. secondary) energies. (TeV)</span>
+<span class="sd">            total_phig : astropy.Quantity</span>
+<span class="sd">                Gamma-ray flux. (TeV-1 cm-2 s-1)</span>
+<span class="sd">            phi_nu : astropy.Quantity</span>
+<span class="sd">                Neutrino flux. (TeV-1 cm-2 s-1)</span>
+<span class="sd">            phi_nue_osc : astropy.Quantity</span>
+<span class="sd">                Electron Neutrino flux. (TeV-1 cm-2 s-1)</span>
+<span class="sd">            phi_numu_osc : astropy.Quantity</span>
+<span class="sd">                Muon Neutrino flux. (TeV-1 cm-2 s-1)</span>
+<span class="sd">            phi_nutau_osc : astropy.Quantity</span>
+<span class="sd">                Tau Neutrino flux. (TeV-1 cm-2 s-1)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Compute proton travel parameters &amp; cloud penetration depth</span>
+        <span class="n">cloud_depth</span><span class="p">,</span> <span class="n">dism</span><span class="p">,</span> <span class="n">ismtime</span><span class="p">,</span> <span class="n">Resc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_travel_parameters</span><span class="p">(</span><span class="n">nh2</span><span class="p">,</span> <span class="n">dist</span><span class="p">,</span> <span class="n">age</span><span class="p">)</span>
+        
+        <span class="c1"># Compute energy distribution of protons at cloud entrance location</span>
+        <span class="n">pflux_tmp</span><span class="p">,</span> <span class="n">pfluxlow_tmp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_proton_flux</span><span class="p">(</span><span class="n">nh2</span><span class="p">,</span> <span class="n">dism</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">timediff</span><span class="p">,</span> <span class="n">ismtime</span><span class="p">,</span> <span class="n">Resc</span><span class="p">)</span>
+        
+        <span class="c1"># Include flux from galactic CR sea if requested</span>
+        <span class="n">pflux_tmp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_galactic_flux</span><span class="p">(</span><span class="n">pflux_tmp</span><span class="p">)</span>
+        
+        <span class="c1"># Compute total proton flux interacting with the cloud (cell-based)</span>
+        <span class="n">pflux</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">cloud_cell_flux</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radius_MC</span><span class="p">,</span> <span class="n">cloud_depth</span><span class="p">,</span> <span class="n">pflux_tmp</span><span class="p">)</span> 
+
+        <span class="c1"># To be sure, set NaN fluxes to zero</span>
+        <span class="n">pflux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">pflux</span><span class="p">,</span> <span class="n">nan</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        
+        <span class="c1"># Compute gamma-ray flux</span>
+        <span class="n">total_phig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_gamma_ray_flux</span><span class="p">(</span><span class="n">nh2</span><span class="p">,</span> <span class="n">pflux</span><span class="p">,</span> <span class="n">pfluxlow_tmp</span><span class="p">)</span>
+        
+        <span class="c1"># Compute neutrino flux</span>
+        <span class="n">phi_nu</span><span class="p">,</span> <span class="n">phi_nue_osc</span><span class="p">,</span> <span class="n">phi_numu_osc</span><span class="p">,</span> <span class="n">phi_nutau_osc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_neutrino_flux</span><span class="p">(</span><span class="n">nh2</span><span class="p">,</span> <span class="n">pflux</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Egs</span><span class="p">,</span> <span class="n">total_phig</span><span class="p">,</span> <span class="n">phi_nu</span><span class="p">,</span> <span class="n">phi_nue_osc</span><span class="p">,</span> <span class="n">phi_numu_osc</span><span class="p">,</span> <span class="n">phi_nutau_osc</span></div>
+</div>
+
+    
+    <span class="c1"># def set_parameters(self, **kwargs):</span>
+    <span class="c1">#     &quot;&quot;&quot;</span>
+    <span class="c1">#     Update calculator parameters if needed.</span>
+        
+    <span class="c1">#     Parameters</span>
+    <span class="c1">#     ----------</span>
+    <span class="c1">#     **kwargs : dict</span>
+    <span class="c1">#         Parameter name-value pairs to update</span>
+    <span class="c1">#     &quot;&quot;&quot;</span>
+    <span class="c1">#     for key, value in kwargs.items():</span>
+    <span class="c1">#         if hasattr(self, key):</span>
+    <span class="c1">#             setattr(self, key, value)</span>
+    <span class="c1">#         else:</span>
+    <span class="c1">#             raise ValueError(f&quot;Unknown parameter: {key}&quot;)</span>
+        
+    <span class="c1">#     # Re-setup parameters if needed</span>
+    <span class="c1">#     if any(key in kwargs for key in [&#39;palpha&#39;, &#39;D_fast&#39;]):</span>
+    <span class="c1">#         self._setup_parameters()</span>
+
+
+<span class="c1"># Example usage:</span>
+<span class="c1"># SNRcloud = SNRCloudFlux(</span>
+<span class="c1">#     chi=0.05,</span>
+<span class="c1">#     distance_SNR=1000*u.pc,</span>
+<span class="c1">#     major_MC=10*u.pc,</span>
+<span class="c1">#     minor_MC=10*u.pc,</span>
+<span class="c1">#     accel_type=&#39;Impulsive&#39;,</span>
+<span class="c1">#     snr_typeII=True,</span>
+<span class="c1">#     F_gal=&quot;AMS-O2&quot;,</span>
+<span class="c1">#     palpha=2.0,</span>
+<span class="c1">#     D_fast=True,</span>
+<span class="c1">#     flag_low=True</span>
+<span class="c1"># )</span>
+
+<span class="c1"># Egs, phi_gamma, phi_nu, phi_nue_osc, phi_numu_osc, phi_nutau_osc = SNRcloud.compute_flux(</span>
+<span class="c1">#     nh2=1e3*u.cm**-3,</span>
+<span class="c1">#     dist=50*u.pc,</span>
+<span class="c1">#     age=1e4*u.yr</span>
+<span class="c1"># )</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, CRAIC Contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -30,7 +30,7 @@ class SNR_Cloud_Flux:
     def __init__(self, chi=0.05, distance_SNR=2000*u.pc, radius_MC=10*u.pc, Eg_lo=1.0*u.GeV, Eg_hi=3e3*u.TeV, accel_type='Impulsive', 
                  snr_typeII=True, F_gal=False, palpha=2.0, D_fast=True, flag_low=True):
         """
-        Initialize the SNR Cloud Flux Calculator by setting the properties of the SNR and the cloud.
+        Initialize the SNR Cloud Flux model by setting the properties of the SNR and the cloud.
         
         Parameters
         ----------

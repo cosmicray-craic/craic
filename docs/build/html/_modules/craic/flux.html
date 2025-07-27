@@ -1,0 +1,363 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>craic.flux &mdash; craic 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            craic
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../subpages/project.html">Project &amp; Contributors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../subpages/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../subpages/modules.html">Modules &amp; Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../subpages/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../subpages/versions.html">Versions</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">craic</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">craic.flux</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for craic.flux</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.special</span><span class="w"> </span><span class="kn">import</span> <span class="n">erfc</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">IPython</span><span class="w"> </span><span class="kn">import</span> <span class="n">embed</span>
+
+<div class="viewcode-block" id="flux">
+<a class="viewcode-back" href="../../subpages/modules.html#craic.flux.flux">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">flux</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes proton flux, gamma-ray and neutrino </span>
+<span class="sd">    kernal function from the molecular cloud.&quot;&quot;&quot;</span>
+    
+    <span class="n">ncbins</span> <span class="o">=</span> <span class="mi">30</span>
+
+    <span class="c1"># Neutrino Oscillation Probabilities over long distances</span>
+    <span class="c1"># From Mascaretti et al. </span>
+    <span class="n">Pee</span> <span class="o">=</span> <span class="mf">0.56</span>
+    <span class="n">Pemu</span> <span class="o">=</span> <span class="mf">0.25</span>
+    <span class="n">Petau</span> <span class="o">=</span> <span class="mf">0.19</span>
+    <span class="n">Pmumu</span> <span class="o">=</span> <span class="mf">0.37</span>
+    <span class="n">Pmutau</span> <span class="o">=</span> <span class="mf">0.381</span>
+    <span class="n">Ptautau</span> <span class="o">=</span> <span class="mf">0.43</span>
+    
+<div class="viewcode-block" id="flux.cloud_cell_flux">
+<a class="viewcode-back" href="../../subpages/modules.html#craic.flux.flux.cloud_cell_flux">[docs]</a>
+    <span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">Rc</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">pc</span><span class="p">,</span> <span class="n">Dc</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">pc</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cloud_cell_flux</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Rc</span><span class="p">,</span> <span class="n">Dc</span><span class="p">,</span> <span class="n">flux</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the total proton influx at the cloud (:math:`\mathrm{GeV}^{-1}`).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        Rc : :class:`~astropy.units.Quantity`</span>
+<span class="sd">            Radius of the molecular cloud. (pc)</span>
+<span class="sd">        Dc : :class:`~astropy.units.Quantity`</span>
+<span class="sd">            Proton penetration depth in the cloud. (pc)</span>
+<span class="sd">        flux : :class:`~astropy.units.Quantity`</span>
+<span class="sd">            Proton differential flux density at cloud entrance location. (:math:`\mathrm{GeV}^{-1}\,\mathrm{cm}^{-3}`)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Initialise return value to desired units</span>
+        <span class="n">tot_ccf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Dc</span><span class="p">))</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="o">**-</span><span class="mi">1</span>
+
+        <span class="c1"># Mask those penetration depths, that fully traverse the cloud</span>
+        <span class="n">vmask</span> <span class="o">=</span> <span class="n">Dc</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">Rc</span>
+
+        <span class="c1">#TEST flux reduction by escaped particles?</span>
+        <span class="n">norm_v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Dc</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="o">*</span><span class="n">Rc</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">Rc</span><span class="o">/</span><span class="n">Dc</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        
+        <span class="c1"># Compute cloud volume</span>
+        <span class="n">vol_cloud</span> <span class="o">=</span> <span class="p">(</span><span class="mi">4</span> <span class="o">/</span> <span class="mf">3.</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">Rc</span> <span class="o">**</span> <span class="mi">3</span>
+
+        <span class="c1"># Easy case: fully traversed cloud</span>
+        <span class="n">tot_ccf</span><span class="p">[</span><span class="n">vmask</span><span class="p">]</span> <span class="o">=</span> <span class="n">flux</span><span class="p">[</span><span class="n">vmask</span><span class="p">]</span> <span class="o">*</span> <span class="n">vol_cloud</span> <span class="o">*</span> <span class="n">norm_v</span><span class="p">[</span><span class="n">vmask</span><span class="p">]</span>
+        
+        <span class="c1"># If cloud fully traversed, we&#39;re done.</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">vmask</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">tot_ccf</span> <span class="c1">#if without cells, always exit here</span>
+
+        <span class="c1"># assume sphere</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">Rc</span><span class="p">,</span> <span class="n">Rc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ncbins</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">Rc</span><span class="p">,</span> <span class="n">Rc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ncbins</span><span class="p">)</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">cx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="n">cy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+
+        <span class="n">cell_rad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">cx</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">cy</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">cell_rad</span> <span class="o">=</span> <span class="n">cell_rad</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="nb">max</span><span class="o">=</span><span class="n">Rc</span><span class="p">)</span>
+        <span class="n">circ_x</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Rc</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">cy</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="c1"># calculate line of sight depth</span>
+        <span class="n">ch</span> <span class="o">=</span> <span class="n">Rc</span> <span class="o">-</span> <span class="n">cell_rad</span>
+        <span class="n">slice_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">ch</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">Rc</span> <span class="o">-</span> <span class="n">ch</span><span class="p">))</span>
+        <span class="n">cell_theta2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">cell_rad</span> <span class="o">/</span> <span class="n">Rc</span><span class="p">)</span>
+        <span class="n">cell_depth</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">slice_a</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">cell_theta2</span><span class="p">)</span>
+
+        <span class="n">Area</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">Rc</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">ncbins</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">Rc</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">ncbins</span><span class="p">)</span>  <span class="c1"># pc^2</span>
+
+        <span class="c1"># Normalisation factor</span>
+        <span class="n">norm</span> <span class="o">=</span> <span class="n">vol_cloud</span> <span class="o">/</span> <span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">cell_depth</span><span class="p">)</span> <span class="o">*</span> <span class="n">Area</span><span class="p">)</span>
+
+        <span class="c1"># re-writing the condition (circ_x + Dc &gt; cx)</span>
+        <span class="n">cdiff</span> <span class="o">=</span> <span class="n">circ_x</span> <span class="o">-</span> <span class="n">cx</span>
+        <span class="n">ti</span><span class="p">,</span> <span class="n">tj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">cdiff</span><span class="p">,</span> <span class="n">Dc</span><span class="p">[</span><span class="o">~</span><span class="n">vmask</span><span class="p">])</span>
+
+        <span class="n">tij</span> <span class="o">=</span> <span class="n">ti</span> <span class="o">+</span> <span class="n">tj</span>
+        <span class="n">maskt</span> <span class="o">=</span> <span class="n">tij</span> <span class="o">&gt;</span> <span class="mf">0.</span>
+
+
+        <span class="n">tot_cell_depth</span> <span class="o">=</span> <span class="p">[</span><span class="nb">sum</span><span class="p">(</span><span class="n">cell_depth</span><span class="p">[</span><span class="n">maskt</span><span class="p">[</span><span class="n">it</span><span class="p">]]</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">it</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Dc</span><span class="p">[</span><span class="o">~</span><span class="n">vmask</span><span class="p">]))]</span>
+
+        <span class="n">tot_ccf</span><span class="p">[</span><span class="o">~</span><span class="n">vmask</span><span class="p">]</span> <span class="o">=</span> <span class="n">flux</span><span class="p">[</span><span class="o">~</span><span class="n">vmask</span><span class="p">]</span> <span class="o">*</span> <span class="n">Area</span> <span class="o">*</span> <span class="n">tot_cell_depth</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">pc</span>
+        <span class="n">tot_ccf</span><span class="p">[</span><span class="o">~</span><span class="n">vmask</span><span class="p">]</span> <span class="o">*=</span> <span class="n">norm</span><span class="o">.</span><span class="n">value</span>
+
+        <span class="k">return</span> <span class="n">tot_ccf</span></div>
+
+
+<div class="viewcode-block" id="flux.compute_gamma_kernel">
+<a class="viewcode-back" href="../../subpages/modules.html#craic.flux.flux.compute_gamma_kernel">[docs]</a>
+    <span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">Eg</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">TeV</span><span class="p">,</span> <span class="n">Ep</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_gamma_kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Eg</span><span class="p">,</span> <span class="n">Ep</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes the kernel function for the total gamma-ray spectrum from :math:`\mathrm{\pi^{0}}` and </span>
+<span class="sd">        :math:`\eta` meson decay channels according to `Kelner et al. 2006, PhysRevD 74, 034018 </span>
+<span class="sd">        &lt;https://journals.aps.org/prd/abstract/10.1103/PhysRevD.74.034018&gt;`_. </span>
+<span class="sd">        (:class:`numpy.ndarray`, indexing [((proton,)gamma)])</span>
+
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        Eg : :class:`~astropy.units.Quantity`</span>
+<span class="sd">            Energy of gamma rays. (TeV)</span>
+<span class="sd">        Ep : :class:`~astropy.units.Quantity`</span>
+<span class="sd">            Energy of protons. (GeV)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">Ep_ndim_in</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">Ep</span><span class="p">)</span>
+        <span class="n">Eg_ndim_in</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">Eg</span><span class="p">)</span>
+        <span class="n">Ep</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">Ep</span><span class="p">)</span>
+        <span class="n">Eg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">Eg</span><span class="p">)</span>
+
+        <span class="c1"># Pre-compute variables</span>
+        <span class="n">L</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">Ep</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">TeV</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">)[:,</span><span class="kc">None</span><span class="p">]</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">Eg</span><span class="o">/</span><span class="n">Ep</span><span class="p">[:,</span><span class="kc">None</span><span class="p">])</span><span class="o">.</span><span class="n">decompose</span><span class="p">()</span>
+        <span class="n">L2</span> <span class="o">=</span> <span class="n">L</span><span class="o">**</span><span class="mi">2</span>
+        <span class="n">log_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="c1"># Parameters of gamma-ray spectrum kernel function</span>
+        <span class="c1"># (eqs. 59-61 in Kelner et al. 2006)</span>
+        <span class="n">B</span>     <span class="o">=</span>      <span class="mf">1.30</span>  <span class="o">+</span> <span class="mf">0.14</span>  <span class="o">*</span> <span class="n">L</span> <span class="o">+</span> <span class="mf">0.011</span> <span class="o">*</span> <span class="n">L2</span>
+        <span class="n">betag</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.79</span>  <span class="o">+</span> <span class="mf">0.11</span>  <span class="o">*</span> <span class="n">L</span> <span class="o">+</span> <span class="mf">0.008</span> <span class="o">*</span> <span class="n">L2</span><span class="p">)</span>
+        <span class="n">k</span>     <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mf">0.801</span> <span class="o">+</span> <span class="mf">0.049</span> <span class="o">*</span> <span class="n">L</span> <span class="o">+</span> <span class="mf">0.014</span> <span class="o">*</span> <span class="n">L2</span><span class="p">)</span>
+
+        <span class="n">xbeta</span> <span class="o">=</span> <span class="n">x</span><span class="o">**</span><span class="n">betag</span>
+
+        <span class="c1"># Components of gamma-ray spectrum kernel function</span>
+        <span class="n">part_1</span> <span class="o">=</span> <span class="n">B</span> <span class="o">*</span> <span class="n">log_x</span> <span class="o">/</span> <span class="n">x</span>
+        <span class="n">part_2</span> <span class="o">=</span> <span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">xbeta</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">k</span> <span class="o">*</span> <span class="n">xbeta</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">xbeta</span><span class="p">)))</span> <span class="o">**</span> <span class="mi">4</span>
+        <span class="n">part_3</span> <span class="o">=</span> <span class="p">((</span><span class="mi">1</span> <span class="o">/</span> <span class="n">log_x</span><span class="p">)</span> \
+                  <span class="o">-</span> <span class="p">((</span><span class="mi">4</span> <span class="o">*</span> <span class="n">betag</span> <span class="o">*</span> <span class="n">xbeta</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">xbeta</span><span class="p">))</span> \
+                  <span class="o">-</span> <span class="p">((</span><span class="mi">4</span> <span class="o">*</span> <span class="n">k</span> <span class="o">*</span> <span class="n">betag</span> <span class="o">*</span> <span class="n">xbeta</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">xbeta</span><span class="p">))</span> \
+                      <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">k</span> <span class="o">*</span> <span class="n">xbeta</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">xbeta</span><span class="p">))</span>
+                    <span class="p">)</span>
+                 <span class="p">)</span>
+
+        <span class="c1"># The gamma-ray spectrum kernel function (eq. 58 in Kelner et al. 2006)</span>
+        <span class="n">F_gamma</span> <span class="o">=</span> <span class="n">part_1</span> <span class="o">*</span> <span class="n">part_2</span> <span class="o">*</span> <span class="n">part_3</span>
+
+        <span class="c1"># Just to be sure, null unphysical (i.e. where Eg &gt; Ep) factors</span>
+        <span class="n">F_gamma</span><span class="p">[</span><span class="n">x</span><span class="o">&gt;=</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">L</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">==</span><span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">L</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">F_gamma</span><span class="p">[:]</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">L</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="p">:</span>
+            <span class="n">F_gamma</span><span class="p">[</span><span class="n">L</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&lt;-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+            
+        <span class="c1"># Squeeze array to fit input shapes</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">Ep_ndim_in</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Eg_ndim_in</span><span class="o">==</span><span class="mi">0</span><span class="p">):</span> <span class="n">F_gamma</span><span class="o">=</span><span class="n">F_gamma</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">Ep_ndim_in</span><span class="o">==</span><span class="mi">0</span><span class="p">):</span>                 <span class="n">F_gamma</span><span class="o">=</span><span class="n">F_gamma</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">Eg_ndim_in</span><span class="o">==</span><span class="mi">0</span><span class="p">):</span>                 <span class="n">F_gamma</span><span class="o">=</span><span class="n">F_gamma</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Return [((proton,)gamma)]</span>
+        <span class="k">return</span> <span class="n">F_gamma</span></div>
+
+
+<div class="viewcode-block" id="flux.compute_neutrino_kernel">
+<a class="viewcode-back" href="../../subpages/modules.html#craic.flux.flux.compute_neutrino_kernel">[docs]</a>
+    <span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">En</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">TeV</span><span class="p">,</span> <span class="n">Ep</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_neutrino_kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">En</span><span class="p">,</span> <span class="n">Ep</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the neutrino kernel function for the total neutrino spectrum from :math:`\pi^{\pm}` &amp; </span>
+<span class="sd">        :math:`\mu` decay channels according to `Kelner et al. 2006, PhysRevD 74, 034018 </span>
+<span class="sd">        &lt;https://journals.aps.org/prd/abstract/10.1103/PhysRevD.74.034018&gt;`_. </span>
+<span class="sd">        Returns kernal functions from :math:`\mu` and :math:`\pi^{\pm}` with indexing </span>
+<span class="sd">        [((proton,)neutrino)]. </span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        En : :class:`~astropy.units.Quantity`</span>
+<span class="sd">            Energy of neutrinos. (TeV)</span>
+<span class="sd">        Ep : :class:`~astropy.units.Quantity`</span>
+<span class="sd">            Energy of protons. (GeV)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">Ep_ndim_in</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">Ep</span><span class="p">)</span>
+        <span class="n">En_ndim_in</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">En</span><span class="p">)</span>
+        <span class="n">Ep</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">Ep</span><span class="p">)</span>
+        <span class="n">En</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">En</span><span class="p">)</span>
+
+        <span class="c1"># Pre-compute variables</span>
+        <span class="n">L</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">Ep</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">TeV</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">)[:,</span><span class="kc">None</span><span class="p">]</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">En</span> <span class="o">/</span> <span class="n">Ep</span><span class="p">[:,</span><span class="kc">None</span><span class="p">])</span><span class="o">.</span><span class="n">decompose</span><span class="p">()</span>
+
+        <span class="c1"># Note that for following parameters, read Kelners paper for explanation</span>
+        <span class="c1"># PARAMETERS FOR MUONIC NEUTRINOS FROM DECAY OF CHARGED PIONS #</span>
+
+        <span class="n">Be</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mf">69.5</span> <span class="o">+</span> <span class="mf">2.65</span> <span class="o">*</span> <span class="n">L</span> <span class="o">+</span> <span class="mf">0.3</span> <span class="o">*</span> <span class="n">L</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">betae</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">((</span><span class="mf">0.201</span> <span class="o">+</span> <span class="mf">0.062</span> <span class="o">*</span> <span class="n">L</span> <span class="o">+</span> <span class="mf">0.00042</span> <span class="o">*</span> <span class="n">L</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">4</span><span class="p">))</span>
+        <span class="n">ke</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.279</span> <span class="o">+</span> <span class="mf">0.141</span> <span class="o">*</span> <span class="n">L</span> <span class="o">+</span> <span class="mf">0.0172</span> <span class="o">*</span> <span class="n">L</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">0.3</span> <span class="o">+</span> <span class="p">(</span><span class="mf">2.3</span> <span class="o">+</span> <span class="n">L</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="c1"># PARAMETERS FOR MUONIC NEUTRINOS FROM DECAY OF MUONS #</span>
+
+        <span class="n">By</span> <span class="o">=</span> <span class="mf">1.75</span> <span class="o">+</span> <span class="mf">0.204</span> <span class="o">*</span> <span class="n">L</span> <span class="o">+</span> <span class="mf">0.010</span> <span class="o">*</span> <span class="n">L</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="n">betay</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.67</span> <span class="o">+</span> <span class="mf">0.111</span> <span class="o">*</span> <span class="n">L</span> <span class="o">+</span> <span class="mf">0.0038</span> <span class="o">*</span> <span class="n">L</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">ky</span> <span class="o">=</span> <span class="mf">1.07</span> <span class="o">-</span> <span class="mf">0.086</span> <span class="o">*</span> <span class="n">L</span> <span class="o">+</span> <span class="mf">0.002</span> <span class="o">*</span> <span class="n">L</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">x</span> <span class="o">/</span> <span class="mf">0.427</span>
+
+        <span class="n">ybeta</span> <span class="o">=</span> <span class="n">y</span> <span class="o">**</span> <span class="n">betay</span>
+
+        <span class="c1"># CALCULATION OF NEUTRINOS #</span>
+
+        <span class="c1"># SPECTRUM BY DIRECT DECAYS OF CHARGED PIONS #</span>
+
+        <span class="n">part_1_nu2</span> <span class="o">=</span> <span class="n">Be</span>
+        <span class="n">part_2_nu2</span> <span class="o">=</span> <span class="p">((</span><span class="mi">1</span> <span class="o">+</span> <span class="n">ke</span> <span class="o">*</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">0.3</span> <span class="o">/</span> <span class="p">(</span><span class="n">x</span> <span class="o">**</span> <span class="n">betae</span><span class="p">)))</span>
+        <span class="n">part_3_nu2</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">**</span> <span class="mi">5</span>
+
+        
+        <span class="n">F_nu_2</span> <span class="o">=</span> <span class="n">part_1_nu2</span> <span class="o">*</span> <span class="n">part_2_nu2</span> <span class="o">*</span> <span class="n">part_3_nu2</span>
+
+        
+        <span class="c1"># SPECTRUM BY DECAY OF MUONS #</span>
+
+        <span class="n">part_1_nu1</span> <span class="o">=</span> <span class="n">By</span> <span class="o">*</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">y</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">y</span><span class="p">))</span>
+        <span class="n">part_2_nu1</span> <span class="o">=</span> <span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">ybeta</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">ky</span> <span class="o">*</span> <span class="n">ybeta</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">ybeta</span><span class="p">)))</span> <span class="o">**</span> <span class="mi">4</span>
+        <span class="n">part_3_nu1</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">betay</span> <span class="o">*</span> <span class="n">ybeta</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">ybeta</span><span class="p">)</span>
+                      <span class="o">-</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">ky</span> <span class="o">*</span> <span class="n">betay</span> <span class="o">*</span> <span class="n">ybeta</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">ybeta</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">ky</span> <span class="o">*</span> <span class="n">ybeta</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">ybeta</span><span class="p">)))</span>
+
+        <span class="n">F_nu_1</span> <span class="o">=</span> <span class="n">part_1_nu1</span> <span class="o">*</span> <span class="n">part_2_nu1</span> <span class="o">*</span> <span class="n">part_3_nu1</span>
+
+
+        <span class="c1"># Just to be sure, remove unphysical factors</span>
+
+        <span class="n">F_nu_1</span><span class="p">[</span><span class="n">x</span><span class="o">&gt;=</span><span class="mf">0.427</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="c1">#remove low energies</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">L</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">==</span><span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">L</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">F_nu_2</span><span class="p">[:]</span> <span class="o">=</span> <span class="mf">0.</span>
+            <span class="n">F_nu_1</span><span class="p">[:]</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">L</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="p">:</span>
+            <span class="n">F_nu_2</span><span class="p">[</span><span class="n">L</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&lt;-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+            <span class="n">F_nu_1</span><span class="p">[</span><span class="n">L</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&lt;-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+
+            
+        <span class="n">F_nu_2</span><span class="p">[</span><span class="n">F_nu_2</span> <span class="o">&lt;</span> <span class="mf">0.</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+        
+        <span class="c1"># Squeeze array to fit input shapes (muon decay)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">Ep_ndim_in</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">En_ndim_in</span><span class="o">==</span><span class="mi">0</span><span class="p">):</span> <span class="n">F_nu_1</span><span class="o">=</span><span class="n">F_nu_1</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">Ep_ndim_in</span><span class="o">==</span><span class="mi">0</span><span class="p">):</span>                 <span class="n">F_nu_1</span><span class="o">=</span><span class="n">F_nu_1</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">En_ndim_in</span><span class="o">==</span><span class="mi">0</span><span class="p">):</span>                 <span class="n">F_nu_1</span><span class="o">=</span><span class="n">F_nu_1</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Squeeze array to fit input shapes (pion decay)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">Ep_ndim_in</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">En_ndim_in</span><span class="o">==</span><span class="mi">0</span><span class="p">):</span> <span class="n">F_nu_2</span><span class="o">=</span><span class="n">F_nu_2</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">Ep_ndim_in</span><span class="o">==</span><span class="mi">0</span><span class="p">):</span>                 <span class="n">F_nu_2</span><span class="o">=</span><span class="n">F_nu_2</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">En_ndim_in</span><span class="o">==</span><span class="mi">0</span><span class="p">):</span>                 <span class="n">F_nu_2</span><span class="o">=</span><span class="n">F_nu_2</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Return [((proton,)neutrino)]</span>
+        <span class="c1"># Muon decay (F_nu_1) then pion decay (F_nu_2)</span>
+        <span class="k">return</span> <span class="n">F_nu_1</span> <span class="p">,</span> <span class="n">F_nu_2</span></div>
+</div>
+
+
+    
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, CRAIC Contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

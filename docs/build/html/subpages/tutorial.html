@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tutorial &mdash; craic 0.1.0 documentation</title>
+  <title>Quickstart Tutorial &mdash; craic 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
 
@@ -16,11 +16,12 @@
       <script src="../_static/documentation_options.js?v=01f34227"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Versions" href="versions.html" />
-    <link rel="prev" title="Modules" href="modules.html" /> 
+    <link rel="prev" title="Modules &amp; Functions" href="modules.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -45,8 +46,8 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="project.html">Project &amp; Contributors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">Modules</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Modules &amp; Functions</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Quickstart Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="versions.html">Versions</a></li>
 </ul>
 
@@ -64,7 +65,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">Tutorial</li>
+      <li class="breadcrumb-item active">Quickstart Tutorial</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/subpages/tutorial.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -74,15 +75,91 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="tutorial">
-<h1>Tutorial<a class="headerlink" href="#tutorial" title="Link to this heading"></a></h1>
+  <section id="quickstart-tutorial">
+<h1>Quickstart Tutorial<a class="headerlink" href="#quickstart-tutorial" title="Link to this heading"></a></h1>
+<p>The first step is to import the relevant packages and functions from craic.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">craic.particles</span><span class="w"> </span><span class="kn">import</span> <span class="n">particles</span> <span class="k">as</span> <span class="n">pa</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">craic.transport</span><span class="w"> </span><span class="kn">import</span> <span class="n">transport</span> <span class="k">as</span> <span class="n">tr</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">craic.accelerator</span><span class="w"> </span><span class="kn">import</span> <span class="n">accelerator</span> <span class="k">as</span> <span class="n">ac</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">craic.flux</span><span class="w"> </span><span class="kn">import</span> <span class="n">flux</span> <span class="k">as</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">craic</span><span class="w"> </span><span class="kn">import</span> <span class="n">injection</span> <span class="k">as</span> <span class="n">inj</span>
+</pre></div>
+</div>
+<p>The figure parameters can be set here (optional):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">SMALL_SIZE</span> <span class="o">=</span> <span class="mi">11</span>
+<span class="n">MEDIUM_SIZE</span> <span class="o">=</span> <span class="mi">12</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;font&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">SMALL_SIZE</span><span class="p">)</span>          <span class="c1"># controls default text sizes</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;axes&#39;</span><span class="p">,</span> <span class="n">titlesize</span><span class="o">=</span><span class="n">SMALL_SIZE</span><span class="p">)</span>     <span class="c1"># fontsize of the axes title</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;axes&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="n">MEDIUM_SIZE</span><span class="p">)</span>    <span class="c1"># fontsize of the x and y labels</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;xtick&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="n">SMALL_SIZE</span><span class="p">)</span>    <span class="c1"># fontsize of the tick labels</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;ytick&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="n">SMALL_SIZE</span><span class="p">)</span>    <span class="c1"># fontsize of the tick labels</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;legend&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">SMALL_SIZE</span><span class="p">)</span>    <span class="c1"># legend fontsize</span>
+</pre></div>
+</div>
+<p>The imported classes are initiated with default values, they can be altered if needed:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">acel</span> <span class="o">=</span> <span class="n">ac</span><span class="p">()</span> <span class="c1">#default explosion energy 1e51 erg</span>
+<span class="n">part</span> <span class="o">=</span> <span class="n">pa</span><span class="p">()</span> <span class="c1">#default power-law index alpha = 2, default energy budget 1e50 erg</span>
+<span class="n">tran</span> <span class="o">=</span> <span class="n">tr</span><span class="p">()</span> <span class="c1">#default diffusion coefficient 3x10^27 cm^2/s at 1 GeV, default chi = 0.05</span>
+<span class="n">fluxfunc</span> <span class="o">=</span> <span class="n">fl</span><span class="p">()</span> <span class="c1">#default index alpha = 2</span>
+</pre></div>
+</div>
+<p>To run through the model with particle acceleration at source, propagation through the ISM and interaction with target cloud to produce gamma-ray and neutrino flux, use the function SNR_Cloud_Flux.
+The model follows Kelner et al (2006).</p>
+<p>Input parameters:</p>
+<ul class="simple">
+<li><p>nh2 = target material density (<span class="math notranslate nohighlight">\(\mathrm{cm}^{-3}\)</span>)</p></li>
+<li><p>dist = separation distance accelerator to target cloud (pc)</p></li>
+<li><p>age = SNR age (yr)</p></li>
+</ul>
+<p>Optional input parameters:</p>
+<ul class="simple">
+<li><p>chi = diffusion suppression factor (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>)</p></li>
+<li><p>distance_SNR = distance of SNR from Earth (pc)</p></li>
+<li><p>radius_MC = radius of the cloud (pc)</p></li>
+<li><p>accel_type = acceleration type (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>: “Impulsive” or “Continuous”)</p></li>
+<li><p>snr_typeII = a flag for type II or type IA SNRs (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>)</p></li>
+<li><p>F_gal = flag whether or not to include which galactic CR spectrum:
+F_gal=False (default), “AMS-O2”, “DAMPE”</p></li>
+<li><p>palpha = power law index of the proton spectrum (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>)</p></li>
+<li><p>D_fast = flag fast or slow diffusion in the ISM (changes the normalisation) (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool`</span></code>)</p></li>
+<li><p>flag_low = include low energy correction ~GeV range (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool`</span></code>)</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">SNRcloud</span> <span class="o">=</span> <span class="n">SNR_Cloud_Flux</span><span class="p">(</span><span class="n">Eg_lo</span><span class="o">=</span><span class="mi">1</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="p">,</span> <span class="n">Eg_hi</span><span class="o">=</span><span class="mi">3</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">PeV</span><span class="p">,</span> <span class="n">F_gal</span><span class="o">=</span><span class="s2">&quot;DAMPE&quot;</span><span class="p">)</span> <span class="c1"># Change optional input parameters here if needed</span>
+<span class="n">Eg</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">phi_nu</span><span class="p">,</span> <span class="n">phi_nue</span><span class="p">,</span> <span class="n">phi_numu</span><span class="p">,</span> <span class="n">phi_nutau</span> <span class="o">=</span> <span class="n">SNRcloud</span><span class="o">.</span><span class="n">compute_flux</span><span class="p">(</span>
+    <span class="n">nh2</span><span class="o">=</span><span class="mi">100</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">dist</span><span class="o">=</span><span class="mi">50</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">pc</span><span class="p">,</span>
+    <span class="n">age</span><span class="o">=</span><span class="mf">2e4</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">yr</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Plotting the resultant spectra:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">Eg</span><span class="p">,</span> <span class="n">Eg</span><span class="o">*</span><span class="n">Eg</span><span class="o">*</span><span class="p">(</span><span class="n">phi</span><span class="p">),</span><span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\gamma$&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">Eg</span><span class="p">,</span> <span class="n">Eg</span><span class="o">*</span><span class="n">Eg</span><span class="o">*</span><span class="p">(</span><span class="n">phi_nu</span><span class="p">),</span><span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\nu$&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">Eg</span><span class="p">,</span> <span class="n">Eg</span><span class="o">*</span><span class="n">Eg</span><span class="o">*</span><span class="p">(</span><span class="n">phi_nue</span><span class="p">),</span><span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\nu_e$&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">Eg</span><span class="p">,</span> <span class="n">Eg</span><span class="o">*</span><span class="n">Eg</span><span class="o">*</span><span class="p">(</span><span class="n">phi_numu</span><span class="p">),</span><span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\nu_\mu$&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">Eg</span><span class="p">,</span> <span class="n">Eg</span><span class="o">*</span><span class="n">Eg</span><span class="o">*</span><span class="p">(</span><span class="n">phi_nutau</span><span class="p">),</span><span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\nu_\tau$&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mf">1e-14</span><span class="p">,</span><span class="mf">1e-12</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mf">0.01</span><span class="p">,</span><span class="mf">100.</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$E_{\gamma}$ (TeV)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$E^2$dN/dE (TeV cm$^{-2}$ s$^{-1}$)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="kc">None</span>
+</pre></div>
+</div>
+<img alt="../_images/quickstart_tutorial.png" src="../_images/quickstart_tutorial.png" />
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="modules.html" class="btn btn-neutral float-left" title="Modules" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="modules.html" class="btn btn-neutral float-left" title="Modules &amp; Functions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="versions.html" class="btn btn-neutral float-right" title="Versions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

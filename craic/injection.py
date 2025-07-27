@@ -15,23 +15,33 @@ acel = accelerator()
 def compute_pflux_impulsive_extended(Resc,
         N_0, Ep, d, a, dens, chi=0.05, ism=1, alpha=2.0) -> u.GeV**-1 * u.cm**-3:
     """
-    Compute differential proton flux density for an impulsive injection from
-    the surface of an extended source.
+    Compute differential proton flux density (:math:`\mathrm{GeV}^{-1}\,\mathrm{cm}^{-3}`) for an 
+    impulsive injection from the surface of an extended source.
     The difference to the case of a point source is the normalisation.
 
     Parameters
     ----------
-    Resc : `astropy.Quantity`
-        Particle escape radius (=distance from source center). (~ pc)
-    For the other parameters see compute_pflux_impulsive_point() method.
-
-    Returns
-    -------
-    pflux : `astropy.Quantity`
-        Differential flux density (~ GeV^-1 cm^-3).
+    Resc : :class:`~astropy.units.Quantity`
+        Particle escape radius (=distance from source center). (pc)
+    N_0 : :class:`~astropy.units.Quantity`
+        Normalisation of particle distribution function normalising the
+        energy injection rate (L_CR, which could be E_totCR/age). (GeV/s)
+    Ep : :class:`~astropy.units.Quantity`
+        Particle energy. (GeV)
+    d : :class:`~astropy.units.Quantity`
+        Distance to particle injection location. (pc)
+    a : :class:`~astropy.units.Quantity`
+        Time since particle injection at source (can differ from its age). (yr)
+    dens : :class:`~astropy.units.Quantity`
+        Density of traversed ambient matter. (:math:`\mathrm{cm}^{-3}`)
+        Default value for ISM is 1 :math:`\mathrm{cm}^{-3}`.
+    chi : float
+        Scalar suppression factor for diffusion coefficient, relating to
+        the level of turbulence along the particles path.
+        (ism: 1, clouds: 0.05)
+    alpha : float
+        Proton spectrum spectral index. (default: 2.0)
     """
-    import numpy as np
-    import astropy.units as u
     sqrt_pi = np.sqrt(np.pi)
     assert (np.size(Resc) == 1) or (np.shape(Resc) == np.shape(Ep))
 
@@ -52,39 +62,32 @@ def compute_pflux_impulsive_extended(Resc,
 def compute_pflux_impulsive_point(N_0, Ep, d, a, dens, chi=0.05,
         ism=1, alpha=2.0) -> u.GeV**-1 * u.cm**-3:
     """
-    Compute differential proton flux density for an impulsive injection from
-    a point source as given by Aharonian & Atoyan (1996) (eq. 3).
-    Equals & replaces former flux.flux_calc():
-        def flux_calc(self, N_0, Ep, d, a, dens, chi=0.05, ism=0):
+    Compute differential proton flux density (:math:`\mathrm{GeV}^{-1}\,\mathrm{cm}^{-3}`) for an 
+    impulsive injection from a point source as given by 
+    `Aharonian & Atoyan (1996), A&A 309, 917 <https://ui.adsabs.harvard.edu/abs/1996A%26A...309..917A/abstract>`_ (eq. 3).
+    
 
     Parameters
     ----------
-    N_0 : `astropy.Quantity`
+    N_0 : :class:`~astropy.units.Quantity`
         Normalisation of particle distribution function normalising the
-        total injected energy since the accelerator birth. (~ GeV)
-    Ep : `astropy.Quantity`
-        Particle energy. (~ GeV)
-    d : `astropy.Quantity`
-        Distance to particle injection location. (~ pc)
-    a : `astropy.Quantity`
-        Time since particle injection at source (can differ from its age). (~ yr)
-    dens : `astropy.Quantity`
-        Density of traversed ambient matter. (~ cm^-3)
-        (ism: 1.0 cm^-3)
-    chi : `float`
+        energy injection rate (L_CR, which could be E_totCR/age). (GeV/s)
+    Ep : :class:`~astropy.units.Quantity`
+        Particle energy. (GeV)
+    d : :class:`~astropy.units.Quantity`
+        Distance to particle injection location. (pc)
+    a : :class:`~astropy.units.Quantity`
+        Time since particle injection at source (can differ from its age). (yr)
+    dens : :class:`~astropy.units.Quantity`
+        Density of traversed ambient matter. (:math:`\mathrm{cm}^{-3}`)
+        Default value for ISM is 1 :math:`\mathrm{cm}^{-3}`.
+    chi : float
         Scalar suppression factor for diffusion coefficient, relating to
         the level of turbulence along the particles path.
         (ism: 1, clouds: 0.05)
-    alpha : `float`
+    alpha : float
         Proton spectrum spectral index. (default: 2.0)
-
-    Returns
-    -------
-    pflux : `astropy.Quantity`
-        Differential flux density in ``GeV-1 cm-3``.
     """
-    import numpy as np
-    import astropy.units as u
 
     Rdiff = tran.R_diffusion(Ep, a, dens, chi=chi, ism=ism).to(u.cm)
 
@@ -97,27 +100,40 @@ def compute_pflux_impulsive_point(N_0, Ep, d, a, dens, chi=0.05,
     # Return
     return pflux.to(u.GeV**-1 *u.cm**-3)
 
+# Equals & replaces former flux.flux_calc():
+#     def flux_calc(self, N_0, Ep, d, a, dens, chi=0.05, ism=0):
+
 @u.quantity_input(Resc=u.pc, N_0=u.GeV, Ep=u.GeV, d=u.pc, a=u.yr, dens=u.cm**-3)
 def compute_pflux_continuous_extended(Resc,
         N_0, Ep, d, a, dens, chi=0.05, ism=1, alpha=2.0) -> u.GeV**-1 * u.cm**-3:
     """
-    Compute differential proton flux density for an continuous injection from
-    the surface of an extended source.
+    Compute differential proton flux density (:math:`\mathrm{GeV}^{-1}\,\mathrm{cm}^{-3}`) for an 
+    continuous injection from the surface of an extended source.
     The difference to the case of a point source is the normalisation.
 
     Parameters
     ----------
-    Resc : `astropy.Quantity`
-        Particle escape radius (=distance from source center). (~ pc)
-    For the other parameters see compute_pflux_continuous_point() method.
-
-    Returns
-    -------
-    pflux : `astropy.Quantity`
-        Differential flux density in ``GeV-1 cm-3``.
+    Resc : :class:`astropy.Quantity`
+        Particle escape radius (=distance from source center). (pc)
+    N_0 : :class:`~astropy.units.Quantity`
+        Normalisation of particle distribution function normalising the
+        energy injection rate (L_CR, which could be E_totCR/age). (GeV/s)
+    Ep : :class:`~astropy.units.Quantity`
+        Particle energy. (GeV)
+    d : :class:`~astropy.units.Quantity`
+        Distance to particle injection location. (pc)
+    a : :class:`~astropy.units.Quantity`
+        Time since particle injection at source (can differ from its age). (yr)
+    dens : :class:`~astropy.units.Quantity`
+        Density of traversed ambient matter. (:math:`\mathrm{cm}^{-3}`)
+        Default value for ISM is 1 :math:`\mathrm{cm}^{-3}`.
+    chi : float
+        Scalar suppression factor for diffusion coefficient, relating to
+        the level of turbulence along the particles path.
+        (ism: 1, clouds: 0.05)
+    alpha : float
+        Proton spectrum spectral index. (default: 2.0)
     """
-    import numpy as np
-    import astropy.units as u
     from scipy.special import erf, erfc
 
     raise NotImplementedError("f0 for cont. ext. case still to be revised!")
@@ -135,43 +151,37 @@ def compute_pflux_continuous_extended(Resc,
     # Return
     return pflux
 
+# Equals & replaces former flux.flux_calc_cont():
+#     def flux_calc_cont(self, N_0, Ep, d, a, dens, chi=0.05, ism=0):
+
 @u.quantity_input(N_0=u.GeV, Ep=u.GeV, d=u.pc, a=u.yr, dens=u.cm**-3)
 def compute_pflux_continuous_point(N_0, Ep, d, a, dens, chi=0.05,
         ism=1, alpha=2.0) -> u.GeV**-1 * u.cm**-3:
     """
-    Compute differential proton flux density for a continuous injection from
-    a point source as given by Aharonian & Atoyan (1996) (eq. 8).
-    Equals & replaces former flux.flux_calc_cont():
-        def flux_calc_cont(self, N_0, Ep, d, a, dens, chi=0.05, ism=0):
-
+    Compute differential proton flux density (:math:`\mathrm{GeV}^{-1}\,\mathrm{cm}^{-3}`) for a continuous injection 
+    from a point source as given by `Aharonian & Atoyan (1996), A&A 309, 917 <https://ui.adsabs.harvard.edu/abs/1996A%26A...309..917A/abstract>`_ (eq. 8).
+    
     Parameters
     ----------
-    N_0 : `astropy.Quantity`
+    N_0 : :class:`~astropy.units.Quantity`
         Normalisation of particle distribution function normalising the
-        energy injection rate (L_CR, which could be E_totCR/age). (~ GeV s-1)
-    Ep : `astropy.Quantity`
-        Particle energy. (~ GeV)
-    d : `astropy.Quantity`
-        Distance to particle injection location. (~ pc)
-    a : `astropy.Quantity`
-        Time since particle injection at source (can differ from its age). (~ yr)
-    dens : `astropy.Quantity`
-        Density of traversed ambient matter. (~ cm-3)
-        (ism: 1 cm-3)
-    chi : `float`
+        energy injection rate (L_CR, which could be E_totCR/age). (GeV/s)
+    Ep : :class:`~astropy.units.Quantity`
+        Particle energy. (GeV)
+    d : :class:`~astropy.units.Quantity`
+        Distance to particle injection location. (pc)
+    a : :class:`~astropy.units.Quantity`
+        Time since particle injection at source (can differ from its age). (yr)
+    dens : :class:`~astropy.units.Quantity`
+        Density of traversed ambient matter. (:math:`\mathrm{cm}^{-3}`)
+        Default value for ISM is 1 :math:`\mathrm{cm}^{-3}`.
+    chi : float
         Scalar suppression factor for diffusion coefficient, relating to
         the level of turbulence along the particles path.
         (ism: 1, clouds: 0.05)
-    alpha : `float`
+    alpha : float
         Proton spectrum spectral index. (default: 2.0)
-
-    Returns
-    -------
-    pflux : `astropy.Quantity`
-        Differential flux density (~ GeV^-1 cm^-3).
     """
-    import numpy as np
-    import astropy.units as u
     from scipy.special import erfc
 
     # Q_0 is injection rate, two possible ways:
@@ -195,19 +205,14 @@ def compute_pflux_continuous_point(N_0, Ep, d, a, dens, chi=0.05,
 @u.quantity_input(e=u.GeV)
 def e2R(e, Z=1) -> u.GV:
     """
-    Compute proton rigidity.
+    Compute proton rigidity (``GV``) from particle energy.
 
     Parameters
     ==========
-    e : `astropy.Quantity`
-        Particle energy. (~ GeV)
-    Z : `float`
+    e : :class:`~astropy.units.Quantity`
+        Particle energy. (``GeV``)
+    Z : float
         Charge number, 1 for a proton.
-
-    Returns
-    =======
-    R : `astropy.Quantity`
-        Particle rigidity. (GV)
     """
     R = e / (Z * c.e.si)
     return R
@@ -215,9 +220,13 @@ def e2R(e, Z=1) -> u.GV:
 @u.quantity_input(E=u.GeV)
 def compute_fgal(E) -> u.GeV**(-1) * u.cm**(-3):
     """
-    Return spectral particle density of galactic CRs as measured by
-    AMS Collab. (2015), PRL 114 171103,
-    https://journals.aps.org/prl/pdf/10.1103/PhysRevLett.114.171103.
+    Returns differential proton density of galactic CRs (:math:`\mathrm{GeV}^{-1}\,\mathrm{cm}^{-3}`) 
+    measured by `AMS Collab. (2015), PRL 114 171103 <https://journals.aps.org/prl/pdf/10.1103/PhysRevLett.114.171103>`_.
+
+    Parameters
+    ----------
+    E : :class:`~astropy.units.Quantity` or array-like
+        Energy of Galactic cosmic rays. (GeV)
     """
     R = e2R(E)
 
@@ -232,80 +241,27 @@ def compute_fgal(E) -> u.GeV**(-1) * u.cm**(-3):
     # Return
     return n
 
-@u.quantity_input(E=u.GeV)
-def compute_fgal_dampe(E) -> u.GeV**(-1) * u.cm**(-3):
-    """
-    Import cosmic ray flux data from DAMPE measurements:
-    DAMPE Collab (2019), SciAdv aax3793,
-    https://www.science.org/doi/10.1126/sciadv.aax3793, 
-    and return cosmic-ray density of galactic CRs.
-    
-    Parameters:
-    -----------
-    E : array-like, optional
-        Energy values of Galactic cosmic rays (~ GeV).
-
-    
-    Returns:
-    --------
-    Cosmic ray density at specified energies (~ GeV^-1 cm^-3)
-    """
-    
-    # Load data from CSV file
-    df = pd.read_csv("./craic/data/DAMPE_fgal.csv")
-    gal_cr_flux = df['F_flux'].values / (u.m**2 * u.sr * u.s * u.GeV)
-    energy = df['E_GeV'].values * u.GeV
-
-    # Convert galactic CR flux to energy density
-    gal_cr_density=(gal_cr_flux * 4 * np.pi * u.sr / c.c).to('GeV^-1*cm^-3')
-
-    # Take log of both x and y arrays for interpolation
-    log_energy = np.log10(energy.value)
-    log_density = np.log10(gal_cr_density.value)
- 
-    # Create interpolation function in log space
-    interp_func_log = interp1d(log_energy, log_density, kind='linear', 
-                               bounds_error=False, fill_value='extrapolate')
-    
-    # Compute the CR density with the input energy array
-    density_interp = interp_func_log(np.log10(E.value))
-
-    n = (10**(density_interp))*u.Unit('GeV^-1*cm^-3')
-    return n
-
 def compute_fgal_dampe(E, E_tran=6.3*u.TeV):
-    
-
     """
-    Import cosmic ray flux data from CSV and return cosmic-ray density 
-    of galactic CRs as measured by DAMPE: 
-    DAMPE Collab (2019), SciAdv aax3793,
-    https://www.science.org/doi/10.1126/sciadv.aax3793.
+    Returns differential proton density of galactic CRs (:math:`\mathrm{GeV}^{-1}\,\mathrm{cm}^{-3}`) measured by 
+    `DAMPE Collab (2019), SciAdv aax3793 <https://www.science.org/doi/10.1126/sciadv.aax3793>`_.
     
-    Parameters:
-    -----------
-    E : array-like
+    Parameters
+    ==========
+    E : :class:`~astropy.units.Quantity` or array-like
         Energy values of Galactic cosmic rays (GeV).
-
-    E_tran: astropy.Quantity
-        Energy which the Smooth Broken Power-Law (SBPL) fits for low and high energies transitions. (TeV)
-
-    Returns:
-    --------
-    Cosmic ray density at specified energies (GeV^-1 cm^-3)
+    E_tran : :class:`~astropy.units.Quantity`
+        Energy at which the low-energy and high-energy Smooth Broken Power-Law (SBPL) fits transition. (TeV)
     """
     
     def DAMPE_SBPL_low(E):
-        """Smooth Broken Power Law fit for 100 GeV - 6.3 TeV. 
+        """Smooth Broken Power Law fit for 100 GeV - 6.3 TeV. Returns differential CR density (GeV^-1 cm^-3).
         
         Parameter:
         ----------
-        E: astropy.Quantity
-            Energy values of Galactic cosmic rays (energy)
-
-        Returns:
-        --------
-        Cosmic-ray density (GeV^-1 cm^-3)
+        E: :class:`~astropy.units.Quantity`
+            Energy values of Galactic cosmic rays (GeV)
+        
         """
     
         E_0 = 1 * u.TeV
@@ -315,15 +271,12 @@ def compute_fgal_dampe(E, E_tran=6.3*u.TeV):
         return density
 
     def DAMPE_SBPL_high(E):
-        """Smooth Broken Power Law fit for 1 TeV - 100 TeV. 
+        """Smooth Broken Power Law fit for 1 TeV - 100 TeV. Returns differential CR density (GeV^-1 cm^-3)
         
         Parameter:
         ----------
-        E: astropy.Quantity
-            Energy values of Galactic cosmic rays (energy)
-        Returns:
-        --------
-        Cosmic-ray density (GeV^-1 cm^-3)
+        E: :class:`~astropy.units.Quantity`
+            Energy values of Galactic cosmic rays (GeV)
         """
 
         E_0 = 1.0 * u.TeV

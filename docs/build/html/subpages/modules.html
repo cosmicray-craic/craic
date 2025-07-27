@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Modules &mdash; craic 0.1.0 documentation</title>
+  <title>Modules &amp; Functions &mdash; craic 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
 
@@ -16,10 +16,11 @@
       <script src="../_static/documentation_options.js?v=01f34227"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Tutorial" href="tutorial.html" />
+    <link rel="next" title="Quickstart Tutorial" href="tutorial.html" />
     <link rel="prev" title="Installation" href="installation.html" /> 
 </head>
 
@@ -45,8 +46,64 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="project.html">Project &amp; Contributors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Modules</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Modules &amp; Functions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#accelerator">accelerator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#craic.accelerator.accelerator"><code class="docutils literal notranslate"><span class="pre">accelerator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#craic.accelerator.accelerator.SNR_Radius"><code class="docutils literal notranslate"><span class="pre">accelerator.SNR_Radius()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#craic.accelerator.accelerator.SNR_age"><code class="docutils literal notranslate"><span class="pre">accelerator.SNR_age()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#craic.accelerator.accelerator.escape_time"><code class="docutils literal notranslate"><span class="pre">accelerator.escape_time()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#injection">injection</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#craic.injection.compute_fgal"><code class="docutils literal notranslate"><span class="pre">compute_fgal()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#craic.injection.compute_fgal_dampe"><code class="docutils literal notranslate"><span class="pre">compute_fgal_dampe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#craic.injection.compute_pflux_continuous_extended"><code class="docutils literal notranslate"><span class="pre">compute_pflux_continuous_extended()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#craic.injection.compute_pflux_continuous_point"><code class="docutils literal notranslate"><span class="pre">compute_pflux_continuous_point()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#craic.injection.compute_pflux_impulsive_extended"><code class="docutils literal notranslate"><span class="pre">compute_pflux_impulsive_extended()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#craic.injection.compute_pflux_impulsive_point"><code class="docutils literal notranslate"><span class="pre">compute_pflux_impulsive_point()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#craic.injection.e2R"><code class="docutils literal notranslate"><span class="pre">e2R()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#transport">transport</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#craic.transport.transport"><code class="docutils literal notranslate"><span class="pre">transport</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#craic.transport.transport.B_mag"><code class="docutils literal notranslate"><span class="pre">transport.B_mag()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#craic.transport.transport.Diffusion_Coefficient"><code class="docutils literal notranslate"><span class="pre">transport.Diffusion_Coefficient()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#craic.transport.transport.R_diffusion"><code class="docutils literal notranslate"><span class="pre">transport.R_diffusion()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#particles">particles</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#craic.particles.particles"><code class="docutils literal notranslate"><span class="pre">particles</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#craic.particles.particles.NormEbudget"><code class="docutils literal notranslate"><span class="pre">particles.NormEbudget()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#craic.particles.particles.sig_ppEK"><code class="docutils literal notranslate"><span class="pre">particles.sig_ppEK()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#craic.particles.particles.t_ppEK"><code class="docutils literal notranslate"><span class="pre">particles.t_ppEK()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#flux">flux</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#craic.flux.flux"><code class="docutils literal notranslate"><span class="pre">flux</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#craic.flux.flux.cloud_cell_flux"><code class="docutils literal notranslate"><span class="pre">flux.cloud_cell_flux()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#craic.flux.flux.compute_gamma_kernel"><code class="docutils literal notranslate"><span class="pre">flux.compute_gamma_kernel()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#craic.flux.flux.compute_neutrino_kernel"><code class="docutils literal notranslate"><span class="pre">flux.compute_neutrino_kernel()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#snr-cloud-flux">SNR_Cloud_Flux</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#craic.SNR_Cloud_Flux.SNR_Cloud_Flux"><code class="docutils literal notranslate"><span class="pre">SNR_Cloud_Flux</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#craic.SNR_Cloud_Flux.SNR_Cloud_Flux.__init__"><code class="docutils literal notranslate"><span class="pre">SNR_Cloud_Flux.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#craic.SNR_Cloud_Flux.SNR_Cloud_Flux.compute_flux"><code class="docutils literal notranslate"><span class="pre">SNR_Cloud_Flux.compute_flux()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Quickstart Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="versions.html">Versions</a></li>
 </ul>
 
@@ -64,7 +121,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">Modules</li>
+      <li class="breadcrumb-item active">Modules &amp; Functions</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/subpages/modules.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -74,8 +131,446 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="modules">
-<h1>Modules<a class="headerlink" href="#modules" title="Link to this heading"></a></h1>
+  <section id="modules-functions">
+<h1>Modules &amp; Functions<a class="headerlink" href="#modules-functions" title="Link to this heading"></a></h1>
+<p>Here are listed some useful functions from the modules <em>accelerator</em>, <em>particles</em>, <em>transport</em>, <em>flux</em>, and <em>injection</em>.
+They can be used to calculate the properties and CR flux accelerated by the supernova remnant, the transport in the ISM and in the molecular cloud, and the CR interactions within the cloud.</p>
+<section id="accelerator">
+<h2>accelerator<a class="headerlink" href="#accelerator" title="Link to this heading"></a></h2>
+<p>This module returns the properties of the supernova remnant, which accelerates particles to high energies.</p>
+<dl class="py class" id="module-craic.accelerator">
+<dt class="sig sig-object py" id="craic.accelerator.accelerator">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">craic.accelerator.</span></span><span class="sig-name descname"><span class="pre">accelerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">En=&lt;Quantity</span> <span class="pre">1.e+51</span> <span class="pre">erg&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/craic/accelerator.html#accelerator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#craic.accelerator.accelerator" title="Link to this definition"></a></dt>
+<dd><p>Calculates the radius and age of supernova remnant
+in the Sedov-Taylor stage.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="craic.accelerator.accelerator.SNR_Radius">
+<span class="sig-name descname"><span class="pre">SNR_Radius</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/craic/accelerator.html#accelerator.SNR_Radius"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#craic.accelerator.accelerator.SNR_Radius" title="Link to this definition"></a></dt>
+<dd><p>Classical Sedov-Taylor stage solution for SNR radius (pc) as a function of its age.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>time</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – SNR age. (yr)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="craic.accelerator.accelerator.SNR_age">
+<span class="sig-name descname"><span class="pre">SNR_age</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/craic/accelerator.html#accelerator.SNR_age"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#craic.accelerator.accelerator.SNR_age" title="Link to this definition"></a></dt>
+<dd><p>Estimates SNR age in the Sedov-Taylor stage (yr) based on its radius.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>size</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – SNR radius. (pc)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="craic.accelerator.accelerator.escape_time">
+<span class="sig-name descname"><span class="pre">escape_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ep</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">typeIIb</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/craic/accelerator.html#accelerator.escape_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#craic.accelerator.accelerator.escape_time" title="Link to this definition"></a></dt>
+<dd><p>Computes the escape time of particles from the supernova remnant (yr).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Ep</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Energy of particles (GeV)</p></li>
+<li><p><strong>typeIIb</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Type of supernova. Type Ia if False, type IIb if True.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="injection">
+<h2>injection<a class="headerlink" href="#injection" title="Link to this heading"></a></h2>
+<p>This module computes the proton flux from point or extended sources in the impulsive or continuous injection cases given a set of source properties, based on Aharonian and Atoyan (1996).</p>
+<dl class="py function" id="module-craic.injection">
+<dt class="sig sig-object py" id="craic.injection.compute_fgal">
+<span class="sig-prename descclassname"><span class="pre">craic.injection.</span></span><span class="sig-name descname"><span class="pre">compute_fgal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">E</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/craic/injection.html#compute_fgal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#craic.injection.compute_fgal" title="Link to this definition"></a></dt>
+<dd><p>Returns differential proton density of galactic CRs (<span class="math notranslate nohighlight">\(\mathrm{GeV}^{-1}\,\mathrm{cm}^{-3}\)</span>)
+measured by <a class="reference external" href="https://journals.aps.org/prl/pdf/10.1103/PhysRevLett.114.171103">AMS Collab. (2015), PRL 114 171103</a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>E</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a> or array-like) – Energy of Galactic cosmic rays. (GeV)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="craic.injection.compute_fgal_dampe">
+<span class="sig-prename descclassname"><span class="pre">craic.injection.</span></span><span class="sig-name descname"><span class="pre">compute_fgal_dampe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">E</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E_tran=&lt;Quantity</span> <span class="pre">6.3</span> <span class="pre">TeV&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/craic/injection.html#compute_fgal_dampe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#craic.injection.compute_fgal_dampe" title="Link to this definition"></a></dt>
+<dd><p>Returns differential proton density of galactic CRs (<span class="math notranslate nohighlight">\(\mathrm{GeV}^{-1}\,\mathrm{cm}^{-3}\)</span>) measured by
+<a class="reference external" href="https://www.science.org/doi/10.1126/sciadv.aax3793">DAMPE Collab (2019), SciAdv aax3793</a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>E</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a> or array-like) – Energy values of Galactic cosmic rays (GeV).</p></li>
+<li><p><strong>E_tran</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Energy at which the low-energy and high-energy Smooth Broken Power-Law (SBPL) fits transition. (TeV)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="craic.injection.compute_pflux_continuous_extended">
+<span class="sig-prename descclassname"><span class="pre">craic.injection.</span></span><span class="sig-name descname"><span class="pre">compute_pflux_continuous_extended</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Resc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N_0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ep</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ism</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/craic/injection.html#compute_pflux_continuous_extended"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#craic.injection.compute_pflux_continuous_extended" title="Link to this definition"></a></dt>
+<dd><p>Compute differential proton flux density (<span class="math notranslate nohighlight">\(\mathrm{GeV}^{-1}\,\mathrm{cm}^{-3}\)</span>) for an
+continuous injection from the surface of an extended source.
+The difference to the case of a point source is the normalisation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Resc</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.Quantity</span></code>) – Particle escape radius (=distance from source center). (pc)</p></li>
+<li><p><strong>N_0</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Normalisation of particle distribution function normalising the
+energy injection rate (L_CR, which could be E_totCR/age). (GeV/s)</p></li>
+<li><p><strong>Ep</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Particle energy. (GeV)</p></li>
+<li><p><strong>d</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Distance to particle injection location. (pc)</p></li>
+<li><p><strong>a</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Time since particle injection at source (can differ from its age). (yr)</p></li>
+<li><p><strong>dens</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Density of traversed ambient matter. (<span class="math notranslate nohighlight">\(\mathrm{cm}^{-3}\)</span>)
+Default value for ISM is 1 <span class="math notranslate nohighlight">\(\mathrm{cm}^{-3}\)</span>.</p></li>
+<li><p><strong>chi</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Scalar suppression factor for diffusion coefficient, relating to
+the level of turbulence along the particles path.
+(ism: 1, clouds: 0.05)</p></li>
+<li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Proton spectrum spectral index. (default: 2.0)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="craic.injection.compute_pflux_continuous_point">
+<span class="sig-prename descclassname"><span class="pre">craic.injection.</span></span><span class="sig-name descname"><span class="pre">compute_pflux_continuous_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">N_0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ep</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ism</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/craic/injection.html#compute_pflux_continuous_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#craic.injection.compute_pflux_continuous_point" title="Link to this definition"></a></dt>
+<dd><p>Compute differential proton flux density (<span class="math notranslate nohighlight">\(\mathrm{GeV}^{-1}\,\mathrm{cm}^{-3}\)</span>) for a continuous injection
+from a point source as given by <a class="reference external" href="https://ui.adsabs.harvard.edu/abs/1996A%26A...309..917A/abstract">Aharonian &amp; Atoyan (1996), A&amp;A 309, 917</a> (eq. 8).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>N_0</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Normalisation of particle distribution function normalising the
+energy injection rate (L_CR, which could be E_totCR/age). (GeV/s)</p></li>
+<li><p><strong>Ep</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Particle energy. (GeV)</p></li>
+<li><p><strong>d</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Distance to particle injection location. (pc)</p></li>
+<li><p><strong>a</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Time since particle injection at source (can differ from its age). (yr)</p></li>
+<li><p><strong>dens</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Density of traversed ambient matter. (<span class="math notranslate nohighlight">\(\mathrm{cm}^{-3}\)</span>)
+Default value for ISM is 1 <span class="math notranslate nohighlight">\(\mathrm{cm}^{-3}\)</span>.</p></li>
+<li><p><strong>chi</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Scalar suppression factor for diffusion coefficient, relating to
+the level of turbulence along the particles path.
+(ism: 1, clouds: 0.05)</p></li>
+<li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Proton spectrum spectral index. (default: 2.0)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="craic.injection.compute_pflux_impulsive_extended">
+<span class="sig-prename descclassname"><span class="pre">craic.injection.</span></span><span class="sig-name descname"><span class="pre">compute_pflux_impulsive_extended</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Resc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N_0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ep</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ism</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/craic/injection.html#compute_pflux_impulsive_extended"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#craic.injection.compute_pflux_impulsive_extended" title="Link to this definition"></a></dt>
+<dd><p>Compute differential proton flux density (<span class="math notranslate nohighlight">\(\mathrm{GeV}^{-1}\,\mathrm{cm}^{-3}\)</span>) for an
+impulsive injection from the surface of an extended source.
+The difference to the case of a point source is the normalisation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Resc</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Particle escape radius (=distance from source center). (pc)</p></li>
+<li><p><strong>N_0</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Normalisation of particle distribution function normalising the
+energy injection rate (L_CR, which could be E_totCR/age). (GeV/s)</p></li>
+<li><p><strong>Ep</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Particle energy. (GeV)</p></li>
+<li><p><strong>d</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Distance to particle injection location. (pc)</p></li>
+<li><p><strong>a</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Time since particle injection at source (can differ from its age). (yr)</p></li>
+<li><p><strong>dens</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Density of traversed ambient matter. (<span class="math notranslate nohighlight">\(\mathrm{cm}^{-3}\)</span>)
+Default value for ISM is 1 <span class="math notranslate nohighlight">\(\mathrm{cm}^{-3}\)</span>.</p></li>
+<li><p><strong>chi</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Scalar suppression factor for diffusion coefficient, relating to
+the level of turbulence along the particles path.
+(ism: 1, clouds: 0.05)</p></li>
+<li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Proton spectrum spectral index. (default: 2.0)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="craic.injection.compute_pflux_impulsive_point">
+<span class="sig-prename descclassname"><span class="pre">craic.injection.</span></span><span class="sig-name descname"><span class="pre">compute_pflux_impulsive_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">N_0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ep</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ism</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/craic/injection.html#compute_pflux_impulsive_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#craic.injection.compute_pflux_impulsive_point" title="Link to this definition"></a></dt>
+<dd><p>Compute differential proton flux density (<span class="math notranslate nohighlight">\(\mathrm{GeV}^{-1}\,\mathrm{cm}^{-3}\)</span>) for an
+impulsive injection from a point source as given by
+<a class="reference external" href="https://ui.adsabs.harvard.edu/abs/1996A%26A...309..917A/abstract">Aharonian &amp; Atoyan (1996), A&amp;A 309, 917</a> (eq. 3).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>N_0</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Normalisation of particle distribution function normalising the
+energy injection rate (L_CR, which could be E_totCR/age). (GeV/s)</p></li>
+<li><p><strong>Ep</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Particle energy. (GeV)</p></li>
+<li><p><strong>d</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Distance to particle injection location. (pc)</p></li>
+<li><p><strong>a</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Time since particle injection at source (can differ from its age). (yr)</p></li>
+<li><p><strong>dens</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Density of traversed ambient matter. (<span class="math notranslate nohighlight">\(\mathrm{cm}^{-3}\)</span>)
+Default value for ISM is 1 <span class="math notranslate nohighlight">\(\mathrm{cm}^{-3}\)</span>.</p></li>
+<li><p><strong>chi</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Scalar suppression factor for diffusion coefficient, relating to
+the level of turbulence along the particles path.
+(ism: 1, clouds: 0.05)</p></li>
+<li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Proton spectrum spectral index. (default: 2.0)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="craic.injection.e2R">
+<span class="sig-prename descclassname"><span class="pre">craic.injection.</span></span><span class="sig-name descname"><span class="pre">e2R</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/craic/injection.html#e2R"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#craic.injection.e2R" title="Link to this definition"></a></dt>
+<dd><p>Compute proton rigidity (<code class="docutils literal notranslate"><span class="pre">GV</span></code>) from particle energy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>e</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Particle energy. (<code class="docutils literal notranslate"><span class="pre">GeV</span></code>)</p></li>
+<li><p><strong>Z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Charge number, 1 for a proton.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="transport">
+<h2>transport<a class="headerlink" href="#transport" title="Link to this heading"></a></h2>
+<p>This modules describes CR transport by calculating magnetic field strength, diffusion coefficient and diffusion radius in the ISM and in a molecular cloud.</p>
+<dl class="py class" id="module-craic.transport">
+<dt class="sig sig-object py" id="craic.transport.transport">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">craic.transport.</span></span><span class="sig-name descname"><span class="pre">transport</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">D0=&lt;Quantity</span> <span class="pre">3.e+26</span> <span class="pre">cm2</span> <span class="pre">/</span> <span class="pre">s&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/craic/transport.html#transport"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#craic.transport.transport" title="Link to this definition"></a></dt>
+<dd><p>Calculates magnetic field strength, diffusion coefficient and diffusion radius
+in the ISM and in a molecular cloud.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="craic.transport.transport.B_mag">
+<span class="sig-name descname"><span class="pre">B_mag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dens</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/craic/transport.html#transport.B_mag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#craic.transport.transport.B_mag" title="Link to this definition"></a></dt>
+<dd><p>Returns the magnetic field strength of the cloud (<span class="math notranslate nohighlight">\(\mathrm{\mu G}\)</span>)
+based on <a class="reference external" href="https://iopscience.iop.org/article/10.1088/0004-637X/725/1/466">Crutcher et al. 2010, ApJ 725 466</a> (eq. 21).</p>
+<section id="parameter">
+<h3>Parameter<a class="headerlink" href="#parameter" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>dens: <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a></dt><dd><p>Number density of the molecular cloud (<span class="math notranslate nohighlight">\(\mathrm{cm}^{-3}\)</span>)</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="craic.transport.transport.Diffusion_Coefficient">
+<span class="sig-name descname"><span class="pre">Diffusion_Coefficient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ep</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ism</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/craic/transport.html#transport.Diffusion_Coefficient"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#craic.transport.transport.Diffusion_Coefficient" title="Link to this definition"></a></dt>
+<dd><p>Returns the diffusion coefficient of the ISM or the cloud (<span class="math notranslate nohighlight">\(\mathrm{cm}^{2} \mathrm{/s}\)</span>)
+based on number density of the medium.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Ep</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a> or array-like) – Energy of particles (GeV)</p></li>
+<li><p><strong>dens</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Number density (<span class="math notranslate nohighlight">\(\mathrm{cm}^{-3}\)</span>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="craic.transport.transport.R_diffusion">
+<span class="sig-name descname"><span class="pre">R_diffusion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ep</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ism</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/craic/transport.html#transport.R_diffusion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#craic.transport.transport.R_diffusion" title="Link to this definition"></a></dt>
+<dd><p>Returns how far the accelerated particles can
+propagate by diffusion in the ISM or in the molecular cloud (cm).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Ep</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Energy of particles (GeV)</p></li>
+<li><p><strong>a</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Time of particle propagation in the medium. (seconds)</p></li>
+<li><p><strong>dens</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Number density (<span class="math notranslate nohighlight">\(\mathrm{cm}^{-3}\)</span>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="particles">
+<h2>particles<a class="headerlink" href="#particles" title="Link to this heading"></a></h2>
+<p>This module handles particle interactions by calculating inelastic p-p interaction cross-section, proton cooling time, and the normalisation of proton spectrum.</p>
+<dl class="py class" id="module-craic.particles">
+<dt class="sig sig-object py" id="craic.particles.particles">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">craic.particles.</span></span><span class="sig-name descname"><span class="pre">particles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha=2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ebudget=&lt;Quantity</span> <span class="pre">1.e+50</span> <span class="pre">erg&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/craic/particles.html#particles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#craic.particles.particles" title="Link to this definition"></a></dt>
+<dd><p>Calculates the p-p cross-section, proton cooling time,
+and the normalisation for proton spectrum.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="craic.particles.particles.NormEbudget">
+<span class="sig-name descname"><span class="pre">NormEbudget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Emin=&lt;Quantity</span> <span class="pre">10.</span> <span class="pre">GeV&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Emax=&lt;Quantity</span> <span class="pre">3.</span> <span class="pre">PeV&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/craic/particles.html#particles.NormEbudget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#craic.particles.particles.NormEbudget" title="Link to this definition"></a></dt>
+<dd><p>Computes the normalisation of the proton flux. Normalises the integral
+of the energy flux to 1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Emin</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Minimum proton energy. (GeV)</p></li>
+<li><p><strong>Emax</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Maximum proton energy. (GeV)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="craic.particles.particles.sig_ppEK">
+<span class="sig-name descname"><span class="pre">sig_ppEK</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ep</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/craic/particles.html#particles.sig_ppEK"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#craic.particles.particles.sig_ppEK" title="Link to this definition"></a></dt>
+<dd><p>Computes the total inelastic cross section of p-p collisions (<span class="math notranslate nohighlight">\(\mathrm{cm}^{2}\)</span>) as given by
+<a class="reference external" href="https://journals.aps.org/prd/abstract/10.1103/PhysRevD.90.123014">Kafexhiu et al. (2014), PhysRevD 90, 123014,</a> (eq. 1).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Ep</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Proton energy. (GeV)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="craic.particles.particles.t_ppEK">
+<span class="sig-name descname"><span class="pre">t_ppEK</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ep</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/craic/particles.html#particles.t_ppEK"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#craic.particles.particles.t_ppEK" title="Link to this definition"></a></dt>
+<dd><p>Computes the cooling time of protons (s).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dens</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Number density. (<span class="math notranslate nohighlight">\(\mathrm{cm}^{-3}\)</span>)</p></li>
+<li><p><strong>Ep</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Proton energy. (GeV)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="flux">
+<h2>flux<a class="headerlink" href="#flux" title="Link to this heading"></a></h2>
+<p>This module computes the proton flux and kernal functions required to calculate the gamma-ray and neutrino emission from the molecular cloud.”””</p>
+<dl class="py class" id="module-craic.flux">
+<dt class="sig sig-object py" id="craic.flux.flux">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">craic.flux.</span></span><span class="sig-name descname"><span class="pre">flux</span></span><a class="reference internal" href="../_modules/craic/flux.html#flux"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#craic.flux.flux" title="Link to this definition"></a></dt>
+<dd><p>Computes proton flux, gamma-ray and neutrino
+kernal function from the molecular cloud.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="craic.flux.flux.cloud_cell_flux">
+<span class="sig-name descname"><span class="pre">cloud_cell_flux</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Rc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Dc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flux</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/craic/flux.html#flux.cloud_cell_flux"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#craic.flux.flux.cloud_cell_flux" title="Link to this definition"></a></dt>
+<dd><p>Compute the total proton influx at the cloud (<span class="math notranslate nohighlight">\(\mathrm{GeV}^{-1}\)</span>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Rc</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Radius of the molecular cloud. (pc)</p></li>
+<li><p><strong>Dc</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Proton penetration depth in the cloud. (pc)</p></li>
+<li><p><strong>flux</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Proton differential flux density at cloud entrance location. (<span class="math notranslate nohighlight">\(\mathrm{GeV}^{-1}\,\mathrm{cm}^{-3}\)</span>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="craic.flux.flux.compute_gamma_kernel">
+<span class="sig-name descname"><span class="pre">compute_gamma_kernel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Eg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ep</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/craic/flux.html#flux.compute_gamma_kernel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#craic.flux.flux.compute_gamma_kernel" title="Link to this definition"></a></dt>
+<dd><p>Computes the kernel function for the total gamma-ray spectrum from <span class="math notranslate nohighlight">\(\mathrm{\pi^{0}}\)</span> and
+<span class="math notranslate nohighlight">\(\eta\)</span> meson decay channels according to <a class="reference external" href="https://journals.aps.org/prd/abstract/10.1103/PhysRevD.74.034018">Kelner et al. 2006, PhysRevD 74, 034018</a>.
+(<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>, indexing [((proton,)gamma)])</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Eg</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Energy of gamma rays. (TeV)</p></li>
+<li><p><strong>Ep</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Energy of protons. (GeV)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="craic.flux.flux.compute_neutrino_kernel">
+<span class="sig-name descname"><span class="pre">compute_neutrino_kernel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">En</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ep</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/craic/flux.html#flux.compute_neutrino_kernel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#craic.flux.flux.compute_neutrino_kernel" title="Link to this definition"></a></dt>
+<dd><p>Compute the neutrino kernel function for the total neutrino spectrum from <span class="math notranslate nohighlight">\(\pi^{\pm}\)</span> &amp;
+<span class="math notranslate nohighlight">\(\mu\)</span> decay channels according to <a class="reference external" href="https://journals.aps.org/prd/abstract/10.1103/PhysRevD.74.034018">Kelner et al. 2006, PhysRevD 74, 034018</a>.
+Returns kernal functions from <span class="math notranslate nohighlight">\(\mu\)</span> and <span class="math notranslate nohighlight">\(\pi^{\pm}\)</span> with indexing
+[((proton,)neutrino)].</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>En</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Energy of neutrinos. (TeV)</p></li>
+<li><p><strong>Ep</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Energy of protons. (GeV)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="snr-cloud-flux">
+<h2>SNR_Cloud_Flux<a class="headerlink" href="#snr-cloud-flux" title="Link to this heading"></a></h2>
+<p>This module contains the essential functions to configure the properties of the supernova remnant and the molecular cloud, and compute the gamma-ray and neutrino spectra.</p>
+<dl class="py class" id="module-craic.SNR_Cloud_Flux">
+<dt class="sig sig-object py" id="craic.SNR_Cloud_Flux.SNR_Cloud_Flux">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">craic.SNR_Cloud_Flux.</span></span><span class="sig-name descname"><span class="pre">SNR_Cloud_Flux</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chi=0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_SNR=&lt;Quantity</span> <span class="pre">2000.</span> <span class="pre">pc&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius_MC=&lt;Quantity</span> <span class="pre">10.</span> <span class="pre">pc&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Eg_lo=&lt;Quantity</span> <span class="pre">1.</span> <span class="pre">GeV&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Eg_hi=&lt;Quantity</span> <span class="pre">3000.</span> <span class="pre">TeV&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accel_type='Impulsive'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snr_typeII=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">F_gal=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">palpha=2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D_fast=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flag_low=True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/craic/SNR_Cloud_Flux.html#SNR_Cloud_Flux"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#craic.SNR_Cloud_Flux.SNR_Cloud_Flux" title="Link to this definition"></a></dt>
+<dd><p>Class to compute gamma-ray flux from a molecular cloud given the properties of a nearby SNR.</p>
+<p>This class calculates gamma-ray and neutrino fluxes
+from cosmic ray interactions in molecular clouds illuminated by nearby supernova remnants.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="craic.SNR_Cloud_Flux.SNR_Cloud_Flux.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chi=0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_SNR=&lt;Quantity</span> <span class="pre">2000.</span> <span class="pre">pc&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius_MC=&lt;Quantity</span> <span class="pre">10.</span> <span class="pre">pc&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Eg_lo=&lt;Quantity</span> <span class="pre">1.</span> <span class="pre">GeV&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Eg_hi=&lt;Quantity</span> <span class="pre">3000.</span> <span class="pre">TeV&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accel_type='Impulsive'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snr_typeII=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">F_gal=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">palpha=2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D_fast=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flag_low=True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/craic/SNR_Cloud_Flux.html#SNR_Cloud_Flux.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#craic.SNR_Cloud_Flux.SNR_Cloud_Flux.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the SNR Cloud Flux model by setting the properties of the SNR and the cloud.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>chi</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Scalar suppression factor for diffusion coefficient in clouds, relating
+to the level of turbulence along the particles path.
+(ism: 1, clouds: 0.05)</p></li>
+<li><p><strong>distance_SNR</strong> (<em>astropy.Quantity</em>) – Distance from earth to the SNR. (~ pc)</p></li>
+<li><p><strong>radius_MC</strong> (<em>astropy.Quantity</em>) – Radius of the molecular cloud (~ pc)</p></li>
+<li><p><strong>Eg_lo</strong> (<em>astropy.Quantity</em>) – Minimum energy of the produced gamma rays.</p></li>
+<li><p><strong>Eg_hi</strong> (<em>astropy.Quantity</em>) – Maximum energy of the produced gamma rays.</p></li>
+<li><p><strong>accel_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Type of acceleration. Possible values are:
+<code class="docutils literal notranslate"><span class="pre">Impulsive</span></code> or <code class="docutils literal notranslate"><span class="pre">Continuous</span></code></p></li>
+<li><p><strong>snr_typeII</strong> (<em>boolean</em>) – Flag to indicate the SNR scenario considered</p></li>
+<li><p><strong>F_gal</strong> (<em>boolean</em><em> or </em><em>string</em>) – Flag to include the galactic CR flux contribution. Can switch between
+two Galactic CR flux inputs “AMS-O2” and “DAMPE”.</p></li>
+<li><p><strong>palpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Proton spectrum index</p></li>
+<li><p><strong>D_fast</strong> (<em>boolean</em>) – Diffusion scenario (fast or slow normalisation)</p></li>
+<li><p><strong>flag_low</strong> (<em>boolean</em>) – Flag to include low energy correction</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="craic.SNR_Cloud_Flux.SNR_Cloud_Flux.compute_flux">
+<span class="sig-name descname"><span class="pre">compute_flux</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nh2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">age</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><span class="pre">tuple</span></a></span></span><a class="reference internal" href="../_modules/craic/SNR_Cloud_Flux.html#SNR_Cloud_Flux.compute_flux"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#craic.SNR_Cloud_Flux.SNR_Cloud_Flux.compute_flux" title="Link to this definition"></a></dt>
+<dd><p>Compute the gamma-ray and neutrino flux from a molecular cloud
+irradiated by a nearby SNR.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nh2</strong> (<em>astropy.Quantity</em>) – Matter density in the MC. (~ cm-3)</p></li>
+<li><p><strong>dist</strong> (<em>astropy.Quantity</em>) – Distance from SNR center to MC center. (~ pc)</p></li>
+<li><p><strong>age</strong> (<em>astropy.Quantity</em>) – SNR age. (~ yr)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>(Egs, total_phig, phi_nu, phi_nue_osc, phi_numu_osc, phi_nutau_osc)</p>
+<dl class="simple">
+<dt>Egs<span class="classifier">astropy.Quantity</span></dt><dd><p>Gamma-ray (or neutrino, i.e. secondary) energies. (TeV)</p>
+</dd>
+<dt>total_phig<span class="classifier">astropy.Quantity</span></dt><dd><p>Gamma-ray flux. (TeV-1 cm-2 s-1)</p>
+</dd>
+<dt>phi_nu<span class="classifier">astropy.Quantity</span></dt><dd><p>Neutrino flux. (TeV-1 cm-2 s-1)</p>
+</dd>
+<dt>phi_nue_osc<span class="classifier">astropy.Quantity</span></dt><dd><p>Electron Neutrino flux. (TeV-1 cm-2 s-1)</p>
+</dd>
+<dt>phi_numu_osc<span class="classifier">astropy.Quantity</span></dt><dd><p>Muon Neutrino flux. (TeV-1 cm-2 s-1)</p>
+</dd>
+<dt>phi_nutau_osc<span class="classifier">astropy.Quantity</span></dt><dd><p>Tau Neutrino flux. (TeV-1 cm-2 s-1)</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)">tuple</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
 </section>
 
 
@@ -83,7 +578,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="tutorial.html" class="btn btn-neutral float-right" title="Tutorial" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="tutorial.html" class="btn btn-neutral float-right" title="Quickstart Tutorial" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

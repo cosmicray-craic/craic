@@ -4,8 +4,9 @@ from scipy.special import erfc
 from IPython import embed
 
 class flux:
-    """Return proton flux, gamma-ray and neutrino 
+    """Computes proton flux, gamma-ray and neutrino 
     kernal function from the molecular cloud."""
+    
     ncbins = 30
 
     # Neutrino Oscillation Probabilities over long distances
@@ -20,21 +21,16 @@ class flux:
     @u.quantity_input(Rc=u.pc, Dc=u.pc)
     def cloud_cell_flux(self, Rc, Dc, flux):
         """
-        Compute the total proton influx at the cloud.
+        Compute the total proton influx at the cloud (:math:`\mathrm{GeV}^{-1}`).
 
         Parameters
         ----------
-        Rc : `astropy.Quantity`
-            Cloud radius (~ pc)
-        Dc : `astropy.Quantity`
-            Proton penetration depth in cloud (~ pc)
-        flux : `astropy.Quantity`
-            Proton flux at cloud entrance location
-
-        Returns
-        -------
-        tot_ccf : `astropy.Quantity`
-            Total cloud-cell-flux (~ GeV-1)
+        Rc : :class:`~astropy.units.Quantity`
+            Radius of the molecular cloud. (pc)
+        Dc : :class:`~astropy.units.Quantity`
+            Proton penetration depth in the cloud. (pc)
+        flux : :class:`~astropy.units.Quantity`
+            Proton differential flux density at cloud entrance location. (:math:`\mathrm{GeV}^{-1}\,\mathrm{cm}^{-3}`)
         """
 
         # Initialise return value to desired units
@@ -96,20 +92,18 @@ class flux:
     @u.quantity_input(Eg=u.TeV, Ep=u.GeV)
     def compute_gamma_kernel(self, Eg, Ep):
         """
-        Compute the gamma-ray kernel function according to Kelner et al. 2006:
-        Total spectrum of gamma-rays from pi0 & eta meson decay channels.
+        Computes the kernel function for the total gamma-ray spectrum from :math:`\mathrm{\pi^{0}}` and 
+        :math:`\eta` meson decay channels according to `Kelner et al. 2006, PhysRevD 74, 034018 
+        <https://journals.aps.org/prd/abstract/10.1103/PhysRevD.74.034018>`_. 
+        (:class:`numpy.ndarray`, indexing [((proton,)gamma)])
+
 
         Parameters
         ----------
-        Eg : `astropy.Quantity`
-            Gamma energy (~ TeV)
-        Ep : `astropy.Quantity`
-            Proton energy (~ GeV)
-
-        Returns
-        -------
-        F_gamma : `numpyp.ndarray`
-            Gamma kernel function with indexing [((proton,)gamma)]
+        Eg : :class:`~astropy.units.Quantity`
+            Energy of gamma rays. (TeV)
+        Ep : :class:`~astropy.units.Quantity`
+            Energy of protons. (GeV)
         """
         Ep_ndim_in = np.ndim(Ep)
         Eg_ndim_in = np.ndim(Eg)
@@ -162,23 +156,18 @@ class flux:
     @u.quantity_input(En=u.TeV, Ep=u.GeV)
     def compute_neutrino_kernel(self, En, Ep):
         """
-        Compute the neutrino kernel function according to Kelner et al. 2006:
-        Total spectrum of neutrinos from charged pion & muon decay channels.
+        Compute the neutrino kernel function for the total neutrino spectrum from :math:`\pi^{\pm}` & 
+        :math:`\mu` decay channels according to `Kelner et al. 2006, PhysRevD 74, 034018 
+        <https://journals.aps.org/prd/abstract/10.1103/PhysRevD.74.034018>`_. 
+        Returns kernal functions from :math:`\mu` and :math:`\pi^{\pm}` with indexing 
+        [((proton,)neutrino)]. 
 
         Parameters
         ----------
-        En : `astropy.Quantity`
-            neutrino energy (~ TeV)
-        Ep : `astropy.Quantity`
-            Proton energy (~ GeV)
-
-        Returns
-        -------
-        F_nu_1 : `numpyp.ndarray`
-            Neutrino kernel function with indexing [((proton,)neutrino)] from muons
-
-        F_nu_2 : `numpyp.ndarray`
-            Neutrino kernel function with indexing [((proton,)neutrino)] from pions
+        En : :class:`~astropy.units.Quantity`
+            Energy of neutrinos. (TeV)
+        Ep : :class:`~astropy.units.Quantity`
+            Energy of protons. (GeV)
         """
         Ep_ndim_in = np.ndim(Ep)
         En_ndim_in = np.ndim(En)
@@ -252,7 +241,7 @@ class flux:
         elif (En_ndim_in==0):                 F_nu_2=F_nu_2[:,0]
 
         # Return [((proton,)neutrino)]
-        # Pion decay (F_nu_1) then muon decay (F_nu_2)
+        # Muon decay (F_nu_1) then pion decay (F_nu_2)
         return F_nu_1 , F_nu_2
 
     

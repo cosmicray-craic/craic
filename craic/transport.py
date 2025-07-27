@@ -4,8 +4,9 @@ import astropy.constants as c
 from .particles import particles
 
 class transport:
-    """Returns magnetic field strength, diffusion coefficient and diffusion radius
+    """Calculates magnetic field strength, diffusion coefficient and diffusion radius
     in the ISM and in a molecular cloud."""
+
     chiism = 1.
     cr_delta = 0.5
     part = particles()
@@ -18,20 +19,14 @@ class transport:
     # Magnetic Field Strength
     @u.quantity_input(dens=u.cm**-3)
     def B_mag(self, dens) -> u.uG:
-        """Returns the magnetic field strength of the cloud
-        based on the number density.
-        Crutcher et al. 2010, ApJ 725 466
-        https://iopscience.iop.org/article/10.1088/0004-637X/725/1/466
+        """Returns the magnetic field strength of the cloud (:math:`\mathrm{\mu G}`)
+        based on `Crutcher et al. 2010, ApJ 725 466 
+        <https://iopscience.iop.org/article/10.1088/0004-637X/725/1/466>`_ (eq. 21).
 
         Parameter
         ----------
-        dens: `astropy.Quantity`
-            Number density of the molecular cloud (~ cm^-3)
-
-        Return
-        -------
-        B : `astropy.Quantity`
-            Magnetic field strength (~ micro Gauss)
+        dens: :class:`~astropy.units.Quantity`
+            Number density of the molecular cloud (:math:`\mathrm{cm}^{-3}`)
         """
         B = np.where(dens > 300*u.cm**-3,
                         10*u.uG * (dens/(300*u.cm**-3))**0.65,
@@ -41,20 +36,15 @@ class transport:
 
     @u.quantity_input(Ep=u.GeV, dens=u.cm**-3)
     def Diffusion_Coefficient(self, Ep, dens, chi=0.05, ism=0) -> u.cm**2/u.s:  # input: GeV
-        """Returns the diffusion coefficient of the ISM or the cloud 
-        based on local magnetic field strength.
+        """Returns the diffusion coefficient of the ISM or the cloud (:math:`\mathrm{cm}^{2} \mathrm{/s}`)
+        based on number density of the medium.
         
         Parameters
         ----------
-        Ep : `astropy.Quantity`
-            Energy of particles (~ GeV)
-        dens: `astropy.Quantity`
-            Number density of the molecular cloud (~ cm^-3)
-
-        Returns
-        -------
-        d_coeff : `astropy.Quantity`
-            Diffusion coefficient (~ cm^2/s)
+        Ep : :class:`~astropy.units.Quantity` or array-like
+            Energy of particles (GeV)
+        dens: :class:`~astropy.units.Quantity`
+            Number density (:math:`\mathrm{cm}^{-3}`)
         """
 
         # chi = 1, no suppression in the ISM = larger diffusion coefficient
@@ -67,22 +57,18 @@ class transport:
 
     @u.quantity_input(Ep=u.GeV, a=u.s, dens=u.cm**-3)
     def R_diffusion(self, Ep, a, dens, chi=0.05, ism=0) -> u.cm: 
-        """Returns how deep the accelerated particles can 
-        penetrate in the molecular cloud.
+        """Returns how far the accelerated particles can 
+        propagate by diffusion in the ISM or in the molecular cloud (cm).
         
         Parameters
         ----------
-        Ep : `astropy.Quantity`
-            Energy of particles (~ GeV)
-        a : `astropy.Quantity`
-            Time of particle propagation in the cloud. (~ s)
-        dens: `astropy.Quantity`
-            Number density of the molecular cloud (~ cm^-3)
-
-        Returns
-        -------
-        R_dif : `astropy.Quantity`
-            Diffusion radius (~ cm)"""
+        Ep : :class:`~astropy.units.Quantity`
+            Energy of particles (GeV)
+        a : :class:`~astropy.units.Quantity`
+            Time of particle propagation in the medium. (seconds)
+        dens: :class:`~astropy.units.Quantity`
+            Number density (:math:`\mathrm{cm}^{-3}`)
+        """
 
 
         R_dif = 2 * np.sqrt(self.Diffusion_Coefficient(Ep, dens, chi=chi, ism=ism) * a.to(u.s))  # no frac contribution
