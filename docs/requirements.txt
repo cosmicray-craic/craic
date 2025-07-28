@@ -1,0 +1,16 @@
+# Core doc tools
+sphinx>=7.0
+sphinx_rtd_theme
+
+# Markdown support
+myst-parser
+
+# Docstring and intersphinx support
+sphinxcontrib-napoleon
+
+
+# Scientific dependencies used in your code
+numpy
+matplotlib
+astropy
+
