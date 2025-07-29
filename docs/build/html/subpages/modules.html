@@ -539,25 +539,25 @@ irradiated by a nearby SNR.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>nh2</strong> (<em>astropy.Quantity</em>) – Matter density in the MC. (~ cm-3)</p></li>
-<li><p><strong>dist</strong> (<em>astropy.Quantity</em>) – Distance from SNR center to MC center. (~ pc)</p></li>
-<li><p><strong>age</strong> (<em>astropy.Quantity</em>) – SNR age. (~ yr)</p></li>
+<li><p><strong>nh2</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Matter density in the MC. (<span class="math notranslate nohighlight">\(\mathrm{cm}^{-3}\)</span>)</p></li>
+<li><p><strong>dist</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Distance from SNR center to MC center. (pc)</p></li>
+<li><p><strong>age</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – SNR age. (yr)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><p>(Egs, total_phig, phi_nu, phi_nue_osc, phi_numu_osc, phi_nutau_osc)</p>
-<dl class="simple">
-<dt>Egs<span class="classifier">astropy.Quantity</span></dt><dd><p>Gamma-ray (or neutrino, i.e. secondary) energies. (TeV)</p>
+<dl>
+<dt>Egs<span class="classifier"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a></span></dt><dd><p>Gamma-ray (or neutrino, i.e. secondary) energies. (TeV)</p>
 </dd>
-<dt>total_phig<span class="classifier">astropy.Quantity</span></dt><dd><p>Gamma-ray flux. (TeV-1 cm-2 s-1)</p>
+<dt>total_phig<span class="classifier"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a></span></dt><dd><p>Gamma-ray flux. (<span class="math notranslate nohighlight">\(\mathrm{TeV}^{-1}\,\mathrm{cm}^{-2}\,\mathrm{s}^{-1}\)</span>)</p>
 </dd>
-<dt>phi_nu<span class="classifier">astropy.Quantity</span></dt><dd><p>Neutrino flux. (TeV-1 cm-2 s-1)</p>
+<dt>phi_nu<span class="classifier"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a></span></dt><dd><p>Neutrino flux. (<span class="math notranslate nohighlight">\(\mathrm{TeV}^{-1}\,\mathrm{cm}^{-2}\,\mathrm{s}^{-1}\)</span>)</p>
 </dd>
-<dt>phi_nue_osc<span class="classifier">astropy.Quantity</span></dt><dd><p>Electron Neutrino flux. (TeV-1 cm-2 s-1)</p>
+<dt>phi_nue_osc<span class="classifier"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a></span></dt><dd><p>Electron Neutrino flux. (<span class="math notranslate nohighlight">\(\mathrm{TeV}^{-1}\,\mathrm{cm}^{-2}\,\mathrm{s}^{-1}\)</span>)</p>
 </dd>
-<dt>phi_numu_osc<span class="classifier">astropy.Quantity</span></dt><dd><p>Muon Neutrino flux. (TeV-1 cm-2 s-1)</p>
+<dt>phi_numu_osc<span class="classifier"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a></span></dt><dd><p>Muon Neutrino flux. (<span class="math notranslate nohighlight">\(\mathrm{TeV}^{-1}\,\mathrm{cm}^{-2}\,\mathrm{s}^{-1}\)</span>)</p>
 </dd>
-<dt>phi_nutau_osc<span class="classifier">astropy.Quantity</span></dt><dd><p>Tau Neutrino flux. (TeV-1 cm-2 s-1)</p>
+<dt>phi_nutau_osc<span class="classifier"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a></span></dt><dd><p>Tau Neutrino flux. (<span class="math notranslate nohighlight">\(\mathrm{TeV}^{-1}\,\mathrm{cm}^{-2}\,\mathrm{s}^{-1}\)</span>)</p>
 </dd>
 </dl>
 </p>

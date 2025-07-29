@@ -1,5 +1,5 @@
 Project & Contributors
-----------------------
+======================
 
 This project is contributed by Alison Mitchell, Andreas Specovius, Gavin Rowell, Hayden P. H. Ng, Sabrina Einecke, Samuel Spencer and Silvia Celli.
 

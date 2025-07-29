@@ -16,23 +16,11 @@ Welcome to craic's documentation!
    subpages/versions
 
 Introduction
------
+------------
 
 This is the documentation page for the `CRAIC <https://github.com/cosmicray-craic/craic>`_ python pacakge (Cosmic Ray Acceleration and Interactions with Clouds).
 It models the accelerated cosmic rays from an accelerator, transport through the intervening interstellar medium (ISM), 
 and the subsequent p-p interactions with interstellar clouds. Secondary gamma-ray and neutrino spectra are calculated as a result.
-
-Installation
-------------
-
-To install the package, you can download from the PyPI library.
-
-To download, type the following command in your terminal (Mac/Linux) or command prompt (Windows):
-
-.. code-block:: bash
-
-   $ pip install craic
-
 
 Project details
 ---------------
@@ -47,8 +35,8 @@ If you have any enquires or are asking for help, please create a Github issue or
 Versions
 --------
 
-The updated versions are listed here:
+The updated versions are listed here.
 
-For more details, please refer to the github repository: `CRAIC <https://github.com/cosmicray-craic/craic>`_.
+For more details, please refer to the Github repository: `CRAIC <https://github.com/cosmicray-craic/craic>`_.
 
 

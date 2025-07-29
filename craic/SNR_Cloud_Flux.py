@@ -398,30 +398,30 @@ class SNR_Cloud_Flux:
         
         Parameters
         ----------
-        nh2 : astropy.Quantity
-            Matter density in the MC. (~ cm-3)
-        dist : astropy.Quantity
-            Distance from SNR center to MC center. (~ pc)
-        age : astropy.Quantity
-            SNR age. (~ yr)
+        nh2 : :class:`~astropy.units.Quantity`
+            Matter density in the MC. (:math:`\mathrm{cm}^{-3}`)
+        dist : :class:`~astropy.units.Quantity`
+            Distance from SNR center to MC center. (pc)
+        age : :class:`~astropy.units.Quantity`
+            SNR age. (yr)
             
         Returns
         -------
         tuple
             (Egs, total_phig, phi_nu, phi_nue_osc, phi_numu_osc, phi_nutau_osc)
             
-            Egs : astropy.Quantity
+            Egs : :class:`~astropy.units.Quantity`
                 Gamma-ray (or neutrino, i.e. secondary) energies. (TeV)
-            total_phig : astropy.Quantity
-                Gamma-ray flux. (TeV-1 cm-2 s-1)
-            phi_nu : astropy.Quantity
-                Neutrino flux. (TeV-1 cm-2 s-1)
-            phi_nue_osc : astropy.Quantity
-                Electron Neutrino flux. (TeV-1 cm-2 s-1)
-            phi_numu_osc : astropy.Quantity
-                Muon Neutrino flux. (TeV-1 cm-2 s-1)
-            phi_nutau_osc : astropy.Quantity
-                Tau Neutrino flux. (TeV-1 cm-2 s-1)
+            total_phig : :class:`~astropy.units.Quantity`
+                Gamma-ray flux. (:math:`\mathrm{TeV}^{-1}\,\mathrm{cm}^{-2}\,\mathrm{s}^{-1}`)
+            phi_nu : :class:`~astropy.units.Quantity`
+                Neutrino flux. (:math:`\mathrm{TeV}^{-1}\,\mathrm{cm}^{-2}\,\mathrm{s}^{-1}`)
+            phi_nue_osc : :class:`~astropy.units.Quantity`
+                Electron Neutrino flux. (:math:`\mathrm{TeV}^{-1}\,\mathrm{cm}^{-2}\,\mathrm{s}^{-1}`)
+            phi_numu_osc : :class:`~astropy.units.Quantity`
+                Muon Neutrino flux. (:math:`\mathrm{TeV}^{-1}\,\mathrm{cm}^{-2}\,\mathrm{s}^{-1}`)
+            phi_nutau_osc : :class:`~astropy.units.Quantity`
+                Tau Neutrino flux. (:math:`\mathrm{TeV}^{-1}\,\mathrm{cm}^{-2}\,\mathrm{s}^{-1}`)
         """
         # Compute proton travel parameters & cloud penetration depth
         cloud_depth, dism, ismtime, Resc = self._compute_travel_parameters(nh2, dist, age)

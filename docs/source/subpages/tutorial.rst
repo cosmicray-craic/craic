@@ -37,8 +37,8 @@ The imported classes are initiated with default values, they can be altered if n
     tran = tr() #default diffusion coefficient 3x10^27 cm^2/s at 1 GeV, default chi = 0.05
     fluxfunc = fl() #default index alpha = 2
 
-To run through the model with particle acceleration at source, propagation through the ISM and interaction with target cloud to produce gamma-ray and neutrino flux, use the function SNR_Cloud_Flux.
-The model follows Kelner et al (2006).
+To run through the model with particle acceleration at source, propagation through the ISM and interaction with target cloud to produce gamma-ray and neutrino flux, use the function :func:`craic.SNR_Cloud_Flux.SNR_Cloud_Flux.compute_flux`.
+The model follows `Kelner et al (2006) <https://journals.aps.org/prd/abstract/10.1103/PhysRevD.74.034018>`_.
 
 Input parameters:
 
