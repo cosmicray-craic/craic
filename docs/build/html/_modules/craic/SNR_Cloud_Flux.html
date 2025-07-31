@@ -85,13 +85,47 @@
 <span class="n">acce</span> <span class="o">=</span> <span class="n">accelerator</span><span class="p">()</span>
 <span class="n">fl</span> <span class="o">=</span> <span class="n">flux</span><span class="p">()</span>
 
-
-
 <span class="c1">#Define a convenient function</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">find_nearest</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
     <span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
     <span class="n">idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">array</span><span class="o">-</span><span class="n">value</span><span class="p">))</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">idx</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">cosine_blend</span><span class="p">(</span><span class="n">E</span><span class="p">,</span> <span class="n">pflux_low</span><span class="p">,</span> <span class="n">pflux_high</span><span class="p">,</span> <span class="n">E1</span><span class="p">,</span> <span class="n">E2</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Blends two spectra pflux_low and pflux_high over energy E using a cosine window.</span>
+<span class="sd">        The transition is defined between E1 and E2.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        ----------</span>
+<span class="sd">        E : array_like</span>
+<span class="sd">            Energy of particles (~ TeV)</span>
+<span class="sd">        F_low : array_like</span>
+<span class="sd">            Spectrum from low-energy regime</span>
+<span class="sd">        F_high : array_like</span>
+<span class="sd">            Spectrum from high-energy regime</span>
+<span class="sd">        E1 : float</span>
+<span class="sd">            Start of blending region (lower boundary) (~ TeV)</span>
+<span class="sd">        E2 : float</span>
+<span class="sd">            End of blending region (upper boundary) (~ TeV)</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">        -------</span>
+<span class="sd">        pflux_total : array_like</span>
+<span class="sd">            Blended spectrum </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Initialise</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">E</span><span class="p">)</span>
+
+        <span class="c1"># Define transition region mask</span>
+        <span class="n">blend_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">E</span> <span class="o">&gt;=</span> <span class="n">E1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">E</span> <span class="o">&lt;=</span> <span class="n">E2</span><span class="p">)</span>
+        <span class="n">w</span><span class="p">[</span><span class="n">E</span> <span class="o">&gt;</span> <span class="n">E2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Fully high-energy component after E2</span>
+        <span class="n">w</span><span class="p">[</span><span class="n">blend_mask</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="n">E</span><span class="p">[</span><span class="n">blend_mask</span><span class="p">]</span> <span class="o">-</span> <span class="n">E1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">E2</span> <span class="o">-</span> <span class="n">E1</span><span class="p">)))</span>
+
+        <span class="c1"># Blend the spectra</span>
+        <span class="n">pflux_total</span> <span class="o">=</span> <span class="n">w</span> <span class="o">*</span> <span class="n">pflux_low</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">w</span><span class="p">)</span> <span class="o">*</span> <span class="n">pflux_high</span>
+        <span class="k">return</span> <span class="n">pflux_total</span>
+
 
 <div class="viewcode-block" id="SNR_Cloud_Flux">
 <a class="viewcode-back" href="../../subpages/modules.html#craic.SNR_Cloud_Flux.SNR_Cloud_Flux">[docs]</a>
@@ -265,7 +299,7 @@
 <span class="sd">        ismtime : astropy.Quantity</span>
 <span class="sd">            Time in ISM (~ yr)</span>
 <span class="sd">        Resc : astropy.Quantity</span>
-<span class="sd">            Escape radius (~pc)</span>
+<span class="sd">            Escape radius (~ pc)</span>
 <span class="sd">            </span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -417,8 +451,10 @@
         <span class="n">total_phig</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Egs</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">TeV</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
         <span class="n">total_phig</span><span class="p">[</span><span class="o">~</span><span class="n">Emask</span><span class="p">]</span> <span class="o">=</span> <span class="n">phi</span><span class="p">[</span><span class="o">~</span><span class="n">Emask</span><span class="p">]</span>
         <span class="n">total_phig</span><span class="p">[</span><span class="n">Emask</span><span class="p">]</span> <span class="o">=</span> <span class="n">phig_norm</span> <span class="o">*</span> <span class="n">phig_low</span><span class="p">[</span><span class="n">Emask</span><span class="p">]</span>
-        
-        <span class="k">return</span> <span class="n">total_phig</span>
+
+        <span class="n">pflux_total</span> <span class="o">=</span> <span class="n">cosine_blend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Egs</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">phig_norm</span> <span class="o">*</span> <span class="n">phig_low</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">phi</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">TeV</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span> <span class="c1"># TeV</span>
+
+        <span class="k">return</span> <span class="n">pflux_total</span>
     
     <span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">nh2</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_compute_neutrino_flux</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nh2</span><span class="p">,</span> <span class="n">pflux</span><span class="p">):</span>

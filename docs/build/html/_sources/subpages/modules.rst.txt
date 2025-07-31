@@ -54,7 +54,7 @@ SNR_Cloud_Flux
 
 This module contains the essential functions to configure the properties of the supernova remnant and the molecular cloud, and compute the gamma-ray and neutrino spectra.
 
-.. automodule:: craic.SNR_Cloud_Flux
-    :members: 
+.. autoclass:: craic.SNR_Cloud_Flux.SNR_Cloud_Flux
+    :members: compute_flux
     :special-members: __init__
 

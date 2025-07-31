@@ -389,7 +389,7 @@
     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">low_mask</span><span class="p">):</span>
         <span class="n">result</span><span class="p">[</span><span class="n">low_mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">DAMPE_SBPL_low</span><span class="p">(</span><span class="n">E</span><span class="p">[</span><span class="n">low_mask</span><span class="p">])</span>
 
-    <span class="c1">#High-energy SBPL fit (1-100 TeV)</span>
+    <span class="c1">#High-energy SBPL fit (1 - 100 TeV)</span>
     <span class="n">high_mask</span> <span class="o">=</span> <span class="n">E</span> <span class="o">&gt;</span> <span class="n">E_tran</span>
     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">high_mask</span><span class="p">):</span>
         <span class="n">result</span><span class="p">[</span><span class="n">high_mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">DAMPE_SBPL_high</span><span class="p">(</span><span class="n">E</span><span class="p">[</span><span class="n">high_mask</span><span class="p">])</span>

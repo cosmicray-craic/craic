@@ -43,7 +43,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../subpages/project.html">Project &amp; Contributors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../subpages/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../subpages/modules.html">Modules &amp; Functions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../subpages/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../subpages/tutorial.html">Quickstart Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../subpages/versions.html">Versions</a></li>
 </ul>
 
@@ -117,7 +117,7 @@
         <span class="k">if</span> <span class="n">typeIIb</span><span class="p">:</span>
             <span class="n">t_esc</span> <span class="o">=</span> <span class="n">t_sed</span><span class="o">*</span><span class="p">((</span><span class="n">Pp</span><span class="o">/</span><span class="p">(</span><span class="mf">1e6</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="p">))</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="mf">2.5</span><span class="p">))</span>   <span class="c1">#in yr type IIb core collapse (default)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">t_esc</span> <span class="o">=</span> <span class="p">[(</span><span class="mf">234.</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">yr</span><span class="p">)</span> <span class="o">*</span> <span class="p">((</span><span class="n">Pp</span><span class="o">/</span><span class="p">(</span><span class="mf">1e6</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="p">))</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="mf">2.5</span><span class="p">))]</span> <span class="c1">#type 1A in yr</span>
+            <span class="n">t_esc</span> <span class="o">=</span> <span class="p">(</span><span class="mf">234.</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">yr</span><span class="p">)</span> <span class="o">*</span> <span class="p">((</span><span class="n">Pp</span><span class="o">/</span><span class="p">(</span><span class="mf">1e6</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="p">))</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="mf">2.5</span><span class="p">))</span> <span class="c1">#type 1A in yr</span>
 
         <span class="k">return</span> <span class="n">t_esc</span></div>
 

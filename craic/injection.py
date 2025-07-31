@@ -295,7 +295,7 @@ def compute_fgal_dampe(E, E_tran=6.3*u.TeV):
     if np.any(low_mask):
         result[low_mask] = DAMPE_SBPL_low(E[low_mask])
 
-    #High-energy SBPL fit (1-100 TeV)
+    #High-energy SBPL fit (1 - 100 TeV)
     high_mask = E > E_tran
     if np.any(high_mask):
         result[high_mask] = DAMPE_SBPL_high(E[high_mask])

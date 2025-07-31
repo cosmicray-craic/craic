@@ -8,9 +8,8 @@ myst-parser
 # Docstring and intersphinx support
 sphinxcontrib-napoleon
 
-
 # Scientific dependencies used in your code
 numpy
 matplotlib
 astropy
-
+scipy

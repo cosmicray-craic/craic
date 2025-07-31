@@ -39,7 +39,7 @@ class accelerator:
         if typeIIb:
             t_esc = t_sed*((Pp/(1e6*u.GeV))**(-1/2.5))   #in yr type IIb core collapse (default)
         else:
-            t_esc = [(234.*u.yr) * ((Pp/(1e6*u.GeV))**(-1/2.5))] #type 1A in yr
+            t_esc = (234.*u.yr) * ((Pp/(1e6*u.GeV))**(-1/2.5)) #type 1A in yr
 
         return t_esc
 

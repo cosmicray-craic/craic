@@ -11,13 +11,47 @@ tran = transport()
 acce = accelerator()
 fl = flux()
 
-
-
 #Define a convenient function
 def find_nearest(array, value):
     array = np.asarray(array)
     idx = (np.abs(array-value)).argmin()
     return idx
+
+def cosine_blend(E, pflux_low, pflux_high, E1, E2):
+        """
+        Blends two spectra pflux_low and pflux_high over energy E using a cosine window.
+        The transition is defined between E1 and E2.
+        
+        Parameters:
+        ----------
+        E : array_like
+            Energy of particles (~ TeV)
+        F_low : array_like
+            Spectrum from low-energy regime
+        F_high : array_like
+            Spectrum from high-energy regime
+        E1 : float
+            Start of blending region (lower boundary) (~ TeV)
+        E2 : float
+            End of blending region (upper boundary) (~ TeV)
+        
+        Returns:
+        -------
+        pflux_total : array_like
+            Blended spectrum 
+        """
+        # Initialise
+        w = np.ones_like(E)
+
+        # Define transition region mask
+        blend_mask = (E >= E1) & (E <= E2)
+        w[E > E2] = 0  # Fully high-energy component after E2
+        w[blend_mask] = 0.5 * (1 + np.cos(np.pi * (E[blend_mask] - E1) / (E2 - E1)))
+
+        # Blend the spectra
+        pflux_total = w * pflux_low + (1 - w) * pflux_high
+        return pflux_total
+
 
 class SNR_Cloud_Flux:
     """
@@ -186,7 +220,7 @@ class SNR_Cloud_Flux:
         ismtime : astropy.Quantity
             Time in ISM (~ yr)
         Resc : astropy.Quantity
-            Escape radius (~pc)
+            Escape radius (~ pc)
             
         Returns
         -------
@@ -338,8 +372,10 @@ class SNR_Cloud_Flux:
         total_phig = np.zeros(len(self.Egs)) * (1./(u.TeV*u.s*u.cm**2))
         total_phig[~Emask] = phi[~Emask]
         total_phig[Emask] = phig_norm * phig_low[Emask]
-        
-        return total_phig
+
+        pflux_total = cosine_blend(self.Egs.value, phig_norm * phig_low.value, phi.value, 0.05, 0.15) / (u.TeV * u.cm**2 * u.s) # TeV
+
+        return pflux_total
     
     @u.quantity_input(nh2=u.cm**-3)
     def _compute_neutrino_flux(self, nh2, pflux):
