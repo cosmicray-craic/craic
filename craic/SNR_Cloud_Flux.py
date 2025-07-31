@@ -40,17 +40,54 @@ def cosine_blend(E, pflux_low, pflux_high, E1, E2):
         pflux_total : array_like
             Blended spectrum 
         """
+        alpha=1
         # Initialise
         w = np.ones_like(E)
 
         # Define transition region mask
         blend_mask = (E >= E1) & (E <= E2)
         w[E > E2] = 0  # Fully high-energy component after E2
-        w[blend_mask] = 0.5 * (1 + np.cos(np.pi * (E[blend_mask] - E1) / (E2 - E1)))
+        w[blend_mask] = 0.5 * (1 + np.cos(np.pi * ((E[blend_mask] - E1) / (E2 - E1))**alpha))
 
         # Blend the spectra
         pflux_total = w * pflux_low + (1 - w) * pflux_high
         return pflux_total
+
+def sigmoid_blend(E, pflux_low, pflux_high, E1, E2):
+    """
+    Blends two spectra pflux_low and pflux_high over energy E using a sigmoid window.
+    The transition is defined between E1 and E2.
+
+    Parameters:
+    ----------
+    E : array_like
+        Energy of particles (~ TeV)
+    pflux_low : array_like
+        Spectrum from low-energy regime
+    pflux_high : array_like
+        Spectrum from high-energy regime
+    E1 : float
+        Start of blending region (~ TeV)
+    E2 : float
+        End of blending region (~ TeV)
+
+    Returns:
+    -------
+    pflux_total : array_like
+        Blended spectrum 
+    """
+    E = np.asarray(E)
+    # Transition midpoint and sharpness scale
+    Ec = 0.5 * (E1 + E2)
+    delta = (E2 - E1) / 10  # Smaller = sharper transition
+
+    # Sigmoid window: high at low E, low at high E
+    w = 1 / (1 + np.exp((E - Ec) / delta))
+
+    # Blend the spectra
+    pflux_total = w * pflux_low + (1 - w) * pflux_high
+    return pflux_total
+
 
 
 class SNR_Cloud_Flux:
@@ -373,7 +410,7 @@ class SNR_Cloud_Flux:
         total_phig[~Emask] = phi[~Emask]
         total_phig[Emask] = phig_norm * phig_low[Emask]
 
-        pflux_total = cosine_blend(self.Egs.value, phig_norm * phig_low.value, phi.value, 0.05, 0.15) / (u.TeV * u.cm**2 * u.s) # TeV
+        pflux_total = sigmoid_blend(self.Egs.value, phig_norm * phig_low.value, phi.value, 0.05, 0.15) / (u.TeV * u.cm**2 * u.s) # TeV
 
         return pflux_total
     
