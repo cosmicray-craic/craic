@@ -396,6 +396,134 @@
 
     <span class="k">return</span> <span class="n">result</span></div>
 
+
+<div class="viewcode-block" id="compute_fgal_LHAASO">
+<a class="viewcode-back" href="../../subpages/modules.html#craic.injection.compute_fgal_LHAASO">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">E</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_fgal_LHAASO</span><span class="p">(</span><span class="n">E</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;QGS&quot;</span><span class="p">,</span> <span class="n">fit</span><span class="o">=</span><span class="s2">&quot;exp&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Import cosmic ray flux data from LHAASO measurements:</span>
+<span class="sd">    LHAASO Collab (2019), arXiv250514447T,</span>
+<span class="sd">    https://arxiv.org/abs/2505.14447, </span>
+<span class="sd">    and return cosmic-ray density of galactic CRs.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters:</span>
+<span class="sd">    -----------</span>
+<span class="sd">    E : array-like, optional</span>
+<span class="sd">        Energy values of Galactic cosmic rays (~ GeV).</span>
+
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">    --------</span>
+<span class="sd">    Cosmic ray density at specified energies (~ GeV^-1 cm^-3)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">SBPL_QGS</span><span class="p">(</span><span class="n">E</span><span class="p">):</span>
+        <span class="n">E</span> <span class="o">=</span> <span class="n">E</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="p">)</span>
+
+        <span class="c1"># Define characteristic energies</span>
+        <span class="n">E0</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">PeV</span>  <span class="c1"># 1e5 GeV</span>
+        <span class="n">Eh</span> <span class="o">=</span> <span class="mf">0.44</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">PeV</span>
+        <span class="n">Ecut</span> <span class="o">=</span> <span class="mf">5.1</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">PeV</span>
+
+        <span class="c1"># Flux per energy [1 / (m² sr s PeV)]</span>
+        <span class="n">flux</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="mf">4.51e-4</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">E</span> <span class="o">/</span> <span class="n">E0</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">2.76</span><span class="p">)</span>
+            <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">E</span> <span class="o">/</span> <span class="n">Eh</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mf">0.39</span><span class="p">))</span><span class="o">**</span><span class="p">((</span><span class="o">-</span><span class="mf">2.33</span> <span class="o">+</span> <span class="mf">2.76</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.39</span><span class="p">)</span>
+            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">E</span> <span class="o">/</span> <span class="n">Ecut</span><span class="p">)</span>
+            <span class="o">/</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">m</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">sr</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">PeV</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Convert to differential number density [1 / (GeV cm³)]</span>
+        <span class="n">density</span> <span class="o">=</span> <span class="p">(</span><span class="n">flux</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">sr</span> <span class="o">/</span> <span class="n">c</span><span class="o">.</span><span class="n">c</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;1 / (GeV cm3)&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">density</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">SBPL_LHC</span><span class="p">(</span><span class="n">E</span><span class="p">):</span>
+        <span class="n">E</span> <span class="o">=</span> <span class="n">E</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="p">)</span>
+
+        <span class="c1"># Define characteristic energies</span>
+        <span class="n">E0</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">PeV</span>  <span class="c1"># 1e5 GeV</span>
+        <span class="n">Eh</span> <span class="o">=</span> <span class="mf">0.38</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">PeV</span>
+        <span class="n">Ecut</span> <span class="o">=</span> <span class="mf">5.2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">PeV</span>
+
+        <span class="c1"># Flux per energy [1 / (m² sr s PeV)]</span>
+        <span class="n">flux</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="mf">3.97e-4</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">E</span> <span class="o">/</span> <span class="n">E0</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">2.74</span><span class="p">)</span>
+            <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">E</span> <span class="o">/</span> <span class="n">Eh</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mf">0.33</span><span class="p">))</span><span class="o">**</span><span class="p">((</span><span class="o">-</span><span class="mf">2.31</span> <span class="o">+</span> <span class="mf">2.74</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.33</span><span class="p">)</span>
+            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">E</span> <span class="o">/</span> <span class="n">Ecut</span><span class="p">)</span>
+            <span class="o">/</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">m</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">sr</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">PeV</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Convert to differential number density [1 / (GeV cm³)]</span>
+        <span class="n">density</span> <span class="o">=</span> <span class="p">(</span><span class="n">flux</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">sr</span> <span class="o">/</span> <span class="n">c</span><span class="o">.</span><span class="n">c</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;1 / (GeV cm3)&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">density</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">two_SBPL_QGS</span><span class="p">(</span><span class="n">E</span><span class="p">):</span>
+        <span class="n">E</span> <span class="o">=</span> <span class="n">E</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="p">)</span>
+
+        <span class="n">E0</span> <span class="o">=</span> <span class="mf">0.1</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">PeV</span>
+        <span class="n">E_h</span> <span class="o">=</span> <span class="mf">0.38</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">PeV</span>
+        <span class="n">E_k</span> <span class="o">=</span> <span class="mf">3.4</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">PeV</span>
+
+        <span class="n">flux</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="mf">4.45e-4</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">E</span><span class="o">/</span><span class="n">E0</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">2.79</span><span class="p">)</span>
+            <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">E</span><span class="o">/</span><span class="n">E_h</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mf">0.35</span><span class="p">))</span><span class="o">**</span><span class="p">((</span><span class="o">-</span><span class="mf">2.53</span><span class="o">+</span><span class="mf">2.79</span><span class="p">)</span><span class="o">*</span><span class="mf">0.35</span><span class="p">)</span>
+            <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">E</span><span class="o">/</span><span class="n">E_k</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mf">0.32</span><span class="p">))</span><span class="o">**</span><span class="p">((</span><span class="o">-</span><span class="mf">3.6</span><span class="o">+</span><span class="mf">2.53</span><span class="p">)</span><span class="o">*</span><span class="mf">0.32</span><span class="p">)</span>
+            <span class="o">/</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">m</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">sr</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">PeV</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">density</span> <span class="o">=</span> <span class="p">(</span><span class="n">flux</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">sr</span> <span class="o">/</span> <span class="n">c</span><span class="o">.</span><span class="n">c</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;1 / (GeV cm3)&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">density</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">two_SBPL_LHC</span><span class="p">(</span><span class="n">E</span><span class="p">):</span>
+        <span class="n">E</span> <span class="o">=</span> <span class="n">E</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="p">)</span>
+
+        <span class="n">E0</span> <span class="o">=</span> <span class="mf">0.1</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">PeV</span>
+        <span class="n">E_h</span> <span class="o">=</span> <span class="mf">0.34</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">PeV</span>
+        <span class="n">E_k</span> <span class="o">=</span> <span class="mf">3.3</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">PeV</span>
+
+        <span class="n">flux</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="mf">3.84e-4</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">E</span><span class="o">/</span><span class="n">E0</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">2.71</span><span class="p">)</span>
+            <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">E</span><span class="o">/</span><span class="n">E_h</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mf">0.12</span><span class="p">))</span><span class="o">**</span><span class="p">((</span><span class="o">-</span><span class="mf">2.51</span><span class="o">+</span><span class="mf">2.71</span><span class="p">)</span><span class="o">*</span><span class="mf">0.12</span><span class="p">)</span>
+            <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">E</span><span class="o">/</span><span class="n">E_k</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mf">0.27</span><span class="p">))</span><span class="o">**</span><span class="p">((</span><span class="o">-</span><span class="mf">3.5</span><span class="o">+</span><span class="mf">2.51</span><span class="p">)</span><span class="o">*</span><span class="mf">0.27</span><span class="p">)</span>
+            <span class="o">/</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">m</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">sr</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">PeV</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">density</span> <span class="o">=</span> <span class="p">(</span><span class="n">flux</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">sr</span> <span class="o">/</span> <span class="n">c</span><span class="o">.</span><span class="n">c</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;1 / (GeV cm3)&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">density</span>
+    
+    
+    <span class="c1"># n_QGS_cal = SBPL_QGS(E)</span>
+    <span class="c1"># plt.loglog(E, n_QGS_interp*E**2.75, label=&#39;QGS&#39;)</span>
+    <span class="c1"># plt.loglog(E, SBPL_QGS(E)*E**2.75, label=&quot;QGS (SBPL exp)&quot;)</span>
+    <span class="c1"># plt.loglog(E, two_SBPL_QGS(E)*E**2.75, label=&quot;QGS (SBPL two)&quot;)</span>
+    <span class="c1"># # plt.loglog(energy, n_cr_QGS, label=&#39;Original&#39;)</span>
+    <span class="c1"># plt.loglog(E, n_LHC_interp, label=&#39;LHC&#39;)</span>
+    <span class="c1"># plt.legend(loc=&#39;best&#39;)</span>
+
+    <span class="k">if</span> <span class="n">model</span> <span class="o">==</span> <span class="s2">&quot;QGS&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">fit</span> <span class="o">==</span> <span class="s2">&quot;exp&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">SBPL_QGS</span><span class="p">(</span><span class="n">E</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">fit</span> <span class="o">==</span> <span class="s2">&quot;two&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">two_SBPL_QGS</span><span class="p">(</span><span class="n">E</span><span class="p">)</span>
+    
+    <span class="k">elif</span> <span class="n">model</span> <span class="o">==</span> <span class="s2">&quot;LHC&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">fit</span> <span class="o">==</span> <span class="s2">&quot;exp&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">SBPL_LHC</span><span class="p">(</span><span class="n">E</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">fit</span> <span class="o">==</span> <span class="s2">&quot;two&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">two_SBPL_LHC</span><span class="p">(</span><span class="n">E</span><span class="p">)</span>
+    
+    <span class="k">else</span><span class="p">:</span>
+        <span class="s2">&quot;Please choose a model.&quot;</span></div>
+
 </pre></div>
 
            </div>

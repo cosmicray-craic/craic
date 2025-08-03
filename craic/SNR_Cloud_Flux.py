@@ -5,6 +5,7 @@ from .transport import transport
 from .accelerator import accelerator
 from .flux import flux 
 from . import injection
+import matplotlib.pyplot as plt
 
 part = particles()
 tran = transport()
@@ -79,7 +80,7 @@ def sigmoid_blend(E, pflux_low, pflux_high, E1, E2):
     E = np.asarray(E)
     # Transition midpoint and sharpness scale
     Ec = 0.5 * (E1 + E2)
-    delta = (E2 - E1) / 10  # Smaller = sharper transition
+    delta = (E2 - E1) / 0.5  # Smaller = sharper transition
 
     # Sigmoid window: high at low E, low at high E
     w = 1 / (1 + np.exp((E - Ec) / delta))
@@ -288,7 +289,7 @@ class SNR_Cloud_Flux:
         return pflux_tmp, pfluxlow_tmp
     
     @u.quantity_input(pflux_tmp=u.GeV**-1*u.cm**-3)
-    def _add_galactic_flux(self, pflux_tmp) -> u.GeV**-1*u.cm**-3:
+    def _add_galactic_flux(self, pflux_tmp, model="QGS") -> u.GeV**-1*u.cm**-3:
         """
         Add galactic cosmic ray flux contribution if requested.
         
@@ -302,27 +303,52 @@ class SNR_Cloud_Flux:
         array (GeV^-1 cm^-3)
             Modified proton flux with galactic contribution
         """
-        if self.F_gal is not False:
-            fgal_AMSO2 = injection.compute_fgal(self.Eps)
-            fgal_DAMPE = injection.compute_fgal_dampe(self.Eps)
-            
-            if self.F_gal == "AMS-O2":
-                gal_ratio = np.nanmean(pflux_tmp / fgal_AMSO2)
-                if gal_ratio < 1.:
-                    print("Mean ratio pflux / fgal:", gal_ratio)
-                pflux_tmp += fgal_AMSO2
-            
-            elif self.F_gal == "DAMPE":
-                gal_ratio = np.nanmean(pflux_tmp / fgal_DAMPE)
-                if gal_ratio < 1.:
-                    print("Mean ratio pflux / fgal:", gal_ratio)
-                pflux_tmp += fgal_DAMPE
-            
-            else:
-                raise ValueError('Choose a valid galactic flux model: "AMS-O2" or "DAMPE"')
+        if self.F_gal is False:
+            return pflux_tmp
         
-        return pflux_tmp
-    
+        elif self.F_gal is True:
+
+            #Define energy range of each measurement
+            mask_AMSO2 = self.Eps <= 1.8 * u.TeV
+            mask_DAMPE = (self.Eps >= 40 * u.GeV) & (self.Eps <= 150 * u.TeV)
+            mask_LHASSO = self.Eps >= 100 * u.TeV
+
+            # Normalise DAMPE with respect to LHAASO spectrum
+            mask_overlap_23 = self.Eps[mask_LHASSO] <= 150 * u.TeV
+            E_overlap_23 = self.Eps[mask_LHASSO][mask_overlap_23]
+            DAMPE_overlap_23 = injection.compute_fgal_dampe(E_overlap_23)
+            LHAASO_overlap = injection.compute_fgal_LHAASO(E_overlap_23, model=model)
+            ratio_23 = LHAASO_overlap/DAMPE_overlap_23
+            A3 = 10**(np.nanmean(np.log10(ratio_23)))
+
+            # Normalise AMS-O2 with respect to the normalised DAMPE spectrum
+            mask_overlap_12 = (self.Eps[mask_DAMPE] <= 1.8 * u.TeV) 
+            E_overlap_12 = self.Eps[mask_DAMPE][mask_overlap_12]
+            AMSO2_overlap = injection.compute_fgal(E_overlap_12)
+            DAMPE_overlap_12 = injection.compute_fgal_dampe(E_overlap_12)
+            ratio_12 = A3* DAMPE_overlap_12/AMSO2_overlap
+            A2 = 10**(np.nanmean(np.log10(ratio_12)))
+
+            # Define the transition energies 
+            E_tran_12 = 3e2 * u.GeV
+            E_tran_23 = 1e5 * u.GeV
+
+            # Combine the measurements of AMS-O2, DAMPE and LHAASO
+            total_fgal = np.zeros(len(self.Eps)) * (1./(u.GeV*u.cm**3))
+            total_fgal[self.Eps <= E_tran_12] = A2*injection.compute_fgal(self.Eps[self.Eps <= E_tran_12])
+            total_fgal[(self.Eps > E_tran_12) & (self.Eps <= E_tran_23)] = A3*injection.compute_fgal_dampe(self.Eps[(self.Eps > E_tran_12) & (self.Eps <= E_tran_23)])
+            total_fgal[self.Eps > E_tran_23] = injection.compute_fgal_LHAASO(self.Eps[self.Eps > E_tran_23], model=model)
+            
+            # Add the combined Galactic CR flux to the SNR flux
+            gal_ratio = np.nanmean(pflux_tmp / total_fgal)
+            if gal_ratio < 1.:
+                print("Mean ratio pflux / fgal:", gal_ratio)
+            pflux_tmp += total_fgal
+        
+            return pflux_tmp
+        else:
+            print("No option!")
+        
     @u.quantity_input(nh2=u.cm**-3)
     def _compute_gamma_ray_flux(self, nh2, pflux, pfluxlow_tmp) -> 1 / (u.TeV*u.s*u.cm**2):
         """

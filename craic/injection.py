@@ -301,3 +301,128 @@ def compute_fgal_dampe(E, E_tran=6.3*u.TeV):
         result[high_mask] = DAMPE_SBPL_high(E[high_mask])
 
     return result
+
+@u.quantity_input(E=u.GeV)
+def compute_fgal_LHAASO(E, model="QGS", fit="exp") -> u.GeV**(-1) * u.cm**(-3):
+    """
+    Import cosmic ray flux data from LHAASO measurements:
+    LHAASO Collab (2019), arXiv250514447T,
+    https://arxiv.org/abs/2505.14447, 
+    and return cosmic-ray density of galactic CRs.
+    
+    Parameters:
+    -----------
+    E : array-like, optional
+        Energy values of Galactic cosmic rays (~ GeV).
+
+    
+    Returns:
+    --------
+    Cosmic ray density at specified energies (~ GeV^-1 cm^-3)
+    """
+
+    def SBPL_QGS(E):
+        E = E.to(u.GeV)
+
+        # Define characteristic energies
+        E0 = 0.1 * u.PeV  # 1e5 GeV
+        Eh = 0.44 * u.PeV
+        Ecut = 5.1 * u.PeV
+
+        # Flux per energy [1 / (m² sr s PeV)]
+        flux = (
+            4.51e-4
+            * (E / E0)**(-2.76)
+            * (1 + (E / Eh)**(1 / 0.39))**((-2.33 + 2.76) * 0.39)
+            * np.exp(-E / Ecut)
+            / (u.m**2 * u.sr * u.s * u.PeV)
+        )
+
+        # Convert to differential number density [1 / (GeV cm³)]
+        density = (flux * 4 * np.pi * u.sr / c.c).to('1 / (GeV cm3)')
+
+        return density
+    
+    def SBPL_LHC(E):
+        E = E.to(u.GeV)
+
+        # Define characteristic energies
+        E0 = 0.1 * u.PeV  # 1e5 GeV
+        Eh = 0.38 * u.PeV
+        Ecut = 5.2 * u.PeV
+
+        # Flux per energy [1 / (m² sr s PeV)]
+        flux = (
+            3.97e-4
+            * (E / E0)**(-2.74)
+            * (1 + (E / Eh)**(1 / 0.33))**((-2.31 + 2.74) * 0.33)
+            * np.exp(-E / Ecut)
+            / (u.m**2 * u.sr * u.s * u.PeV)
+        )
+
+        # Convert to differential number density [1 / (GeV cm³)]
+        density = (flux * 4 * np.pi * u.sr / c.c).to('1 / (GeV cm3)')
+
+        return density
+    
+    def two_SBPL_QGS(E):
+        E = E.to(u.GeV)
+
+        E0 = 0.1*u.PeV
+        E_h = 0.38 * u.PeV
+        E_k = 3.4 * u.PeV
+
+        flux = (
+            4.45e-4
+            * (E/E0)**(-2.79)
+            * (1 + (E/E_h)**(1/0.35))**((-2.53+2.79)*0.35)
+            * (1 + (E/E_k)**(1/0.32))**((-3.6+2.53)*0.32)
+            / (u.m**2 * u.sr * u.s * u.PeV)
+        )
+
+        density = (flux * 4 * np.pi * u.sr / c.c).to('1 / (GeV cm3)')
+
+        return density
+    
+    def two_SBPL_LHC(E):
+        E = E.to(u.GeV)
+
+        E0 = 0.1*u.PeV
+        E_h = 0.34 * u.PeV
+        E_k = 3.3 * u.PeV
+
+        flux = (
+            3.84e-4
+            * (E/E0)**(-2.71)
+            * (1 + (E/E_h)**(1/0.12))**((-2.51+2.71)*0.12)
+            * (1 + (E/E_k)**(1/0.27))**((-3.5+2.51)*0.27)
+            / (u.m**2 * u.sr * u.s * u.PeV)
+        )
+
+        density = (flux * 4 * np.pi * u.sr / c.c).to('1 / (GeV cm3)')
+
+        return density
+    
+    
+    # n_QGS_cal = SBPL_QGS(E)
+    # plt.loglog(E, n_QGS_interp*E**2.75, label='QGS')
+    # plt.loglog(E, SBPL_QGS(E)*E**2.75, label="QGS (SBPL exp)")
+    # plt.loglog(E, two_SBPL_QGS(E)*E**2.75, label="QGS (SBPL two)")
+    # # plt.loglog(energy, n_cr_QGS, label='Original')
+    # plt.loglog(E, n_LHC_interp, label='LHC')
+    # plt.legend(loc='best')
+
+    if model == "QGS":
+        if fit == "exp":
+            return SBPL_QGS(E)
+        elif fit == "two":
+            return two_SBPL_QGS(E)
+    
+    elif model == "LHC":
+        if fit == "exp":
+            return SBPL_LHC(E)
+        elif fit == "two":
+            return two_SBPL_LHC(E)
+    
+    else:
+        "Please choose a model."

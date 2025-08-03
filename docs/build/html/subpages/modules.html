@@ -58,6 +58,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#injection">injection</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#craic.injection.compute_fgal"><code class="docutils literal notranslate"><span class="pre">compute_fgal()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#craic.injection.compute_fgal_LHAASO"><code class="docutils literal notranslate"><span class="pre">compute_fgal_LHAASO()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#craic.injection.compute_fgal_dampe"><code class="docutils literal notranslate"><span class="pre">compute_fgal_dampe()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#craic.injection.compute_pflux_continuous_extended"><code class="docutils literal notranslate"><span class="pre">compute_pflux_continuous_extended()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#craic.injection.compute_pflux_continuous_point"><code class="docutils literal notranslate"><span class="pre">compute_pflux_continuous_point()</span></code></a></li>
@@ -195,6 +196,26 @@ measured by <a class="reference external" href="https://journals.aps.org/prl/pdf
 <dd class="field-odd"><p><strong>E</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a> or array-like) – Energy of Galactic cosmic rays. (GeV)</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="craic.injection.compute_fgal_LHAASO">
+<span class="sig-prename descclassname"><span class="pre">craic.injection.</span></span><span class="sig-name descname"><span class="pre">compute_fgal_LHAASO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">E</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'QGS'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'exp'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/craic/injection.html#compute_fgal_LHAASO"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#craic.injection.compute_fgal_LHAASO" title="Link to this definition"></a></dt>
+<dd><p>Import cosmic ray flux data from LHAASO measurements:
+LHAASO Collab (2019), arXiv250514447T,
+<a class="reference external" href="https://arxiv.org/abs/2505.14447">https://arxiv.org/abs/2505.14447</a>,
+and return cosmic-ray density of galactic CRs.</p>
+<section id="parameters">
+<h3>Parameters:<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>E<span class="classifier">array-like, optional</span></dt><dd><p>Energy values of Galactic cosmic rays (~ GeV).</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h3>Returns:<a class="headerlink" href="#returns" title="Link to this heading"></a></h3>
+<p>Cosmic ray density at specified energies (~ GeV^-1 cm^-3)</p>
+</section>
 </dd></dl>
 
 <dl class="py function">

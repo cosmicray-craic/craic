@@ -61,7 +61,7 @@ Optional input parameters:
 
 .. code-block:: python
 
-    SNRcloud = SNR_Cloud_Flux(Eg_lo=1*u.GeV, Eg_hi=3*u.PeV, F_gal="DAMPE") # Change optional input parameters here if needed
+    SNRcloud = SNR_Cloud_Flux(F_gal=True) # Change optional input parameters here if needed
     Eg, phi, phi_nu, phi_nue, phi_numu, phi_nutau = SNRcloud.compute_flux(
         nh2=100*u.cm**-3,
         dist=50*u.pc,

@@ -79,6 +79,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">.accelerator</span><span class="w"> </span><span class="kn">import</span> <span class="n">accelerator</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.flux</span><span class="w"> </span><span class="kn">import</span> <span class="n">flux</span> 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">injection</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
 <span class="n">part</span> <span class="o">=</span> <span class="n">particles</span><span class="p">()</span>
 <span class="n">tran</span> <span class="o">=</span> <span class="n">transport</span><span class="p">()</span>
@@ -114,17 +115,54 @@
 <span class="sd">        pflux_total : array_like</span>
 <span class="sd">            Blended spectrum </span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span>
         <span class="c1"># Initialise</span>
         <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">E</span><span class="p">)</span>
 
         <span class="c1"># Define transition region mask</span>
         <span class="n">blend_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">E</span> <span class="o">&gt;=</span> <span class="n">E1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">E</span> <span class="o">&lt;=</span> <span class="n">E2</span><span class="p">)</span>
         <span class="n">w</span><span class="p">[</span><span class="n">E</span> <span class="o">&gt;</span> <span class="n">E2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Fully high-energy component after E2</span>
-        <span class="n">w</span><span class="p">[</span><span class="n">blend_mask</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="n">E</span><span class="p">[</span><span class="n">blend_mask</span><span class="p">]</span> <span class="o">-</span> <span class="n">E1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">E2</span> <span class="o">-</span> <span class="n">E1</span><span class="p">)))</span>
+        <span class="n">w</span><span class="p">[</span><span class="n">blend_mask</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">((</span><span class="n">E</span><span class="p">[</span><span class="n">blend_mask</span><span class="p">]</span> <span class="o">-</span> <span class="n">E1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">E2</span> <span class="o">-</span> <span class="n">E1</span><span class="p">))</span><span class="o">**</span><span class="n">alpha</span><span class="p">))</span>
 
         <span class="c1"># Blend the spectra</span>
         <span class="n">pflux_total</span> <span class="o">=</span> <span class="n">w</span> <span class="o">*</span> <span class="n">pflux_low</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">w</span><span class="p">)</span> <span class="o">*</span> <span class="n">pflux_high</span>
         <span class="k">return</span> <span class="n">pflux_total</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">sigmoid_blend</span><span class="p">(</span><span class="n">E</span><span class="p">,</span> <span class="n">pflux_low</span><span class="p">,</span> <span class="n">pflux_high</span><span class="p">,</span> <span class="n">E1</span><span class="p">,</span> <span class="n">E2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Blends two spectra pflux_low and pflux_high over energy E using a sigmoid window.</span>
+<span class="sd">    The transition is defined between E1 and E2.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    ----------</span>
+<span class="sd">    E : array_like</span>
+<span class="sd">        Energy of particles (~ TeV)</span>
+<span class="sd">    pflux_low : array_like</span>
+<span class="sd">        Spectrum from low-energy regime</span>
+<span class="sd">    pflux_high : array_like</span>
+<span class="sd">        Spectrum from high-energy regime</span>
+<span class="sd">    E1 : float</span>
+<span class="sd">        Start of blending region (~ TeV)</span>
+<span class="sd">    E2 : float</span>
+<span class="sd">        End of blending region (~ TeV)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    -------</span>
+<span class="sd">    pflux_total : array_like</span>
+<span class="sd">        Blended spectrum </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">E</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">E</span><span class="p">)</span>
+    <span class="c1"># Transition midpoint and sharpness scale</span>
+    <span class="n">Ec</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">E1</span> <span class="o">+</span> <span class="n">E2</span><span class="p">)</span>
+    <span class="n">delta</span> <span class="o">=</span> <span class="p">(</span><span class="n">E2</span> <span class="o">-</span> <span class="n">E1</span><span class="p">)</span> <span class="o">/</span> <span class="mf">0.5</span>  <span class="c1"># Smaller = sharper transition</span>
+
+    <span class="c1"># Sigmoid window: high at low E, low at high E</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">((</span><span class="n">E</span> <span class="o">-</span> <span class="n">Ec</span><span class="p">)</span> <span class="o">/</span> <span class="n">delta</span><span class="p">))</span>
+
+    <span class="c1"># Blend the spectra</span>
+    <span class="n">pflux_total</span> <span class="o">=</span> <span class="n">w</span> <span class="o">*</span> <span class="n">pflux_low</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">w</span><span class="p">)</span> <span class="o">*</span> <span class="n">pflux_high</span>
+    <span class="k">return</span> <span class="n">pflux_total</span>
+
 
 
 <div class="viewcode-block" id="SNR_Cloud_Flux">
@@ -330,7 +368,7 @@
         <span class="k">return</span> <span class="n">pflux_tmp</span><span class="p">,</span> <span class="n">pfluxlow_tmp</span>
     
     <span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">pflux_tmp</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="o">**-</span><span class="mi">1</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">)</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_add_galactic_flux</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pflux_tmp</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="o">**-</span><span class="mi">1</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_add_galactic_flux</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pflux_tmp</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;QGS&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="o">**-</span><span class="mi">1</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add galactic cosmic ray flux contribution if requested.</span>
 <span class="sd">        </span>
@@ -344,27 +382,52 @@
 <span class="sd">        array (GeV^-1 cm^-3)</span>
 <span class="sd">            Modified proton flux with galactic contribution</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">F_gal</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">False</span><span class="p">:</span>
-            <span class="n">fgal_AMSO2</span> <span class="o">=</span> <span class="n">injection</span><span class="o">.</span><span class="n">compute_fgal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Eps</span><span class="p">)</span>
-            <span class="n">fgal_DAMPE</span> <span class="o">=</span> <span class="n">injection</span><span class="o">.</span><span class="n">compute_fgal_dampe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Eps</span><span class="p">)</span>
-            
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">F_gal</span> <span class="o">==</span> <span class="s2">&quot;AMS-O2&quot;</span><span class="p">:</span>
-                <span class="n">gal_ratio</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">pflux_tmp</span> <span class="o">/</span> <span class="n">fgal_AMSO2</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">gal_ratio</span> <span class="o">&lt;</span> <span class="mf">1.</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Mean ratio pflux / fgal:&quot;</span><span class="p">,</span> <span class="n">gal_ratio</span><span class="p">)</span>
-                <span class="n">pflux_tmp</span> <span class="o">+=</span> <span class="n">fgal_AMSO2</span>
-            
-            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">F_gal</span> <span class="o">==</span> <span class="s2">&quot;DAMPE&quot;</span><span class="p">:</span>
-                <span class="n">gal_ratio</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">pflux_tmp</span> <span class="o">/</span> <span class="n">fgal_DAMPE</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">gal_ratio</span> <span class="o">&lt;</span> <span class="mf">1.</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Mean ratio pflux / fgal:&quot;</span><span class="p">,</span> <span class="n">gal_ratio</span><span class="p">)</span>
-                <span class="n">pflux_tmp</span> <span class="o">+=</span> <span class="n">fgal_DAMPE</span>
-            
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Choose a valid galactic flux model: &quot;AMS-O2&quot; or &quot;DAMPE&quot;&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">F_gal</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">pflux_tmp</span>
         
-        <span class="k">return</span> <span class="n">pflux_tmp</span>
-    
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">F_gal</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+
+            <span class="c1">#Define energy range of each measurement</span>
+            <span class="n">mask_AMSO2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Eps</span> <span class="o">&lt;=</span> <span class="mf">1.8</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">TeV</span>
+            <span class="n">mask_DAMPE</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Eps</span> <span class="o">&gt;=</span> <span class="mi">40</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Eps</span> <span class="o">&lt;=</span> <span class="mi">150</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">TeV</span><span class="p">)</span>
+            <span class="n">mask_LHASSO</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Eps</span> <span class="o">&gt;=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">TeV</span>
+
+            <span class="c1"># Normalise DAMPE with respect to LHAASO spectrum</span>
+            <span class="n">mask_overlap_23</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Eps</span><span class="p">[</span><span class="n">mask_LHASSO</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">150</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">TeV</span>
+            <span class="n">E_overlap_23</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Eps</span><span class="p">[</span><span class="n">mask_LHASSO</span><span class="p">][</span><span class="n">mask_overlap_23</span><span class="p">]</span>
+            <span class="n">DAMPE_overlap_23</span> <span class="o">=</span> <span class="n">injection</span><span class="o">.</span><span class="n">compute_fgal_dampe</span><span class="p">(</span><span class="n">E_overlap_23</span><span class="p">)</span>
+            <span class="n">LHAASO_overlap</span> <span class="o">=</span> <span class="n">injection</span><span class="o">.</span><span class="n">compute_fgal_LHAASO</span><span class="p">(</span><span class="n">E_overlap_23</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">)</span>
+            <span class="n">ratio_23</span> <span class="o">=</span> <span class="n">LHAASO_overlap</span><span class="o">/</span><span class="n">DAMPE_overlap_23</span>
+            <span class="n">A3</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">ratio_23</span><span class="p">)))</span>
+
+            <span class="c1"># Normalise AMS-O2 with respect to the normalised DAMPE spectrum</span>
+            <span class="n">mask_overlap_12</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Eps</span><span class="p">[</span><span class="n">mask_DAMPE</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mf">1.8</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">TeV</span><span class="p">)</span> 
+            <span class="n">E_overlap_12</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Eps</span><span class="p">[</span><span class="n">mask_DAMPE</span><span class="p">][</span><span class="n">mask_overlap_12</span><span class="p">]</span>
+            <span class="n">AMSO2_overlap</span> <span class="o">=</span> <span class="n">injection</span><span class="o">.</span><span class="n">compute_fgal</span><span class="p">(</span><span class="n">E_overlap_12</span><span class="p">)</span>
+            <span class="n">DAMPE_overlap_12</span> <span class="o">=</span> <span class="n">injection</span><span class="o">.</span><span class="n">compute_fgal_dampe</span><span class="p">(</span><span class="n">E_overlap_12</span><span class="p">)</span>
+            <span class="n">ratio_12</span> <span class="o">=</span> <span class="n">A3</span><span class="o">*</span> <span class="n">DAMPE_overlap_12</span><span class="o">/</span><span class="n">AMSO2_overlap</span>
+            <span class="n">A2</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">ratio_12</span><span class="p">)))</span>
+
+            <span class="c1"># Define the transition energies </span>
+            <span class="n">E_tran_12</span> <span class="o">=</span> <span class="mf">3e2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">GeV</span>
+            <span class="n">E_tran_23</span> <span class="o">=</span> <span class="mf">1e5</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">GeV</span>
+
+            <span class="c1"># Combine the measurements of AMS-O2, DAMPE and LHAASO</span>
+            <span class="n">total_fgal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Eps</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">))</span>
+            <span class="n">total_fgal</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">Eps</span> <span class="o">&lt;=</span> <span class="n">E_tran_12</span><span class="p">]</span> <span class="o">=</span> <span class="n">A2</span><span class="o">*</span><span class="n">injection</span><span class="o">.</span><span class="n">compute_fgal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Eps</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">Eps</span> <span class="o">&lt;=</span> <span class="n">E_tran_12</span><span class="p">])</span>
+            <span class="n">total_fgal</span><span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">Eps</span> <span class="o">&gt;</span> <span class="n">E_tran_12</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Eps</span> <span class="o">&lt;=</span> <span class="n">E_tran_23</span><span class="p">)]</span> <span class="o">=</span> <span class="n">A3</span><span class="o">*</span><span class="n">injection</span><span class="o">.</span><span class="n">compute_fgal_dampe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Eps</span><span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">Eps</span> <span class="o">&gt;</span> <span class="n">E_tran_12</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Eps</span> <span class="o">&lt;=</span> <span class="n">E_tran_23</span><span class="p">)])</span>
+            <span class="n">total_fgal</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">Eps</span> <span class="o">&gt;</span> <span class="n">E_tran_23</span><span class="p">]</span> <span class="o">=</span> <span class="n">injection</span><span class="o">.</span><span class="n">compute_fgal_LHAASO</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Eps</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">Eps</span> <span class="o">&gt;</span> <span class="n">E_tran_23</span><span class="p">],</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">)</span>
+            
+            <span class="c1"># Add the combined Galactic CR flux to the SNR flux</span>
+            <span class="n">gal_ratio</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">pflux_tmp</span> <span class="o">/</span> <span class="n">total_fgal</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">gal_ratio</span> <span class="o">&lt;</span> <span class="mf">1.</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Mean ratio pflux / fgal:&quot;</span><span class="p">,</span> <span class="n">gal_ratio</span><span class="p">)</span>
+            <span class="n">pflux_tmp</span> <span class="o">+=</span> <span class="n">total_fgal</span>
+        
+            <span class="k">return</span> <span class="n">pflux_tmp</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No option!&quot;</span><span class="p">)</span>
+        
     <span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">nh2</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_compute_gamma_ray_flux</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nh2</span><span class="p">,</span> <span class="n">pflux</span><span class="p">,</span> <span class="n">pfluxlow_tmp</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">TeV</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -452,7 +515,7 @@
         <span class="n">total_phig</span><span class="p">[</span><span class="o">~</span><span class="n">Emask</span><span class="p">]</span> <span class="o">=</span> <span class="n">phi</span><span class="p">[</span><span class="o">~</span><span class="n">Emask</span><span class="p">]</span>
         <span class="n">total_phig</span><span class="p">[</span><span class="n">Emask</span><span class="p">]</span> <span class="o">=</span> <span class="n">phig_norm</span> <span class="o">*</span> <span class="n">phig_low</span><span class="p">[</span><span class="n">Emask</span><span class="p">]</span>
 
-        <span class="n">pflux_total</span> <span class="o">=</span> <span class="n">cosine_blend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Egs</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">phig_norm</span> <span class="o">*</span> <span class="n">phig_low</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">phi</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">TeV</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span> <span class="c1"># TeV</span>
+        <span class="n">pflux_total</span> <span class="o">=</span> <span class="n">sigmoid_blend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Egs</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">phig_norm</span> <span class="o">*</span> <span class="n">phig_low</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">phi</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">TeV</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span> <span class="c1"># TeV</span>
 
         <span class="k">return</span> <span class="n">pflux_total</span>
     
