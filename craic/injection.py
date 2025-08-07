@@ -11,9 +11,9 @@ part = particles()
 tran = transport()
 acel = accelerator()
 
-@u.quantity_input(R_esc=u.pc, N_0=u.GeV, Ep=u.GeV, d=u.pc, a=u.yr, dens=u.cm**-3)
+@u.quantity_input(R_esc=u.pc, Ep=u.GeV, d=u.pc, a=u.yr, dens=u.cm**-3)
 def compute_pflux_impulsive_extended(Resc,
-        N_0, Ep, d, a, dens, chi=0.05, ism=1, alpha=2.0) -> u.GeV**-1 * u.cm**-3:
+        N_0, Ep, d, a, dens, chi=0.05, ism=1, alpha=2.0) :
     """
     Compute differential proton flux density (:math:`\mathrm{GeV}^{-1}\,\mathrm{cm}^{-3}`) for an 
     impulsive injection from the surface of an extended source.
@@ -42,6 +42,14 @@ def compute_pflux_impulsive_extended(Resc,
     alpha : float
         Proton spectrum spectral index. (default: 2.0)
     """
+    # Check for negative inputs
+    quantities = {"Resc": Resc, "N_0": N_0, "Ep": Ep, "d": d, "dens": dens,}
+    for name, q in quantities.items():
+        if np.any(q.value < 0):
+            raise ValueError(f"Input '{name}' must be non-negative, got {q}")
+    if chi < 0 or ism < 0:
+        raise ValueError(f"Input parameters must be non-negative.")
+
     sqrt_pi = np.sqrt(np.pi)
     assert (np.size(Resc) == 1) or (np.shape(Resc) == np.shape(Ep))
 
@@ -58,9 +66,9 @@ def compute_pflux_impulsive_extended(Resc,
     # Return
     return pflux.to(u.GeV**-1 *u.cm**-3)
 
-@u.quantity_input(N_0=u.GeV, Ep=u.GeV, d=u.pc, a=u.yr, dens=u.cm**-3)
+@u.quantity_input(Ep=u.GeV, d=u.pc, a=u.yr, dens=u.cm**-3)
 def compute_pflux_impulsive_point(N_0, Ep, d, a, dens, chi=0.05,
-        ism=1, alpha=2.0) -> u.GeV**-1 * u.cm**-3:
+        ism=1, alpha=2.0):
     """
     Compute differential proton flux density (:math:`\mathrm{GeV}^{-1}\,\mathrm{cm}^{-3}`) for an 
     impulsive injection from a point source as given by 
@@ -88,7 +96,14 @@ def compute_pflux_impulsive_point(N_0, Ep, d, a, dens, chi=0.05,
     alpha : float
         Proton spectrum spectral index. (default: 2.0)
     """
-
+    # Check for negative inputs
+    quantities = {"N_0": N_0, "Ep": Ep, "d": d, "dens": dens,}
+    for name, q in quantities.items():
+        if np.any(q.value < 0):
+            raise ValueError(f"Input '{name}' must be non-negative, got {q}")
+    if chi < 0 or ism < 0:
+        raise ValueError(f"Input parameters must be non-negative.")
+    
     Rdiff = tran.R_diffusion(Ep, a, dens, chi=chi, ism=ism).to(u.cm)
 
     exp_frac = -(((alpha - 1) * a.to(u.s)) / (part.t_ppEK(dens, Ep))) \
@@ -103,9 +118,9 @@ def compute_pflux_impulsive_point(N_0, Ep, d, a, dens, chi=0.05,
 # Equals & replaces former flux.flux_calc():
 #     def flux_calc(self, N_0, Ep, d, a, dens, chi=0.05, ism=0):
 
-@u.quantity_input(Resc=u.pc, N_0=u.GeV, Ep=u.GeV, d=u.pc, a=u.yr, dens=u.cm**-3)
+@u.quantity_input(Resc=u.pc, Ep=u.GeV, d=u.pc, a=u.yr, dens=u.cm**-3)
 def compute_pflux_continuous_extended(Resc,
-        N_0, Ep, d, a, dens, chi=0.05, ism=1, alpha=2.0) -> u.GeV**-1 * u.cm**-3:
+        N_0, Ep, d, a, dens, chi=0.05, ism=1, alpha=2.0):
     """
     Compute differential proton flux density (:math:`\mathrm{GeV}^{-1}\,\mathrm{cm}^{-3}`) for an 
     continuous injection from the surface of an extended source.
@@ -134,6 +149,14 @@ def compute_pflux_continuous_extended(Resc,
     alpha : float
         Proton spectrum spectral index. (default: 2.0)
     """
+    # Check for negative input
+    quantities = {"Resc": Resc, "N_0": N_0, "Ep": Ep, "d": d, "dens": dens,}
+    for name, q in quantities.items():
+        if np.any(q.value < 0):
+            raise ValueError(f"Input '{name}' must be non-negative, got {q}")
+    if chi < 0 or ism < 0:
+        raise ValueError(f"Input parameters must be non-negative.")
+    
     from scipy.special import erf, erfc
 
     raise NotImplementedError("f0 for cont. ext. case still to be revised!")
@@ -154,9 +177,9 @@ def compute_pflux_continuous_extended(Resc,
 # Equals & replaces former flux.flux_calc_cont():
 #     def flux_calc_cont(self, N_0, Ep, d, a, dens, chi=0.05, ism=0):
 
-@u.quantity_input(N_0=u.GeV, Ep=u.GeV, d=u.pc, a=u.yr, dens=u.cm**-3)
+@u.quantity_input(Ep=u.GeV, d=u.pc, a=u.yr, dens=u.cm**-3)
 def compute_pflux_continuous_point(N_0, Ep, d, a, dens, chi=0.05,
-        ism=1, alpha=2.0) -> u.GeV**-1 * u.cm**-3:
+        ism=1, alpha=2.0):
     """
     Compute differential proton flux density (:math:`\mathrm{GeV}^{-1}\,\mathrm{cm}^{-3}`) for a continuous injection 
     from a point source as given by `Aharonian & Atoyan (1996), A&A 309, 917 <https://ui.adsabs.harvard.edu/abs/1996A%26A...309..917A/abstract>`_ (eq. 8).
@@ -182,6 +205,14 @@ def compute_pflux_continuous_point(N_0, Ep, d, a, dens, chi=0.05,
     alpha : float
         Proton spectrum spectral index. (default: 2.0)
     """
+    # Check for negative inputs
+    quantities = {"N_0": N_0, "Ep": Ep, "d": d, "dens": dens,}
+    for name, q in quantities.items():
+        if np.any(q.value < 0):
+            raise ValueError(f"Input '{name}' must be non-negative, got {q}")
+    if chi < 0 or ism < 0:
+        raise ValueError(f"Input parameters must be non-negative.")
+    
     from scipy.special import erfc
 
     # Q_0 is injection rate, two possible ways:

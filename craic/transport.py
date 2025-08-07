@@ -19,7 +19,7 @@ class transport:
     # Magnetic Field Strength
     @u.quantity_input(dens=u.cm**-3)
     def B_mag(self, dens) -> u.uG:
-        """Returns the magnetic field strength of the cloud (:math:`\mathrm{\mu G}`)
+        r"""Returns the magnetic field strength of the cloud (:math:`\mathrm{\mu G}`)
         based on `Crutcher et al. 2010, ApJ 725 466 
         <https://iopscience.iop.org/article/10.1088/0004-637X/725/1/466>`_ (eq. 21).
 
@@ -36,7 +36,7 @@ class transport:
 
     @u.quantity_input(Ep=u.GeV, dens=u.cm**-3)
     def Diffusion_Coefficient(self, Ep, dens, chi=0.05, ism=0) -> u.cm**2/u.s:  # input: GeV
-        """Returns the diffusion coefficient of the ISM or the cloud (:math:`\mathrm{cm}^{2} \mathrm{/s}`)
+        r"""Returns the diffusion coefficient of the ISM or the cloud (:math:`\mathrm{cm}^{2} \mathrm{/s}`)
         based on number density of the medium.
         
         Parameters
@@ -57,7 +57,7 @@ class transport:
 
     @u.quantity_input(Ep=u.GeV, a=u.s, dens=u.cm**-3)
     def R_diffusion(self, Ep, a, dens, chi=0.05, ism=0) -> u.cm: 
-        """Returns how far the accelerated particles can 
+        r"""Returns how far the accelerated particles can 
         propagate by diffusion in the ISM or in the molecular cloud (cm).
         
         Parameters

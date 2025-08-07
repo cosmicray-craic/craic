@@ -2,6 +2,7 @@ import numpy as np
 import astropy.units as u
 from scipy.special import erfc
 from IPython import embed
+import warnings
 
 class flux:
     """Computes proton flux, gamma-ray and neutrino 
@@ -20,7 +21,7 @@ class flux:
     
     @u.quantity_input(Rc=u.pc, Dc=u.pc)
     def cloud_cell_flux(self, Rc, Dc, flux):
-        """
+        r"""
         Compute the total proton influx at the cloud (:math:`\mathrm{GeV}^{-1}`).
 
         Parameters
@@ -32,7 +33,8 @@ class flux:
         flux : :class:`~astropy.units.Quantity`
             Proton differential flux density at cloud entrance location. (:math:`\mathrm{GeV}^{-1}\,\mathrm{cm}^{-3}`)
         """
-
+        # if Rc.isscalar or Dc.isscalar or flux.isscalar:
+        #     warnings.warn("Inputs should be arrays. Please use the format np.array([value]) * unit", UserWarning)
         # Initialise return value to desired units
         tot_ccf = np.zeros(len(Dc)) * u.GeV**-1
 
@@ -91,6 +93,7 @@ class flux:
 
     @u.quantity_input(Eg=u.TeV, Ep=u.GeV)
     def compute_gamma_kernel(self, Eg, Ep):
+
         """
         Computes the kernel function for the total gamma-ray spectrum from :math:`\mathrm{\pi^{0}}` and 
         :math:`\eta` meson decay channels according to `Kelner et al. 2006, PhysRevD 74, 034018 
@@ -242,6 +245,6 @@ class flux:
 
         # Return [((proton,)neutrino)]
         # Muon decay (F_nu_1) then pion decay (F_nu_2)
-        return F_nu_1 , F_nu_2
+        return F_nu_1 , F_nu_2 
 
     

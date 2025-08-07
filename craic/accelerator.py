@@ -1,10 +1,14 @@
 import numpy as np
 import astropy.units as u
 import astropy.constants as c
+import pytest
 
 class accelerator:
-    """Calculates the radius and age of supernova remnant 
-    in the Sedov-Taylor stage."""
+    """Calculates the radius and age of supernova remnant (SNR) in the Sedov-Taylor stage.
+    
+    This class provides methods to compute SNR properties including
+    escape time for cosmic rays, radius and age of the SNR.
+    """
     Mej = (10.*u.Msun).to(u.gram)
     mp = c.m_p.to(u.gram)
     nh2ism = np.array([1.])*u.cm**(-3) # Density of Ambient Gas (cm^-3) ISM
@@ -29,7 +33,10 @@ class accelerator:
         typeIIb : bool
             Type of supernova. Type Ia if False, type IIb if True.
         """
-
+        # Warning
+        # if np.any(Ep.to('GeV') <= 0.938*u.GeV):
+        #     raise ValueError("Proton energy must be greater than its rest mass energy.")
+        
         # To find how long it takes for cosmic rays to escape
         t_sed = self.t_sed.to(u.yr)
 
@@ -53,7 +60,10 @@ class accelerator:
         time : :class:`~astropy.units.Quantity`
             SNR age. (yr)
         """
-
+        # Warning
+        if np.any(time <= 0 * u.yr):
+            raise ValueError("Time must be positive")
+        
         # (1) Truelove & McKee (1999):
         # mu_0 = 1.4 * c.m_p            # see text above eq. 4
         # rho_0 = self.nh2ism * mu_0    # see text above eq. 4
@@ -63,7 +73,7 @@ class accelerator:
 
         # (2) Reynolds (2008), which is based on (1):
         mu_1 = 1.4 # for neutral gas
-        n    = self.nh2ism
+        n = self.nh2ism
 
         # eq. 8 (exact factor found by comparing with Truelove)
         radius = 0.31456744*u.pc \
@@ -71,8 +81,7 @@ class accelerator:
                     * (n/self.nh2ism)**-0.2 \
                     * (mu_1/1.4)**-0.2 \
                     * (time/u.yr)**0.4
-
-        # Return
+        
         return radius.to(u.pc)
 
     @u.quantity_input(size=u.pc)
@@ -85,6 +94,10 @@ class accelerator:
         size : :class:`~astropy.units.Quantity`
             SNR radius. (pc)
         """
+
+        # Warning
+        if np.any(size <= 0*u.pc):
+            raise ValueError("Size must be positive")
 
         n = self.nh2ism
         mu_1 = 1.4 # for neutral gas
@@ -100,4 +113,4 @@ class accelerator:
         # Return
         return age.to(u.yr)
 
-    
+

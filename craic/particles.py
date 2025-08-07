@@ -27,6 +27,9 @@ class particles:
         Ep : :class:`~astropy.units.Quantity` 
             Proton energy. (GeV)
         """
+        if np.any(Ep < 0.2797*u.GeV):
+            raise ValueError(f"Energy of particles must be larger than the threshold 0.2797 GeV.")
+        
         frac = Ep / self.Epth
         log_frac = np.log(frac)
 
@@ -69,7 +72,7 @@ class particles:
         """
 
         if self.alpha == 2:
-            N0 = (self.Ebudget / (np.log(Emax / u.GeV) - np.log(Emin / u.GeV)))
+            N0 = (self.Ebudget.to(u.GeV) / (np.log(Emax / u.GeV) - np.log(Emin / u.GeV)))
         else:
             N0 = (self.Ebudget.to(u.GeV) * (2 - self.alpha) /
                   (Emax.to(u.GeV) ** (2 - self.alpha) - Emin.to(u.GeV) ** (2 - self.alpha)))
