@@ -43,7 +43,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../subpages/project.html">Project &amp; Contributors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../subpages/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../subpages/modules.html">Modules &amp; Functions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../subpages/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../subpages/tutorial.html">Quickstart Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../subpages/versions.html">Versions</a></li>
 </ul>
 
@@ -97,7 +97,7 @@
 <a class="viewcode-back" href="../../subpages/modules.html#craic.transport.transport.B_mag">[docs]</a>
     <span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">dens</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">B_mag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dens</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">uG</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the magnetic field strength of the cloud (:math:`\mathrm{\mu G}`)</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Returns the magnetic field strength of the cloud (:math:`\mathrm{\mu G}`)</span>
 <span class="sd">        based on `Crutcher et al. 2010, ApJ 725 466 </span>
 <span class="sd">        &lt;https://iopscience.iop.org/article/10.1088/0004-637X/725/1/466&gt;`_ (eq. 21).</span>
 
@@ -117,7 +117,7 @@
 <a class="viewcode-back" href="../../subpages/modules.html#craic.transport.transport.Diffusion_Coefficient">[docs]</a>
     <span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">Ep</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="p">,</span> <span class="n">dens</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">Diffusion_Coefficient</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Ep</span><span class="p">,</span> <span class="n">dens</span><span class="p">,</span> <span class="n">chi</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">ism</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">:</span>  <span class="c1"># input: GeV</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the diffusion coefficient of the ISM or the cloud (:math:`\mathrm{cm}^{2} \mathrm{/s}`)</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Returns the diffusion coefficient of the ISM or the cloud (:math:`\mathrm{cm}^{2} \mathrm{/s}`)</span>
 <span class="sd">        based on number density of the medium.</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
@@ -141,7 +141,7 @@
 <a class="viewcode-back" href="../../subpages/modules.html#craic.transport.transport.R_diffusion">[docs]</a>
     <span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">Ep</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">,</span> <span class="n">dens</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">R_diffusion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Ep</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">dens</span><span class="p">,</span> <span class="n">chi</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">ism</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">:</span> 
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns how far the accelerated particles can </span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Returns how far the accelerated particles can </span>
 <span class="sd">        propagate by diffusion in the ISM or in the molecular cloud (cm).</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>

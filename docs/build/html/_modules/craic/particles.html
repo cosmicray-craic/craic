@@ -43,7 +43,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../subpages/project.html">Project &amp; Contributors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../subpages/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../subpages/modules.html">Modules &amp; Functions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../subpages/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../subpages/tutorial.html">Quickstart Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../subpages/versions.html">Versions</a></li>
 </ul>
 
@@ -105,6 +105,9 @@
 <span class="sd">        Ep : :class:`~astropy.units.Quantity` </span>
 <span class="sd">            Proton energy. (GeV)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">Ep</span> <span class="o">&lt;</span> <span class="mf">0.2797</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Energy of particles must be larger than the threshold 0.2797 GeV.&quot;</span><span class="p">)</span>
+        
         <span class="n">frac</span> <span class="o">=</span> <span class="n">Ep</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">Epth</span>
         <span class="n">log_frac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">frac</span><span class="p">)</span>
 
@@ -153,7 +156,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="n">N0</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Ebudget</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">Emax</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">Emin</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="p">)))</span>
+            <span class="n">N0</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Ebudget</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">Emax</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">Emin</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="p">)))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">N0</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Ebudget</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span> <span class="o">/</span>
                   <span class="p">(</span><span class="n">Emax</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">2</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span> <span class="o">-</span> <span class="n">Emin</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">2</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">)))</span>

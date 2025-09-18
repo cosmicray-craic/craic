@@ -18,7 +18,7 @@ def find_nearest(array, value):
     idx = (np.abs(array-value)).argmin()
     return idx
 
-def sigmoid_blend(E, pflux_low, pflux_high, E1=0.05, E2=0.15, a=0.5):
+def sigmoid_blend(E, pflux_low, pflux_high, E1=0.07, E2=0.13, a=3):
     """
     Blends two spectra pflux_low and pflux_high over energy E using a sigmoid window.
     The transition is defined between E1 and E2 (default 50 and 150 GeV).
@@ -114,7 +114,7 @@ class SNR_Cloud_Flux:
 
         # Define proton energies
         # Ep_edges = np.logspace(0, 6.48, 1001) *u.GeV #1 PeV
-        Ep_edges = np.logspace(1, 6.48, 1001) *u.GeV #1 PeV
+        Ep_edges = np.logspace(0, 6.48, 1001) *u.GeV #1 PeV
         self.Eps = np.sqrt(Ep_edges[:-1] * Ep_edges[1:]) # log bin centers
         self.dEps = np.diff(Ep_edges)
 
@@ -133,6 +133,12 @@ class SNR_Cloud_Flux:
         self.radius_MC = radius_MC
         # self.E_min = E_min
         # self.E_max = E_max
+        allowed_types = {"Impulsive", "Continuous"}
+        if accel_type not in allowed_types:
+            raise ValueError(
+                f"Invalid accel_type='{accel_type}'. "
+                f"Must be one of {allowed_types}."
+            )
         self.accel_type = accel_type
         self.snr_typeII = snr_typeII
         self.F_gal = F_gal
@@ -156,6 +162,8 @@ class SNR_Cloud_Flux:
             
         if self.D_fast:
             tran.D_0 = 3*10**(27) * u.cm**2 / u.s
+        else:
+            tran.D_0 = 3*10**(26) * u.cm**2 / u.s
     
     @u.quantity_input(nh2=u.cm**-3, dist=u.pc, age=u.yr)
     def _compute_travel_parameters(self, nh2, dist, age) -> tuple[u.cm, u.pc, u.yr, u.pc]:
@@ -176,6 +184,7 @@ class SNR_Cloud_Flux:
         tuple
             (cloud_depth, dism, ismtime, Resc)
         """
+        
         # Compute Escape time
         tesc = acce.escape_time(Ep=self.Eps, typeIIb=self.snr_typeII)
         
@@ -487,6 +496,8 @@ class SNR_Cloud_Flux:
             phi_nutau_osc : :class:`~astropy.units.Quantity`
                 Tau Neutrino flux. (:math:`\mathrm{TeV}^{-1}\,\mathrm{cm}^{-2}\,\mathrm{s}^{-1}`)
         """
+        if age < 1050*u.yr:
+            raise ValueError("The SNR is too young.")
         # Compute proton travel parameters & cloud penetration depth
         cloud_depth, dism, ismtime, Resc = self._compute_travel_parameters(nh2, dist, age)
         

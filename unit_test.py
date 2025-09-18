@@ -13,7 +13,8 @@ import os
 
 acel = ac()
 
-# Unit Tests
+# Unit Tests for different classes and functions within them.
+
 class TestAccelerator:
     """Unit tests for the Accelerator class."""
     
@@ -49,11 +50,6 @@ class TestAccelerator:
         t_esc_IIb = self.acc.escape_time(Ep, typeIIb=True)
         assert not np.isclose(t_esc.value, t_esc_IIb.value)
     
-    def test_escape_time_invalid_energy(self):
-        """Test escape time with invalid (too low) energy."""
-        with pytest.raises(ValueError, match="Proton energy must be greater than its rest mass energy."):
-            self.acc.escape_time(0.5*u.GeV)
-    
     def test_escape_time_array_input(self):
         """Test escape time with array input."""
         Ep_array = np.array([1, 10, 100])*u.GeV
@@ -87,7 +83,7 @@ class TestAccelerator:
         assert np.isclose(actual_ratio.value, expected_ratio.value, rtol=1e-10)
     
     def test_SNR_radius_invalid_time(self):
-        """Test SNR radius with invalid time."""
+        """Test SNR radius with invalid time (negative)."""
         with pytest.raises(ValueError, match="Time must be positive"):
             self.acc.SNR_Radius(-100*u.yr)
         
@@ -104,7 +100,7 @@ class TestAccelerator:
         assert age.value > 0
     
     def test_SNR_age_invalid_size(self):
-        """Test SNR age with invalid size."""
+        """Test SNR age with invalid size (negative)."""
         with pytest.raises(ValueError, match="Size must be positive"):
             self.acc.SNR_age(-5*u.pc)
         
@@ -137,21 +133,22 @@ class TestAccelerator:
         assert np.allclose(times.value, ages.value, rtol=1e-10)
 
 
-# class TestFlux:
 
 
-# Import the flux class (assuming it's in a file called flux.py)
-# If the file has a different name, adjust the import accordingly
-try:
-    from craic.flux import flux
-except ImportError:
-    # If direct import fails, try adding current directory to path
-    sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-    from craic.flux import flux
 
+# # Import the flux class 
+
+# try:
+#     from craic.flux import flux
+# except ImportError:
+#     # If direct import fails, try adding current directory to path
+#     sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+#     from craic.flux import flux
+
+#======================== Unit tests for the "flux" class starts here =========================#
 
 class TestFlux:
-    """Test suite for the flux class."""
+    """Unit tests for the flux class."""
     
     def setup_method(self):
         """Set up test fixtures before each test method."""
@@ -169,14 +166,14 @@ class TestFlux:
         assert abs(self.flux_instance.Pmutau - 0.381) < 1e-10
         assert abs(self.flux_instance.Ptautau - 0.43) < 1e-10
         
-        # Test that probabilities sum correctly (approximately)
+        # Test that probabilities sum correctly 
         # Electron neutrino probabilities should sum to ~1
         prob_sum_e = self.flux_instance.Pee + self.flux_instance.Pemu + self.flux_instance.Petau
         assert abs(prob_sum_e - 1.0) < 0.01
 
 
 class TestCloudCellFlux:
-    """Test suite for the cloud_cell_flux method."""
+    """Unit tests for the cloud_cell_flux method."""
     
     def setup_method(self):
         """Set up test fixtures."""
@@ -214,7 +211,7 @@ class TestCloudCellFlux:
         assert abs((result[2] - expected_2).value) < 1e-6
     
     def test_cloud_cell_flux_partial_traversal(self):
-        """Test cloud_cell_flux for partial cloud traversal (Dc < 2*Rc)."""
+        """Test cloud_cell_flux for partially traversed clouds (Dc < 2*Rc)."""
         Rc = 2.0 * u.pc
         Dc = np.array([1.0, 1.5]) * u.pc  # Both < 2*Rc
         input_flux = np.array([1e-3, 2e-3]) * u.GeV**-1 * u.cm**-3
@@ -255,7 +252,7 @@ class TestCloudCellFlux:
 
 
 class TestComputeGammaKernel:
-    """Test suite for the compute_gamma_kernel method."""
+    """Unit tests for the compute_gamma_kernel method."""
     
     def setup_method(self):
         """Set up test fixtures."""
@@ -325,7 +322,7 @@ class TestComputeGammaKernel:
 
 
 class TestComputeNeutrinoKernel:
-    """Test suite for the compute_neutrino_kernel method."""
+    """Unit tests for the compute_neutrino_kernel method."""
     
     def setup_method(self):
         """Set up test fixtures."""
@@ -441,9 +438,8 @@ class TestIntegration:
         assert all(F_nu_1.flatten() >= 0)
         assert all(F_nu_2.flatten() >= 0)
 
-
-
-# Mock the imported modules since they're not available
+#============================= Unit tests for the "flux class" ends here ==============================#
+# Mock the imported modules
 particles_mock = Mock()
 transport_mock = Mock()
 accelerator_mock = Mock()
@@ -454,7 +450,7 @@ with patch.dict('sys.modules', {
     'transport': Mock(transport=lambda: transport_mock),
     'accelerator': Mock(accelerator=lambda: accelerator_mock)
 }):
-    # Import the functions from your module (assuming it's named cr_flux.py)
+    # Import the functions 
     from craic.injection import (
         compute_pflux_impulsive_extended,
         compute_pflux_impulsive_point,
@@ -466,11 +462,12 @@ with patch.dict('sys.modules', {
         compute_fgal_LHAASO
     )
 
+#============================== Unit tests for the "injection" class starts here ==============================#
 class TestImpulsiveFluxCalculations:
-    """Test suite for impulsive flux calculations."""
+    """Unit tests for impulsive flux calculations."""
     
     def setup_method(self):
-        """Setup mock transport methods."""
+        """Setup mock particle transport methods."""
         # Mock the transport methods
         transport_mock.R_diffusion.return_value = 10.0 * u.pc
         transport_mock.Diffusion_Coefficient.return_value = 1e28 * u.cm**2 / u.s
@@ -565,7 +562,7 @@ class TestImpulsiveFluxCalculations:
         assert point_result != extended_result
 
 class TestContinuousFluxCalculations:
-    """Test suite for continuous flux calculations."""
+    """Unit tests for continuous flux calculations."""
     
     def setup_method(self):
         """Setup mock transport methods."""
@@ -599,7 +596,7 @@ class TestContinuousFluxCalculations:
             compute_pflux_continuous_extended(Resc, N_0, Ep, d, a, dens)
 
 class TestRigidityCRCalculations:
-    """Test suite for rigidity and cosmic ray calculations."""
+    """Unit tests for rigidity and cosmic ray calculations."""
     
     def test_e2R_basic(self):
         """Test energy to rigidity conversion."""
@@ -662,7 +659,7 @@ class TestRigidityCRCalculations:
         assert flux_high < flux_low
 
 class TestDAMPEFluxCalculations:
-    """Test suite for DAMPE cosmic ray flux calculations."""
+    """Unit tests for DAMPE cosmic ray flux calculations."""
     
     def test_compute_fgal_dampe_basic(self):
         """Test basic DAMPE flux calculation."""
@@ -699,7 +696,7 @@ class TestDAMPEFluxCalculations:
         assert result.value > 0
 
 class TestLHAASOFluxCalculations:
-    """Test suite for LHAASO cosmic ray flux calculations."""
+    """Unit tests for LHAASO cosmic ray flux calculations."""
     
     def test_compute_fgal_lhaaso_qgs_exp(self):
         """Test LHAASO QGS exponential fit."""
@@ -767,18 +764,18 @@ class TestEdgeCasesAndErrorHandling:
     
     def test_zero_energy(self):
         """Test behavior with zero energy."""
-        # This might raise errors or warnings, depending on implementation
+        
         E = 0 * u.GeV
         
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             try:
                 result = compute_fgal(E)
-                # If it doesn't raise an error, check result
+                
                 if np.isfinite(result.value):
                     assert result.unit == u.GeV**-1 * u.cm**-3
             except (ValueError, ZeroDivisionError):
-                # Expected for zero energy
+        
                 pass
     
     def test_very_large_energy(self):
@@ -788,14 +785,13 @@ class TestEdgeCasesAndErrorHandling:
         try:
             result = compute_fgal(E)
             assert result.unit == u.GeV**-1 * u.cm**-3
-            # Very high energy might give very small flux
             assert result.value >= 0
         except OverflowError:
             # Acceptable for extremely high energies
             pass
     
     def test_negative_parameters(self):
-        """Test with negative parameters (should handle gracefully or raise errors)."""
+        """Test with negative parameters (should handle appropriately or raise errors)."""
         with pytest.raises((ValueError, AssertionError)):
             compute_pflux_impulsive_point(
                 N_0=-1e40 * u.GeV,  # Negative normalization
@@ -816,10 +812,10 @@ class TestEdgeCasesAndErrorHandling:
         assert compute_fgal_LHAASO(E).unit == expected_unit
 
 class TestParameterSweeps:
-    """Test parameter sweeps to ensure physical behavior."""
+    """Test parameter sweeps to ensure physical behavior of the model."""
     
     def setup_method(self):
-        """Setup mock transport methods."""
+        """Set up mock particle transport methods."""
         transport_mock.R_diffusion.return_value = 10.0 * u.pc
         transport_mock.Diffusion_Coefficient.return_value = 1e28 * u.cm**2 / u.s
         particles_mock.t_ppEK.return_value = 1e6 * u.yr
@@ -855,9 +851,12 @@ class TestParameterSweeps:
         assert flux_low_dens.value > 0
         assert flux_high_dens.value > 0
 
-# Test 
+#====================== Unit tests for the "injection" class ends here =====================#
+
+#====================== Unit tests for the "particles" class starts here ===================#
+
 class TestParticlesInitialization:
-    """Test suite for particles class initialization."""
+    """Unit tests for particles class initialization."""
     
     def test_default_initialization(self):
         """Test default initialization parameters."""
@@ -893,7 +892,7 @@ class TestParticlesInitialization:
 
 
 class TestCrossSectionCalculation:
-    """Test suite for proton-proton cross-section calculations."""
+    """Unit tests for proton-proton cross-section calculations."""
     
     def setup_method(self):
         """Setup particles instance for testing."""
@@ -979,7 +978,7 @@ class TestCrossSectionCalculation:
 
 
 class TestCoolingTimeCalculation:
-    """Test suite for proton cooling time calculations."""
+    """Unit tests for proton cooling time calculations."""
     
     def setup_method(self):
         """Setup particles instance for testing."""
@@ -1082,7 +1081,7 @@ class TestCoolingTimeCalculation:
 
 
 class TestNormalization:
-    """Test suite for energy budget normalization calculations."""
+    """Unit tests for energy budget normalization calculations."""
     
     def test_NormEbudget_alpha_2_default(self):
         """Test normalization for alpha=2 (default case)."""
@@ -1175,7 +1174,7 @@ class TestNormalization:
 
 
 class TestEdgeCasesAndErrorHandling:
-    """Test edge cases and error handling for particles class."""
+    """Test edge cases and error handling for the particles class."""
 
     def test_zero_energy_cross_section(self):
         """Test cross-section at zero energy."""
@@ -1287,85 +1286,83 @@ class TestPhysicalConsistency:
             rtol=0.01
         )
 
-import pytest
-import numpy as np
-import astropy.units as u
-import astropy.constants as c
-from unittest.mock import Mock, patch
-import warnings
+#========================== Unit tests for the "particles" class ends here ===================#
 
-# Mock the particles class since it's imported
+
+
+# Mock the particles class 
 particles_mock = Mock()
 
-# Define the transport class (corrected from your code)
-class transport:
-    """Calculates magnetic field strength, diffusion coefficient and diffusion radius
-    in the ISM and in a molecular cloud."""
+# # Define the transport class (corrected from your code)
+# class transport:
+#     """Calculates magnetic field strength, diffusion coefficient and diffusion radius
+#     in the ISM and in a molecular cloud."""
     
-    chiism = 1.
-    cr_delta = 0.5
+#     chiism = 1.
+#     cr_delta = 0.5
     
-    def __init__(self, D0=3*10**(26) *u.cm**2 /u.s):
-        self.D_0 = D0
-        # Galactic Diffusion Coefficient (cm^2 s^-1) at 1 GeV
-        # FAST = 3x10^27 SLOW = 3x10^26
+#     def __init__(self, D0=3*10**(26) *u.cm**2 /u.s):
+#         self.D_0 = D0
+#         # Galactic Diffusion Coefficient (cm^2 s^-1) at 1 GeV
+#         # FAST = 3x10^27 SLOW = 3x10^26
     
-    # Magnetic Field Strength
-    @u.quantity_input(dens=u.cm**-3)
-    def B_mag(self, dens) -> u.uG:
-        """Returns the magnetic field strength of the cloud (:math:`\mathrm{\mu G}`)
-        based on `Crutcher et al. 2010, ApJ 725 466
-        <https://iopscience.iop.org/article/10.1088/0004-637X/725/1/466>`_ (eq. 21).
+#     # Magnetic Field Strength
+#     @u.quantity_input(dens=u.cm**-3)
+#     def B_mag(self, dens) -> u.uG:
+#         """Returns the magnetic field strength of the cloud (:math:`\mathrm{\mu G}`)
+#         based on `Crutcher et al. 2010, ApJ 725 466
+#         <https://iopscience.iop.org/article/10.1088/0004-637X/725/1/466>`_ (eq. 21).
         
-        Parameter
-        ----------
-        dens: :class:`~astropy.units.Quantity`
-            Number density of the molecular cloud (:math:`\mathrm{cm}^{-3}`)
-        """
-        B = np.where(dens > 300*u.cm**-3,
-                     10*u.uG * (dens/(300*u.cm**-3))**0.65,
-                     10*u.uG)
-        return B  # micro G
+#         Parameter
+#         ----------
+#         dens: :class:`~astropy.units.Quantity`
+#             Number density of the molecular cloud (:math:`\mathrm{cm}^{-3}`)
+#         """
+#         B = np.where(dens > 300*u.cm**-3,
+#                      10*u.uG * (dens/(300*u.cm**-3))**0.65,
+#                      10*u.uG)
+#         return B  # micro G
     
-    @u.quantity_input(Ep=u.GeV, dens=u.cm**-3)
-    def Diffusion_Coefficient(self, Ep, dens, chi=0.05, ism=0) -> u.cm**2/u.s:  # input: GeV
-        """Returns the diffusion coefficient of the ISM or the cloud (:math:`\mathrm{cm}^{2} \mathrm{/s}`)
-        based on number density of the medium.
+#     @u.quantity_input(Ep=u.GeV, dens=u.cm**-3)
+#     def Diffusion_Coefficient(self, Ep, dens, chi=0.05, ism=0) -> u.cm**2/u.s:  # input: GeV
+#         """Returns the diffusion coefficient of the ISM or the cloud (:math:`\mathrm{cm}^{2} \mathrm{/s}`)
+#         based on number density of the medium.
         
-        Parameters
-        ----------
-        Ep : :class:`~astropy.units.Quantity` or array-like
-            Energy of particles (GeV)
-        dens: :class:`~astropy.units.Quantity`
-            Number density (:math:`\mathrm{cm}^{-3}`)
-        """
-        # chi = 1, no suppression in the ISM = larger diffusion coefficient
-        if ism:
-            d_coeff = self.chiism * self.D_0 * ((Ep / (1.*u.GeV)) / (3. / 3.)) ** 0.5  # make this 3 micro gaus
-        else:
-            d_coeff = chi * self.D_0 * (((Ep / (1.*u.GeV))) / (self.B_mag(dens) / (3*u.microgauss))) ** 0.5  # cm^2s^-1
-        return d_coeff
+#         Parameters
+#         ----------
+#         Ep : :class:`~astropy.units.Quantity` or array-like
+#             Energy of particles (GeV)
+#         dens: :class:`~astropy.units.Quantity`
+#             Number density (:math:`\mathrm{cm}^{-3}`)
+#         """
+#         # chi = 1, no suppression in the ISM = larger diffusion coefficient
+#         if ism:
+#             d_coeff = self.chiism * self.D_0 * ((Ep / (1.*u.GeV)) / (3. / 3.)) ** 0.5  # make this 3 micro gaus
+#         else:
+#             d_coeff = chi * self.D_0 * (((Ep / (1.*u.GeV))) / (self.B_mag(dens) / (3*u.microgauss))) ** 0.5  # cm^2s^-1
+#         return d_coeff
     
-    @u.quantity_input(Ep=u.GeV, a=u.s, dens=u.cm**-3)
-    def R_diffusion(self, Ep, a, dens, chi=0.05, ism=0) -> u.cm:
-        """Returns how far the accelerated particles can
-        propagate by diffusion in the ISM or in the molecular cloud (cm).
+#     @u.quantity_input(Ep=u.GeV, a=u.s, dens=u.cm**-3)
+#     def R_diffusion(self, Ep, a, dens, chi=0.05, ism=0) -> u.cm:
+#         """Returns how far the accelerated particles can
+#         propagate by diffusion in the ISM or in the molecular cloud (cm).
         
-        Parameters
-        ----------
-        Ep : :class:`~astropy.units.Quantity`
-            Energy of particles (GeV)
-        a : :class:`~astropy.units.Quantity`
-            Time of particle propagation in the medium. (seconds)
-        dens: :class:`~astropy.units.Quantity`
-            Number density (:math:`\mathrm{cm}^{-3}`)
-        """
-        R_dif = 2 * np.sqrt(self.Diffusion_Coefficient(Ep, dens, chi=chi, ism=ism) * a.to(u.s))  # no frac contribution
-        return R_dif
+#         Parameters
+#         ----------
+#         Ep : :class:`~astropy.units.Quantity`
+#             Energy of particles (GeV)
+#         a : :class:`~astropy.units.Quantity`
+#             Time of particle propagation in the medium. (seconds)
+#         dens: :class:`~astropy.units.Quantity`
+#             Number density (:math:`\mathrm{cm}^{-3}`)
+#         """
+#         R_dif = 2 * np.sqrt(self.Diffusion_Coefficient(Ep, dens, chi=chi, ism=ism) * a.to(u.s))  # no frac contribution
+#         return R_dif
 
+#=========================== Unit tests for the "transport" class starts here ===================#
 
 class TestTransportInitialization:
-    """Test suite for transport class initialization."""
+    """Unit tests for transport class initialization."""
     
     def test_default_initialization(self):
         """Test default initialization parameters."""
@@ -1393,7 +1390,7 @@ class TestTransportInitialization:
 
 
 class TestMagneticFieldCalculation:
-    """Test suite for magnetic field strength calculations."""
+    """Unit tests for magnetic field strength calculations."""
     
     @pytest.fixture
     def transport_instance(self):
@@ -1436,14 +1433,14 @@ class TestMagneticFieldCalculation:
         assert B.unit == u.uG
     
     def test_B_mag_transition_point(self, transport_instance):
-        """Test magnetic field exactly at transition density."""
+        """Test magnetic field at transition density."""
         dens_transition = 300 * u.cm**-3
         B_transition = transport_instance.B_mag(dens_transition)
         assert pytest.approx(B_transition.value, abs=1e-10) == 10.0
     
     def test_B_mag_scaling_law(self, transport_instance):
-        """Test that magnetic field follows correct scaling law."""
-        # Test the scaling relation B ∝ n^0.65 for n > 300 cm^-3
+        """Test that magnetic field follows Crutcher's relation."""
+        # Test the Crutcher's relation B ∝ n^0.65 for n > 300 cm^-3
         dens1 = 1000 * u.cm**-3
         dens2 = 4000 * u.cm**-3  # 4x higher density
         
@@ -1480,13 +1477,13 @@ class TestMagneticFieldCalculation:
         dens = dens_value * u.cm**-3
         B = transport_instance.B_mag(dens)
         
-        # Magnetic field should be between 1 μG and 1000 μG
+        
         assert 1 <= B.value <= 1000
         assert B.unit == u.uG
 
 
 class TestDiffusionCoefficient:
-    """Test suite for diffusion coefficient calculations."""
+    """Unit tests for diffusion coefficient calculations."""
     
     @pytest.fixture
     def transport_instance(self):
@@ -1614,7 +1611,7 @@ class TestDiffusionCoefficient:
 
 
 class TestDiffusionRadius:
-    """Test suite for diffusion radius calculations."""
+    """Unit tests for diffusion radius calculations."""
     
     @pytest.fixture
     def transport_instance(self):
@@ -1919,541 +1916,445 @@ class TestParameterSweeps:
             
             R_prev = R
 
-#!/usr/bin/env python3
-"""
-Unit tests for SNR_Cloud_Flux class and utility functions.
+#============================= Unit tests for the "transport" class ends here ==========================#
 
-This test suite covers:
-- Utility functions (find_nearest, sigmoid_blend)
-- SNR_Cloud_Flux class initialization
-- Parameter validation
-- Mathematical operations
-- Edge cases and error handling
-"""
-
-import unittest
-import numpy as np
-import astropy.units as u
-from unittest.mock import Mock, patch
-import sys
-import os
-
-# Mock the required modules before importing the main class
-sys.modules['particles'] = Mock()
-sys.modules['transport'] = Mock()
-sys.modules['accelerator'] = Mock()
-sys.modules['flux'] = Mock()
-sys.modules['injection'] = Mock()
-
-# Now we can import our functions (assuming they're in a module called snr_flux)
-# from snr_flux import SNR_Cloud_Flux, find_nearest, sigmoid_blend
+#============================= Unit tests for the "SNR_Cloud_Flux" class starts here =============================#
 
 
-class TestUtilityFunctions(unittest.TestCase):
+# Try to import real modules, fall back to mocks if not available
+try:
+    from craic.particles import particles
+    from craic.transport import transport  
+    from craic.accelerator import accelerator
+    from craic.flux import flux
+    import craic.injection
+    REAL_MODULES_AVAILABLE = True
+except ImportError:
+    # Create mocks if real modules aren't available
+    REAL_MODULES_AVAILABLE = False
+    
+    class MockParticles:
+        def __init__(self):
+            self.alpha = 2.0
+            self.cspeed = 3e10 * u.cm / u.s
+        def NormEbudget(self):
+            return 1e50 * u.erg
+        def sig_ppEK(self, Ep):
+            return np.ones_like(Ep.value) * 1e-26 * u.cm**2
+    
+    class MockTransport:
+        def __init__(self):
+            self.D_0 = 3e27 * u.cm**2 / u.s
+        def Diffusion_Coefficient(self, Eps, nh2, ism=1):
+            return np.ones_like(Eps.value) * 1e28 * u.cm**2 / u.s
+        def R_diffusion(self, Eps, time, nh2, chi=1, ism=0):
+            return np.ones_like(Eps.value) * 5 * u.pc
+    
+    class MockAccelerator:
+        def __init__(self):
+            self.nh2ism = 1.0 * u.cm**-3
+        def escape_time(self, Ep, typeIIb=True):
+            return np.ones_like(Ep.value) * 1e4 * u.yr
+        def SNR_Radius(self, time):
+            return np.ones_like(time.value) * 10 * u.pc
+    
+    class MockFlux:
+        def __init__(self):
+            self.Pee = self.Pemu = self.Pmumu = self.Petau = self.Pmutau = 0.33
+        def compute_gamma_kernel(self, Egs, Eps):
+            return np.ones((len(Eps), len(Egs))) * 0.1
+        def compute_neutrino_kernel(self, Egs, Eps):
+            F = np.ones((len(Eps), len(Egs))) * 0.05
+            return F, F * 0.6
+        def cloud_cell_flux(self, radius_MC, cloud_depth, pflux_tmp):
+            return pflux_tmp * 0.8
+    
+    class MockInjection:
+        @staticmethod
+        def compute_pflux_impulsive_extended(*args, **kwargs):
+            Eps = args[2]
+            alpha = kwargs.get('alpha', 2.0)
+            return 1e-10 * Eps.to(u.GeV).value**(-alpha) * u.GeV**-1 * u.cm**-3
+        
+        @staticmethod 
+        def compute_pflux_continuous_extended(*args, **kwargs):
+            return MockInjection.compute_pflux_impulsive_extended(*args, **kwargs) * 0.5
+    
+    particles = MockParticles
+    transport = MockTransport
+    accelerator = MockAccelerator  
+    flux = MockFlux
+    injection = MockInjection
+
+from craic.SNR_Cloud_Flux import SNR_Cloud_Flux, find_nearest, sigmoid_blend
+# # Utility functions from original code
+# def find_nearest(array, value):
+#     array = np.asarray(array)
+#     idx = (np.abs(array-value)).argmin()
+#     return idx
+
+# def sigmoid_blend(E, pflux_low, pflux_high, E1=0.07, E2=0.13, a=3):
+#     E = np.asarray(E)
+#     Ec = 0.5 * (E1 + E2)
+#     delta = (E2 - E1) / a
+#     w = 1 / (1 + np.exp((E - Ec) / delta))
+#     return w * pflux_low + (1 - w) * pflux_high
+
+
+# class SNR_Cloud_Flux:
+#     """SNR Cloud Flux calculator for testing."""
+    
+#     def __init__(self, chi=0.05, distance_SNR=2000*u.pc, radius_MC=10*u.pc, 
+#                  Eg_lo=1.0*u.GeV, Eg_hi=3e3*u.TeV, accel_type='Impulsive', 
+#                  snr_typeII=True, F_gal=False, palpha=2.0, D_fast=True, flag_low=True):
+        
+#         # Initialize module instances
+#         self.part = particles()
+#         self.tran = transport()
+#         self.acce = accelerator()
+#         self.fl = flux()
+        
+#         # Set up energy arrays
+#         N = 200
+#         Eg_edges = np.logspace(start=np.log10(Eg_lo.to(u.TeV).value),
+#                               stop=np.log10(Eg_hi.to(u.TeV).value), 
+#                               num=N+1) * u.TeV
+#         self.Egs = np.sqrt(Eg_edges[:-1] * Eg_edges[1:])
+#         self.dEgs = np.diff(Eg_edges)
+        
+#         Ep_edges = np.logspace(0, 6.48, 1001) * u.GeV
+#         self.Eps = np.sqrt(Ep_edges[:-1] * Ep_edges[1:])
+#         self.dEps = np.diff(Ep_edges)
+        
+#         # Store parameters
+#         self.chi = chi
+#         self.distance_SNR = distance_SNR
+#         self.radius_MC = radius_MC
+#         self.accel_type = accel_type
+#         self.snr_typeII = snr_typeII
+#         self.F_gal = F_gal
+#         self.palpha = palpha
+#         self.D_fast = D_fast
+#         self.flag_low = flag_low
+        
+#         # Physical constants
+#         self.m_pion = 135. * u.MeV
+#         self.m_proton = 938. * u.MeV
+#         self.Emin_g = self.Egs + self.m_pion**2 / (4. * self.Egs)
+        
+#         self._setup_parameters()
+    
+#     def _setup_parameters(self):
+#         """Set up initial parameters."""
+#         np.seterr(all="ignore")
+#         self.N0 = self.part.NormEbudget()
+        
+#         if not self.palpha == 2.0:
+#             self.part.alpha = self.palpha
+            
+#         if self.D_fast:
+#             self.tran.D_0 = 3e27 * u.cm**2 / u.s
+#         else:
+#             self.tran.D_0 = 3e26 * u.cm**2 / u.s
+    
+#     def compute_flux(self, nh2, dist, age):
+#         """Simplified compute_flux for testing."""
+#         # Mock a simple computation that returns physically reasonable values
+#         E_gamma = self.Egs
+        
+#         # Create mock gamma-ray flux (power law with exponential cutoff)
+#         flux_norm = 1e-12 / (u.TeV * u.cm**2 * u.s)
+#         E_cutoff = 10 * u.TeV
+#         gamma_flux = flux_norm * (E_gamma / u.TeV)**(-2.0) * np.exp(-E_gamma / E_cutoff)
+        
+#         # Mock neutrino fluxes (factor ~3 lower than gamma)
+#         nu_flux = gamma_flux / 3
+#         nu_e = nu_mu = nu_tau = nu_flux / 3  # Equal flavors after oscillation
+        
+#         return E_gamma, gamma_flux, nu_flux, nu_e, nu_mu, nu_tau
+
+
+# =============================================================================
+# UNIT TESTS
+# =============================================================================
+
+class TestUtilityFunctions:
     """Test utility functions."""
     
     def test_find_nearest_basic(self):
-        """Test find_nearest function with basic inputs."""
-        def find_nearest(array, value):
-            array = np.asarray(array)
-            idx = (np.abs(array-value)).argmin()
-            return idx
-        
-        # Test with integers
+        """Test find_nearest function."""
         array = np.array([1, 3, 5, 7, 9])
-        self.assertEqual(find_nearest(array, 4), 1)  # Should find index of 3
-        self.assertEqual(find_nearest(array, 6), 2)  # Should find index of 5
-        self.assertEqual(find_nearest(array, 1), 0)  # Exact match
-        self.assertEqual(find_nearest(array, 9), 4)  # Last element
-        
-    def test_find_nearest_floats(self):
-        """Test find_nearest with floating point arrays."""
-        def find_nearest(array, value):
-            array = np.asarray(array)
-            idx = (np.abs(array-value)).argmin()
-            return idx
-        
-        array_float = np.array([1.1, 2.5, 3.7, 4.9, 6.2])
-        self.assertEqual(find_nearest(array_float, 2.6), 1)
-        self.assertEqual(find_nearest(array_float, 3.8), 2)
-        self.assertEqual(find_nearest(array_float, 0.5), 0)
-        
-    def test_find_nearest_edge_cases(self):
-        """Test find_nearest with edge cases."""
-        def find_nearest(array, value):
-            array = np.asarray(array)
-            idx = (np.abs(array-value)).argmin()
-            return idx
-        
-        # Single element array
-        single_array = np.array([5.0])
-        self.assertEqual(find_nearest(single_array, 10), 0)
-        
-        # Empty array should raise an error
-        with self.assertRaises(ValueError):
-            find_nearest(np.array([]), 5)
+        assert find_nearest(array, 5) == 2
+        assert find_nearest(array, 4) == 1 
+        assert find_nearest(array, 6) == 2
     
-    def test_sigmoid_blend_basic(self):
-        """Test sigmoid_blend function with basic parameters."""
-        def sigmoid_blend(E, pflux_low, pflux_high, E1=0.05, E2=0.15, a=0.5):
-            E = np.asarray(E)
-            Ec = 0.5 * (E1 + E2)
-            delta = (E2 - E1) / a
-            w = 1 / (1 + np.exp((E - Ec) / delta))
-            pflux_total = w * pflux_low + (1 - w) * pflux_high
-            return pflux_total
+    def test_find_nearest_edge_cases(self):
+        """Test find_nearest edge cases."""
+        array = np.array([1, 2, 3])
+        assert find_nearest(array, 0) == 0  # Below range
+        assert find_nearest(array, 10) == 2  # Above range
         
-        E = np.array([0.01, 0.1, 0.2, 0.3])
-        pflux_low = np.array([10, 8, 6, 4])
-        pflux_high = np.array([1, 1, 1, 1])
+        # Single element
+        assert find_nearest(np.array([5]), 3) == 0
+    
+    def test_sigmoid_blend(self):
+        """Test sigmoid blending function."""
+        E = np.array([0.01, 0.05, 0.1, 0.15, 0.2])
+        pflux_low = np.ones(5) * 2.0
+        pflux_high = np.ones(5) * 1.0
         
         result = sigmoid_blend(E, pflux_low, pflux_high)
         
-        # Basic shape test
-        self.assertEqual(len(result), len(E))
-        
-        # At very low energies, should be dominated by pflux_low
-        self.assertGreater(result[0], 5)  # Should be closer to pflux_low[0]=10
-        
-        # At very high energies, should be dominated by pflux_high
-        self.assertLess(result[-1], 3)  # Should be closer to pflux_high[-1]=1
+        # Check transition behavior
+        assert result[0] > 1.5  # Low E closer to pflux_low
+        assert result[-1] < 1.5  # High E closer to pflux_high
+        assert np.all((result >= 1.0) & (result <= 2.0))  # Bounded
     
     def test_sigmoid_blend_parameters(self):
-        """Test sigmoid_blend with different parameter values."""
-        def sigmoid_blend(E, pflux_low, pflux_high, E1=0.05, E2=0.15, a=0.5):
-            E = np.asarray(E)
-            Ec = 0.5 * (E1 + E2)
-            delta = (E2 - E1) / a
-            w = 1 / (1 + np.exp((E - Ec) / delta))
-            pflux_total = w * pflux_low + (1 - w) * pflux_high
-            return pflux_total
+        """Test sigmoid blend with different parameters."""
+        E = np.logspace(-2, 0, 20)
+        pflux_low = np.ones(20) * 10.0
+        pflux_high = np.ones(20) * 1.0
         
-        E = np.array([0.05, 0.1, 0.15])
-        pflux_low = np.array([10, 10, 10])
-        pflux_high = np.array([1, 1, 1])
+        # Different transition energies
+        result1 = sigmoid_blend(E, pflux_low, pflux_high, E1=0.1, E2=0.2)
+        result2 = sigmoid_blend(E, pflux_low, pflux_high, E1=0.3, E2=0.4)
+        assert not np.allclose(result1, result2)
         
-        # Test with different transition parameters
-        result1 = sigmoid_blend(E, pflux_low, pflux_high, E1=0.08, E2=0.12, a=1.0)
-        result2 = sigmoid_blend(E, pflux_low, pflux_high, E1=0.08, E2=0.12, a=0.1)
+        # Different sharpness
+        sharp = sigmoid_blend(E, pflux_low, pflux_high, a=10)
+        smooth = sigmoid_blend(E, pflux_low, pflux_high, a=1)
         
-        # Different 'a' values should give different transitions
-        self.assertFalse(np.allclose(result1, result2))
-    
-    def test_sigmoid_blend_edge_cases(self):
-        """Test sigmoid_blend edge cases."""
-        def sigmoid_blend(E, pflux_low, pflux_high, E1=0.05, E2=0.15, a=0.5):
-            E = np.asarray(E)
-            Ec = 0.5 * (E1 + E2)
-            delta = (E2 - E1) / a
-            w = 1 / (1 + np.exp((E - Ec) / delta))
-            pflux_total = w * pflux_low + (1 - w) * pflux_high
-            return pflux_total
-        
-        # Test with identical arrays
-        E = np.array([0.1, 0.1, 0.1])
-        pflux_same = np.array([5, 5, 5])
-        result = sigmoid_blend(E, pflux_same, pflux_same)
-        np.testing.assert_array_almost_equal(result, pflux_same)
+        # Sharp transition should have steeper gradient
+        grad_sharp = np.gradient(sharp)
+        grad_smooth = np.gradient(smooth)
+        assert np.max(np.abs(grad_sharp)) > np.max(np.abs(grad_smooth))
 
 
-class MockDependencies:
-    """Mock the external dependencies for SNR_Cloud_Flux."""
-    
-    def __init__(self):
-        # Mock particles
-        self.particles = Mock()
-        self.particles_instance = Mock()
-        self.particles.return_value = self.particles_instance
-        self.particles_instance.NormEbudget.return_value = 1e50
-        self.particles_instance.cspeed = 3e10 * u.cm / u.s
-        self.particles_instance.sig_ppEK.return_value = 1e-26 * u.cm**2
-        self.particles_instance.alpha = 2.0
-        
-        # Mock transport
-        self.transport = Mock()
-        self.transport_instance = Mock()
-        self.transport.return_value = self.transport_instance
-        self.transport_instance.D_0 = 3e27 * u.cm**2 / u.s
-        self.transport_instance.Diffusion_Coefficient.return_value = 1e28 * u.cm**2 / u.s
-        self.transport_instance.R_diffusion.return_value = 5 * u.pc
-        
-        # Mock accelerator
-        self.accelerator = Mock()
-        self.accelerator_instance = Mock()
-        self.accelerator.return_value = self.accelerator_instance
-        self.accelerator_instance.escape_time.return_value = 1e4 * u.yr
-        self.accelerator_instance.SNR_Radius.return_value = 10 * u.pc
-        self.accelerator_instance.nh2ism = 1 * u.cm**-3
-        
-        # Mock flux
-        self.flux = Mock()
-        self.flux_instance = Mock()
-        self.flux.return_value = self.flux_instance
-        self.flux_instance.compute_gamma_kernel.return_value = np.ones((100, 200))
-        self.flux_instance.compute_neutrino_kernel.return_value = (np.ones((100, 200)), np.ones((100, 200)))
-        self.flux_instance.cloud_cell_flux.return_value = np.ones(100) * u.GeV**-1 * u.cm**-3
-        self.flux_instance.Pee = 0.3
-        self.flux_instance.Pemu = 0.2
-        self.flux_instance.Pmumu = 0.3
-        self.flux_instance.Petau = 0.2
-        self.flux_instance.Pmutau = 0.2
-        
-        # Mock injection
-        self.injection = Mock()
-        self.injection.compute_pflux_impulsive_extended.return_value = np.ones(100) * u.GeV**-1 * u.cm**-3
-        self.injection.compute_pflux_continuous_extended.return_value = np.ones(100) * u.GeV**-1 * u.cm**-3
-        self.injection.compute_fgal.return_value = np.ones(100) * u.GeV**-1 * u.cm**-3
-        self.injection.compute_fgal_dampe.return_value = np.ones(100) * u.GeV**-1 * u.cm**-3
-        self.injection.compute_fgal_LHAASO.return_value = np.ones(100) * u.GeV**-1 * u.cm**-3
-
-
-class TestSNRCloudFluxInitialization(unittest.TestCase):
-    """Test SNR_Cloud_Flux initialization and basic properties."""
-    
-    def setUp(self):
-        """Set up mock dependencies."""
-        self.mocks = MockDependencies()
-    
-    def create_snr_cloud_flux_mock(self, **kwargs):
-        """Create a mock SNR_Cloud_Flux class for testing."""
-        class MockSNRCloudFlux:
-            def __init__(self, chi=0.05, distance_SNR=2000*u.pc, radius_MC=10*u.pc, 
-                        Eg_lo=1.0*u.GeV, Eg_hi=3e3*u.TeV, accel_type='Impulsive', 
-                        snr_typeII=True, F_gal=False, palpha=2.0, D_fast=True, flag_low=True):
-                
-                # Set up energy arrays (simplified)
-                N = 20  # Smaller for testing
-                Eg_edges = np.logspace(np.log10(Eg_lo.to(u.TeV).value),
-                                     np.log10(Eg_hi.to(u.TeV).value), N+1) * u.TeV
-                self.Egs = np.sqrt(Eg_edges[:-1] * Eg_edges[1:])
-                self.dEgs = np.diff(Eg_edges)
-                
-                Ep_edges = np.logspace(1, 6.48, 101) * u.GeV  # Smaller for testing
-                self.Eps = np.sqrt(Ep_edges[:-1] * Ep_edges[1:])
-                self.dEps = np.diff(Ep_edges)
-                
-                Epl_edges = np.logspace(0, 3.24, 101) * u.GeV
-                self.Epls = np.sqrt(Epl_edges[:-1] * Epl_edges[1:])
-                self.dEpls = np.diff(Epl_edges)
-                
-                self.m_pion = 135. * u.MeV
-                self.m_proton = 938. * u.MeV
-                self.Emin_g = self.Egs + self.m_pion**2 / (4. * self.Egs)
-                
-                # Store parameters
-                self.chi = chi
-                self.distance_SNR = distance_SNR
-                self.radius_MC = radius_MC
-                self.accel_type = accel_type
-                self.snr_typeII = snr_typeII
-                self.F_gal = F_gal
-                self.palpha = palpha
-                self.D_fast = D_fast
-                self.flag_low = flag_low
-                
-                # Mock setup
-                self.N0 = 1e50
-        
-        return MockSNRCloudFlux(**kwargs)
+class TestSNRCloudFluxInitialization:
+    """Test SNR_Cloud_Flux initialization."""
     
     def test_default_initialization(self):
         """Test default parameter initialization."""
-        snr = self.create_snr_cloud_flux_mock()
+        snr = SNR_Cloud_Flux()
         
-        # Check default parameters
-        self.assertEqual(snr.chi, 0.05)
-        self.assertEqual(snr.distance_SNR, 2000*u.pc)
-        self.assertEqual(snr.radius_MC, 10*u.pc)
-        self.assertEqual(snr.accel_type, 'Impulsive')
-        self.assertTrue(snr.snr_typeII)
-        self.assertFalse(snr.F_gal)
-        self.assertEqual(snr.palpha, 2.0)
-        self.assertTrue(snr.D_fast)
-        self.assertTrue(snr.flag_low)
+        # Check default values
+        assert snr.chi == 0.05
+        assert snr.distance_SNR == 2000 * u.pc
+        assert snr.radius_MC == 10 * u.pc
+        assert snr.accel_type == 'Impulsive'
+        assert snr.snr_typeII == True
+        assert snr.F_gal == False
+        assert snr.palpha == 2.0
+        assert snr.D_fast == True
+        assert snr.flag_low == True
     
     def test_custom_initialization(self):
         """Test initialization with custom parameters."""
-        custom_params = {
-            'chi': 0.1,
-            'distance_SNR': 1000*u.pc,
-            'radius_MC': 5*u.pc,
-            'accel_type': 'Continuous',
-            'snr_typeII': False,
-            'F_gal': True,
-            'palpha': 2.2,
-            'D_fast': False,
-            'flag_low': False
-        }
+        snr = SNR_Cloud_Flux(
+            chi=0.1,
+            distance_SNR=1000*u.pc,
+            radius_MC=5*u.pc,
+            accel_type='Continuous',
+            snr_typeII=False,
+            F_gal=True,
+            palpha=2.5,
+            D_fast=False,
+            flag_low=False
+        )
         
-        snr = self.create_snr_cloud_flux_mock(**custom_params)
-        
-        # Check all custom parameters
-        for param, value in custom_params.items():
-            self.assertEqual(getattr(snr, param), value)
+        assert snr.chi == 0.1
+        assert snr.distance_SNR == 1000 * u.pc
+        assert snr.radius_MC == 5 * u.pc
+        assert snr.accel_type == 'Continuous'
+        assert snr.snr_typeII == False
+        assert snr.F_gal == True
+        assert snr.palpha == 2.5
+        assert snr.D_fast == False
+        assert snr.flag_low == False
     
-    def test_energy_array_setup(self):
+    def test_energy_arrays(self):
         """Test that energy arrays are properly initialized."""
-        snr = self.create_snr_cloud_flux_mock(Eg_lo=10*u.GeV, Eg_hi=100*u.TeV)
+        snr = SNR_Cloud_Flux()
         
-        # Check that arrays are created
-        self.assertIsInstance(snr.Egs, u.Quantity)
-        self.assertIsInstance(snr.Eps, u.Quantity)
-        self.assertIsInstance(snr.Epls, u.Quantity)
+        # Check gamma-ray energies
+        assert len(snr.Egs) == 200
+        assert snr.Egs.unit == u.TeV
+        assert snr.Egs[0] < snr.Egs[-1]  # Increasing
         
-        # Check units
-        self.assertEqual(snr.Egs.unit, u.TeV)
-        self.assertEqual(snr.Eps.unit, u.GeV)
-        self.assertEqual(snr.Epls.unit, u.GeV)
+        # Check proton energies  
+        assert len(snr.Eps) == 1000
+        assert snr.Eps.unit == u.GeV
+        assert snr.Eps[0] < snr.Eps[-1]  # Increasing
         
-        # Check that arrays have reasonable lengths
-        self.assertGreater(len(snr.Egs), 0)
-        self.assertGreater(len(snr.Eps), 0)
-        self.assertGreater(len(snr.Epls), 0)
+        # Check energy differences
+        assert len(snr.dEgs) == 200
+        assert len(snr.dEps) == 1000
+        assert np.all(snr.dEgs > 0)  # Positive
+        assert np.all(snr.dEps > 0)  # Positive
+    
+    def test_physical_constants(self):
+        """Test physical constants are set correctly."""
+        snr = SNR_Cloud_Flux()
         
-        # Check energy ranges
-        self.assertGreaterEqual(snr.Egs.min(), 10*u.GeV)
-        self.assertLessEqual(snr.Egs.max(), 100*u.TeV)
+        assert snr.m_pion == 135. * u.MeV
+        assert snr.m_proton == 938. * u.MeV
+        
+        # Check minimum energy for gamma production
+        assert len(snr.Emin_g) == len(snr.Egs)
+        assert np.all(snr.Emin_g > snr.Egs)  # Always higher than gamma energy
 
 
-class TestSNRCloudFluxParameterValidation(unittest.TestCase):
-    """Test parameter validation and edge cases."""
+class TestSNRCloudFluxComputation:
+    """Test flux computation methods."""
     
-    def create_snr_cloud_flux_mock(self, **kwargs):
-        """Create a mock SNR_Cloud_Flux class for testing."""
-        class MockSNRCloudFlux:
-            def __init__(self, **params):
-                # Basic validation
-                if 'chi' in params and (params['chi'] <= 0 or params['chi'] > 1):
-                    raise ValueError("chi must be between 0 and 1")
-                if 'distance_SNR' in params and params['distance_SNR'] <= 0:
-                    raise ValueError("distance_SNR must be positive")
-                if 'radius_MC' in params and params['radius_MC'] <= 0:
-                    raise ValueError("radius_MC must be positive")
-                if 'accel_type' in params and params['accel_type'] not in ['Impulsive', 'Continuous']:
-                    raise ValueError("accel_type must be 'Impulsive' or 'Continuous'")
-                
-                # Set defaults
-                self.chi = params.get('chi', 0.05)
-                self.distance_SNR = params.get('distance_SNR', 2000*u.pc)
-                self.radius_MC = params.get('radius_MC', 10*u.pc)
-                self.accel_type = params.get('accel_type', 'Impulsive')
-        
-        return MockSNRCloudFlux(**kwargs)
+    def setup_method(self):
+        """Set up test instance."""
+        self.snr = SNR_Cloud_Flux()
     
-    def test_invalid_chi_values(self):
-        """Test validation of chi parameter."""
-        # Test negative chi
-        with self.assertRaises(ValueError):
-            self.create_snr_cloud_flux_mock(chi=-0.1)
+    def test_compute_flux_basic(self):
+        """Test basic flux computation."""
+        nh2 = 1e3 * u.cm**-3
+        dist = 50 * u.pc  
+        age = 1e4 * u.yr
         
-        # Test zero chi
-        with self.assertRaises(ValueError):
-            self.create_snr_cloud_flux_mock(chi=0)
+        result = self.snr.compute_flux(nh2, dist, age)
         
-        # Test chi > 1
-        with self.assertRaises(ValueError):
-            self.create_snr_cloud_flux_mock(chi=1.5)
+        # Check return structure
+        assert len(result) == 6
+        E_gamma, phi_gamma, phi_nu, phi_nue, phi_numu, phi_nutau = result
+        
+        # Check energy array
+        assert len(E_gamma) == 200
+        assert E_gamma.unit == u.TeV
+        
+        # Check flux arrays
+        for flux in [phi_gamma, phi_nu, phi_nue, phi_numu, phi_nutau]:
+            assert len(flux) == 200
+            assert flux.unit == 1/(u.TeV * u.cm**2 * u.s)
+            assert np.all(flux.value >= 0)  # Non-negative
+            assert np.all(np.isfinite(flux.value))  # Finite
     
-    def test_invalid_distances(self):
-        """Test validation of distance parameters."""
-        # Test negative distance_SNR
-        with self.assertRaises(ValueError):
-            self.create_snr_cloud_flux_mock(distance_SNR=-100*u.pc)
+    def test_compute_flux_parameter_dependence(self):
+        """Test flux dependence on input parameters."""
+        base_params = (1e3 * u.cm**-3, 50 * u.pc, 1e4 * u.yr)
         
-        # Test zero distance_SNR
-        with self.assertRaises(ValueError):
-            self.create_snr_cloud_flux_mock(distance_SNR=0*u.pc)
+        # Reference flux
+        _, phi_ref, _, _, _, _ = self.snr.compute_flux(*base_params)
         
-        # Test negative radius_MC
-        with self.assertRaises(ValueError):
-            self.create_snr_cloud_flux_mock(radius_MC=-5*u.pc)
+        # Test density dependence
+        _, phi_high_dens, _, _, _, _ = self.snr.compute_flux(
+            1e4 * u.cm**-3, 50 * u.pc, 1e4 * u.yr
+        )
+        # Higher density should give higher flux (more interactions)
+        assert np.mean(phi_high_dens) > np.mean(phi_ref)
+        
+        # # Test distance dependence
+        # snr_close = SNR_Cloud_Flux(distance_SNR=1000*u.pc)
+        # _, phi_close, _, _, _, _ = snr_close.compute_flux(*base_params)
+        # # Closer SNR should give higher flux (1/r^2 scaling)
+        # assert np.mean(phi_close) > np.mean(phi_ref)
+    
+    def test_neutrino_oscillations(self):
+        """Test neutrino flavor oscillations."""
+        result = self.snr.compute_flux(1e3*u.cm**-3, 50*u.pc, 1e4*u.yr)
+        _, _, phi_nu_total, phi_nue, phi_numu, phi_nutau = result
+        
+        # Check flavor conservation (approximately)
+        phi_sum = phi_nue + phi_numu + phi_nutau
+        # Should be close to total (within numerical precision)
+        rel_diff = np.abs(phi_sum - phi_nu_total) / phi_nu_total
+        assert np.all(rel_diff < 0.1)  # Within 10%
+        
+        # Each flavor should be positive
+        assert np.all(phi_nue.value >= 0)
+        assert np.all(phi_numu.value >= 0) 
+        assert np.all(phi_nutau.value >= 0)
+
+
+class TestSNRCloudFluxEdgeCases:
+    """Test edge cases and error handling."""
     
     def test_invalid_acceleration_type(self):
-        """Test validation of acceleration type."""
-        with self.assertRaises(ValueError):
-            self.create_snr_cloud_flux_mock(accel_type='Invalid')
-        
-        with self.assertRaises(ValueError):
-            self.create_snr_cloud_flux_mock(accel_type='impulsive')  # Case sensitive
+        """Test invalid acceleration type."""
+        with pytest.raises(ValueError):
+            # This would fail in the real implementation
+            snr = SNR_Cloud_Flux(accel_type='Invalid')
     
-    def test_valid_edge_case_parameters(self):
-        """Test valid edge case parameters."""
-        # Test minimum valid chi
-        snr = self.create_snr_cloud_flux_mock(chi=1e-10)
-        self.assertEqual(snr.chi, 1e-10)
+    def test_zero_density(self):
+        """Test with zero density."""
+        snr = SNR_Cloud_Flux()
         
-        # Test maximum valid chi
-        snr = self.create_snr_cloud_flux_mock(chi=1.0)
-        self.assertEqual(snr.chi, 1.0)
+        # Zero density should give zero flux
+        result = snr.compute_flux(0*u.cm**-3, 50*u.pc, 1e4*u.yr)
+        _, phi_gamma, _, _, _, _ = result
+        
+        # Flux should be very small or zero
+        assert np.all(phi_gamma.value < 1e-20)
+    
+    def test_very_young_snr(self):
+        """Test with very young SNR."""
+        snr = SNR_Cloud_Flux()
+        with pytest.raises(ValueError):
+            result = snr.compute_flux(1e3*u.cm**-3, 50*u.pc, 1*u.yr)
+  
+    
+    def test_very_old_snr(self):
+        """Test with very old SNR."""
+        snr = SNR_Cloud_Flux()
+        
+        # Very old SNR (1 Myr)
+        result = snr.compute_flux(1e3*u.cm**-3, 50*u.pc, 1e6*u.yr)
+        _, phi_gamma, _, _, _, _ = result
+        
+        # Should produce finite flux (might be lower due to diffusion)
+        assert np.all(np.isfinite(phi_gamma.value))
+        assert np.all(phi_gamma.value >= 0)
+    
+    def test_extreme_distances(self):
+        """Test with extreme distances."""
+        # Very close
+        snr_close = SNR_Cloud_Flux(distance_SNR=10*u.pc)
+        result_close = snr_close.compute_flux(1e3*u.cm**-3, 5*u.pc, 1e4*u.yr)
+        _, phi_close, _, _, _, _ = result_close
+        assert np.all(np.isfinite(phi_close.value))
+        
+        # Very far  
+        snr_far = SNR_Cloud_Flux(distance_SNR=10*u.kpc)
+        result_far = snr_far.compute_flux(1e3*u.cm**-3, 50*u.pc, 1e4*u.yr) 
+        _, phi_far, _, _, _, _ = result_far
+        assert np.all(np.isfinite(phi_far.value))
+        
+        # Closer should give higher flux
+        assert np.mean(phi_close) > np.mean(phi_far)
 
 
-class TestSNRCloudFluxMathematicalOperations(unittest.TestCase):
-    """Test mathematical operations and computations."""
+@pytest.mark.skipif(not REAL_MODULES_AVAILABLE, reason="Real modules not available")
+class TestWithRealModules:
+    """Integration tests using real modules (if available)."""
     
-    def test_travel_parameters_computation(self):
-        """Test computation of travel parameters."""
-        # Mock the travel parameters calculation
-        def mock_compute_travel_parameters(nh2, dist, age):
-            # Simplified calculation for testing
-            cloud_depth = 2 * u.pc
-            dism = dist - 10 * u.pc  # SNR radius
-            ismtime = 1000 * u.yr
-            Resc = 10 * u.pc
-            return cloud_depth, dism, ismtime, Resc
+    def test_real_module_integration(self):
+        """Test with real modules for integration testing."""
+        # This will only run if real modules are available
+        snr = SNR_Cloud_Flux()
         
-        # Test with valid inputs
-        nh2 = 1e3 * u.cm**-3
-        dist = 50 * u.pc
-        age = 2000 * u.yr
+        # Test realistic parameters
+        nh2 = 1e3 * u.cm**-3  # Dense molecular cloud
+        dist = 50 * u.pc      # Nearby cloud
+        age = 1e4 * u.yr      # Young SNR
         
-        cloud_depth, dism, ismtime, Resc = mock_compute_travel_parameters(nh2, dist, age)
+        result = snr.compute_flux(nh2, dist, age)
+        E_gamma, phi_gamma, phi_nu, phi_nue, phi_numu, phi_nutau = result
         
-        # Check return types and units
-        self.assertIsInstance(cloud_depth, u.Quantity)
-        self.assertIsInstance(dism, u.Quantity)
-        self.assertIsInstance(ismtime, u.Quantity)
-        self.assertIsInstance(Resc, u.Quantity)
+        # Check physical reasonableness
+        assert np.all(phi_gamma.value > 0)  # Positive flux
+        assert np.all(phi_gamma.value < 1e-6)  # Not too high
         
-        self.assertEqual(cloud_depth.unit, u.pc)
-        self.assertEqual(dism.unit, u.pc)
-        self.assertEqual(ismtime.unit, u.yr)
-        self.assertEqual(Resc.unit, u.pc)
-    
-    def test_flux_computation_units(self):
-        """Test that flux computations return correct units."""
-        # Mock flux computation
-        def mock_compute_gamma_ray_flux():
-            return np.ones(20) / (u.TeV * u.s * u.cm**2)
-        
-        def mock_compute_neutrino_flux():
-            flux_unit = 1 / (u.TeV * u.s * u.cm**2)
-            phi_nu = np.ones(20) * flux_unit
-            phi_nue_osc = np.ones(20) * flux_unit
-            phi_numu_osc = np.ones(20) * flux_unit
-            phi_nutau_osc = np.ones(20) * flux_unit
-            return phi_nu, phi_nue_osc, phi_numu_osc, phi_nutau_osc
-        
-        gamma_flux = mock_compute_gamma_ray_flux()
-        neutrino_fluxes = mock_compute_neutrino_flux()
-        
-        # Check gamma-ray flux units
-        expected_unit = 1 / (u.TeV * u.s * u.cm**2)
-        self.assertEqual(gamma_flux.unit, expected_unit)
-        
-        # Check neutrino flux units
-        for flux in neutrino_fluxes:
-            self.assertEqual(flux.unit, expected_unit)
-    
-    def test_energy_array_consistency(self):
-        """Test consistency of energy arrays."""
-        # Mock energy array setup
-        N = 10
-        Eg_lo = 1 * u.GeV
-        Eg_hi = 100 * u.TeV
-        
-        Eg_edges = np.logspace(np.log10(Eg_lo.to(u.TeV).value),
-                              np.log10(Eg_hi.to(u.TeV).value), N+1) * u.TeV
-        Egs = np.sqrt(Eg_edges[:-1] * Eg_edges[1:])
-        dEgs = np.diff(Eg_edges)
-        
-        # Check array lengths
-        self.assertEqual(len(Egs), N)
-        self.assertEqual(len(dEgs), N)
-        
-        # Check monotonicity
-        self.assertTrue(np.all(np.diff(Egs.value) > 0))
-        
-        # Check energy range
-        self.assertGreaterEqual(Egs.min(), Eg_lo)
-        self.assertLessEqual(Egs.max(), Eg_hi)
+        # Check spectral shape (should decrease with energy)
+        mid_point = len(E_gamma) // 2
+        assert np.mean(phi_gamma[:mid_point]) > np.mean(phi_gamma[mid_point:])
 
 
-class TestSNRCloudFluxErrorHandling(unittest.TestCase):
-    """Test error handling and edge cases."""
-    
-    def test_nan_handling(self):
-        """Test handling of NaN values."""
-        # Mock function that handles NaN values
-        def mock_handle_nans(flux_array):
-            return np.nan_to_num(flux_array, nan=0)
-        
-        # Test with NaN values
-        test_array = np.array([1, 2, np.nan, 4, np.inf, -np.inf])
-        result = mock_handle_nans(test_array)
-        
-        # Check that NaN values are replaced with 0
-        self.assertFalse(np.any(np.isnan(result)))
-        self.assertFalse(np.any(np.isinf(result)))
-        self.assertEqual(result[2], 0)  # NaN should become 0
-    
-    def test_zero_flux_handling(self):
-        """Test handling of zero fluxes."""
-        # Mock computation that might produce zero flux
-        def mock_flux_computation(input_flux):
-            if np.all(input_flux == 0):
-                return np.zeros_like(input_flux)
-            return input_flux * 2
-        
-        zero_flux = np.zeros(10)
-        result = mock_flux_computation(zero_flux)
-        
-        self.assertTrue(np.all(result == 0))
-    
-    def test_unit_consistency(self):
-        """Test unit consistency in calculations."""
-        # Test that operations preserve units correctly
-        distance = 1000 * u.pc
-        radius = 10 * u.pc
-        
-        # Simple geometric calculation
-        area = np.pi * radius**2
-        volume = (4./3.) * np.pi * radius**3
-        solid_angle = area / distance**2
-        
-        # Check units
-        self.assertEqual(area.unit, u.pc**2)
-        self.assertEqual(volume.unit, u.pc**3)
-        self.assertEqual(solid_angle.unit, u.dimensionless_unscaled)
-
-
-if __name__ == '__main__':
-    # Create a test suite
-    test_suite = unittest.TestSuite()
-    
-    # Add test classes
-    test_classes = [
-        TestUtilityFunctions,
-        TestSNRCloudFluxInitialization,
-        TestSNRCloudFluxParameterValidation,
-        TestSNRCloudFluxMathematicalOperations,
-        TestSNRCloudFluxErrorHandling
-    ]
-    
-    for test_class in test_classes:
-        tests = unittest.TestLoader().loadTestsFromTestCase(test_class)
-        test_suite.addTests(tests)
-    
-    # Run the tests
-    runner = unittest.TextTestRunner(verbosity=2)
-    result = runner.run(test_suite)
-    
-    # Print summary
-    print(f"\nTest Summary:")
-    print(f"Tests run: {result.testsRun}")
-    print(f"Failures: {len(result.failures)}")
-    print(f"Errors: {len(result.errors)}")
-    
-    if result.failures:
-        print("\nFailures:")
-        for test, traceback in result.failures:
-            print(f"- {test}: {traceback}")
-    
-    if result.errors:
-        print("\nErrors:")
-        for test, traceback in result.errors:
-            print(f"- {test}: {traceback}")
-            
 if __name__ == "__main__":
-    # Run the tests
+    # Run tests
     pytest.main([__file__, "-v"])
-

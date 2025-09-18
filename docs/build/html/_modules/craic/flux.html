@@ -43,7 +43,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../subpages/project.html">Project &amp; Contributors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../subpages/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../subpages/modules.html">Modules &amp; Functions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../subpages/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../subpages/tutorial.html">Quickstart Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../subpages/versions.html">Versions</a></li>
 </ul>
 
@@ -76,6 +76,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.special</span><span class="w"> </span><span class="kn">import</span> <span class="n">erfc</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">IPython</span><span class="w"> </span><span class="kn">import</span> <span class="n">embed</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
 <div class="viewcode-block" id="flux">
 <a class="viewcode-back" href="../../subpages/modules.html#craic.flux.flux">[docs]</a>
@@ -98,7 +99,7 @@
 <a class="viewcode-back" href="../../subpages/modules.html#craic.flux.flux.cloud_cell_flux">[docs]</a>
     <span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">Rc</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">pc</span><span class="p">,</span> <span class="n">Dc</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">pc</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">cloud_cell_flux</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Rc</span><span class="p">,</span> <span class="n">Dc</span><span class="p">,</span> <span class="n">flux</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the total proton influx at the cloud (:math:`\mathrm{GeV}^{-1}`).</span>
 
 <span class="sd">        Parameters</span>
@@ -110,7 +111,8 @@
 <span class="sd">        flux : :class:`~astropy.units.Quantity`</span>
 <span class="sd">            Proton differential flux density at cloud entrance location. (:math:`\mathrm{GeV}^{-1}\,\mathrm{cm}^{-3}`)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
+        <span class="c1"># if Rc.isscalar or Dc.isscalar or flux.isscalar:</span>
+        <span class="c1">#     warnings.warn(&quot;Inputs should be arrays. Please use the format np.array([value]) * unit&quot;, UserWarning)</span>
         <span class="c1"># Initialise return value to desired units</span>
         <span class="n">tot_ccf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Dc</span><span class="p">))</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="o">**-</span><span class="mi">1</span>
 
@@ -172,6 +174,7 @@
 <a class="viewcode-back" href="../../subpages/modules.html#craic.flux.flux.compute_gamma_kernel">[docs]</a>
     <span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">Eg</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">TeV</span><span class="p">,</span> <span class="n">Ep</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">GeV</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_gamma_kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Eg</span><span class="p">,</span> <span class="n">Ep</span><span class="p">):</span>
+
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes the kernel function for the total gamma-ray spectrum from :math:`\mathrm{\pi^{0}}` and </span>
 <span class="sd">        :math:`\eta` meson decay channels according to `Kelner et al. 2006, PhysRevD 74, 034018 </span>
@@ -326,7 +329,7 @@
 
         <span class="c1"># Return [((proton,)neutrino)]</span>
         <span class="c1"># Muon decay (F_nu_1) then pion decay (F_nu_2)</span>
-        <span class="k">return</span> <span class="n">F_nu_1</span> <span class="p">,</span> <span class="n">F_nu_2</span></div>
+        <span class="k">return</span> <span class="n">F_nu_1</span> <span class="p">,</span> <span class="n">F_nu_2</span> </div>
 </div>
 
 

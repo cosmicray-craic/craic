@@ -75,12 +75,16 @@
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">astropy.constants</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">c</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
 
 <div class="viewcode-block" id="accelerator">
 <a class="viewcode-back" href="../../subpages/modules.html#craic.accelerator.accelerator">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">accelerator</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculates the radius and age of supernova remnant </span>
-<span class="sd">    in the Sedov-Taylor stage.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculates the radius and age of supernova remnant (SNR) in the Sedov-Taylor stage.</span>
+<span class="sd">    </span>
+<span class="sd">    This class provides methods to compute SNR properties including</span>
+<span class="sd">    escape time for cosmic rays, radius and age of the SNR.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">Mej</span> <span class="o">=</span> <span class="p">(</span><span class="mf">10.</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">Msun</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">gram</span><span class="p">)</span>
     <span class="n">mp</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">m_p</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">gram</span><span class="p">)</span>
     <span class="n">nh2ism</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.</span><span class="p">])</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span> <span class="c1"># Density of Ambient Gas (cm^-3) ISM</span>
@@ -107,7 +111,10 @@
 <span class="sd">        typeIIb : bool</span>
 <span class="sd">            Type of supernova. Type Ia if False, type IIb if True.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
+        <span class="c1"># Warning</span>
+        <span class="c1"># if np.any(Ep.to(&#39;GeV&#39;) &lt;= 0.938*u.GeV):</span>
+        <span class="c1">#     raise ValueError(&quot;Proton energy must be greater than its rest mass energy.&quot;)</span>
+        
         <span class="c1"># To find how long it takes for cosmic rays to escape</span>
         <span class="n">t_sed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t_sed</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">yr</span><span class="p">)</span>
 
@@ -134,7 +141,10 @@
 <span class="sd">        time : :class:`~astropy.units.Quantity`</span>
 <span class="sd">            SNR age. (yr)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
+        <span class="c1"># Warning</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">time</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">yr</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Time must be positive&quot;</span><span class="p">)</span>
+        
         <span class="c1"># (1) Truelove &amp; McKee (1999):</span>
         <span class="c1"># mu_0 = 1.4 * c.m_p            # see text above eq. 4</span>
         <span class="c1"># rho_0 = self.nh2ism * mu_0    # see text above eq. 4</span>
@@ -144,7 +154,7 @@
 
         <span class="c1"># (2) Reynolds (2008), which is based on (1):</span>
         <span class="n">mu_1</span> <span class="o">=</span> <span class="mf">1.4</span> <span class="c1"># for neutral gas</span>
-        <span class="n">n</span>    <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nh2ism</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nh2ism</span>
 
         <span class="c1"># eq. 8 (exact factor found by comparing with Truelove)</span>
         <span class="n">radius</span> <span class="o">=</span> <span class="mf">0.31456744</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">pc</span> \
@@ -152,8 +162,7 @@
                     <span class="o">*</span> <span class="p">(</span><span class="n">n</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">nh2ism</span><span class="p">)</span><span class="o">**-</span><span class="mf">0.2</span> \
                     <span class="o">*</span> <span class="p">(</span><span class="n">mu_1</span><span class="o">/</span><span class="mf">1.4</span><span class="p">)</span><span class="o">**-</span><span class="mf">0.2</span> \
                     <span class="o">*</span> <span class="p">(</span><span class="n">time</span><span class="o">/</span><span class="n">u</span><span class="o">.</span><span class="n">yr</span><span class="p">)</span><span class="o">**</span><span class="mf">0.4</span>
-
-        <span class="c1"># Return</span>
+        
         <span class="k">return</span> <span class="n">radius</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">pc</span><span class="p">)</span></div>
 
 
@@ -169,6 +178,10 @@
 <span class="sd">        size : :class:`~astropy.units.Quantity`</span>
 <span class="sd">            SNR radius. (pc)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Warning</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">size</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">pc</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Size must be positive&quot;</span><span class="p">)</span>
 
         <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nh2ism</span>
         <span class="n">mu_1</span> <span class="o">=</span> <span class="mf">1.4</span> <span class="c1"># for neutral gas</span>
@@ -186,7 +199,7 @@
 </div>
 
 
-    
+
 </pre></div>
 
            </div>
